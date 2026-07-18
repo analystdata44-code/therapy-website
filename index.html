@@ -90,7 +90,7 @@
     opacity:0; animation:fadeUp .8s ease forwards; animation-delay:.58s;
   }
   .hero-image{
-    position:relative; border-radius:10px; overflow:hidden;
+    position:relative; border-radius:50%; overflow:hidden;
     aspect-ratio:4/3.4; box-shadow:0 20px 50px -20px rgba(51,67,62,0.28);
     opacity:0; animation:fadeUp 1s ease forwards; animation-delay:.3s;
   }
@@ -606,6 +606,9 @@
   @media (max-width:760px){
     .corp-grid{grid-template-columns:1fr; gap:22px;}
     .corp-organic{display:none;}
+    .corp-title-icon-wrap{width:56px; height:56px; border-width:2px;}
+    .corp-media{height:200px;}
+    .corp-card h4{font-size:19px;}
   }
 
   /* Start Here */
