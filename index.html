@@ -448,16 +448,24 @@
     .hiw-grid{grid-template-columns:1fr;}
   }
   @media (max-width:640px){
-    .approach-head{gap:12px;}
+    .approach-head{gap:12px; justify-content:center;}
     .approach-badge{width:44px; height:44px;}
     .approach-badge svg{width:20px; height:20px;}
-    .approach-sub{font-size:22px;}
-    .approach-underline{margin-bottom:34px;}
-    .approach-feature{gap:14px; padding:18px 0;}
-    .approach-feature-icon{width:44px; height:44px;}
-    .approach-feature-icon svg{width:20px; height:20px;}
-    .approach-feature p{font-size:14px;}
-    .approach-highlight{flex-direction:column; align-items:flex-start; padding:22px 20px; gap:12px;}
+    .approach-sub{font-size:22px; text-align:center;}
+    .approach-underline{margin-bottom:34px; margin-left:auto; margin-right:auto; display:block;}
+    .approach-features{align-items:center;}
+    .approach-feature{
+      flex-direction:column; align-items:center; text-align:center;
+      gap:14px; padding:22px 4px;
+    }
+    .approach-feature-icon{width:56px; height:56px;}
+    .approach-feature-icon svg{width:24px; height:24px;}
+    .approach-feature p{font-size:14px; text-align:center;}
+    .approach-highlight{
+      flex-direction:column; align-items:center; text-align:center;
+      padding:26px 22px; gap:14px;
+    }
+    .approach-highlight h4, .approach-highlight p{text-align:center;}
   }
 
   /* Services */
