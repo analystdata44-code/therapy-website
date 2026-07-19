@@ -837,6 +837,14 @@
   }
 
   /* ---------- TESTIMONIALS ---------- */
+  .testimonial-section{position:relative; overflow:hidden;}
+  .testimonial-section .wrap{position:relative; z-index:1;}
+  /* Full, uncropped decorative background image — sized to the section's
+     width so the whole image is always visible (never cropped/zoomed). */
+  .testimonial-bg{
+    position:absolute; top:0; left:0; width:100%; height:auto;
+    z-index:0; pointer-events:none; user-select:none; display:block;
+  }
   .testimonial-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:28px; margin-top:44px;}
   .testimonial-card{
     background:var(--card); border:1px solid var(--line); border-radius:14px;
@@ -1508,6 +1516,7 @@
 <!-- TESTIMONIALS (own view, hidden by default, shown via nav) -->
 <div id="view-testimonial" style="display:none;">
 <section class="section section-alt testimonial-section" id="testimonial">
+  <img class="testimonial-bg" src="assets/background.png" alt="">
   <div class="wrap">
     <div class="section-head">
       <div class="section-eyebrow">Client Voices</div>
@@ -1790,11 +1799,12 @@
     items.forEach(function(el){ io.observe(el); });
   })();
 </script>
+<script src="config.js"></script>
 <script>
   (function(){
-    // 👇 YAHAN apna Google Apps Script "Web app URL" paste karo
-    // (Testimonials_Backend_Code.gs deploy karne ke baad milega — instructions neeche di gayi hain)
-    var TESTIMONIALS_ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbxS0R6qFl5KAok-Lo6Mrsz-AJMEwY1cMjN7D5xpo4IYmMLkVjQYa3hUekJqtRYGerrXNw/exec";
+    // 👇 Script URL ab config.js me ek hi jagah set hota hai (TESTIMONIALS_SCRIPT_URL).
+    //    Yahan alag se paste karne ki zaroorat nahi.
+    var TESTIMONIALS_ENDPOINT_URL = (typeof TESTIMONIALS_SCRIPT_URL !== 'undefined') ? TESTIMONIALS_SCRIPT_URL : "PASTE_YOUR_TESTIMONIALS_APPS_SCRIPT_URL_HERE";
 
     var grid = document.getElementById('testimonialGrid');
     if(!grid) return;
