@@ -55,6 +55,39 @@
   .btn-reject{background:#fff; color:var(--red); border:1px solid var(--red) !important;}
   .btn-delete{background:#fff; color:var(--muted); border:1px solid var(--line) !important;}
   .empty{text-align:center; color:var(--muted); padding:40px 0; font-size:14px;}
+
+  /* Tabs */
+  .tabs{display:flex; gap:8px; margin-bottom:22px;}
+  .tabs button{background:#fff; border:1px solid var(--line); color:var(--muted); padding:10px 22px; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer;}
+  .tabs button.active{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .tab-panel{display:none;}
+  .tab-panel.active{display:block;}
+
+  /* Blogs */
+  textarea#blogContent{width:100%; padding:12px 13px; border:1px solid var(--line); border-radius:6px; font-size:14px; background:var(--cream); font-family:'Inter',sans-serif; min-height:140px; resize:vertical; margin-top:12px;}
+  .field-label{font-size:12.5px; font-weight:600; color:var(--muted); margin:14px 0 6px;}
+  #blogImageInput{margin-top:4px;}
+  .image-preview-row{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;}
+  .image-preview{position:relative; width:84px; height:84px; border-radius:8px; overflow:hidden; border:1px solid var(--line);}
+  .image-preview img{width:100%; height:100%; object-fit:cover; display:block;}
+  .image-preview .remove-img{position:absolute; top:2px; right:2px; background:rgba(0,0,0,.55); color:#fff; border:none; width:20px; height:20px; border-radius:50%; font-size:12px; line-height:1; cursor:pointer;}
+  .blog-status-select{padding:11px 13px; border:1px solid var(--line); border-radius:6px; font-size:14px; background:var(--cream); font-weight:600;}
+  .blog-form-actions{display:flex; gap:10px; margin-top:16px; align-items:center;}
+  .btn-primary{background:var(--sage); color:#fff; border:none; padding:11px 22px; border-radius:6px; font-weight:600; cursor:pointer;}
+  .btn-primary:hover{background:var(--sage-dark);}
+  .btn-secondary{background:#fff; border:1px solid var(--line); color:var(--muted); padding:11px 18px; border-radius:6px; font-weight:600; cursor:pointer;}
+
+  .blog-card{background:#fff; border:1px solid var(--line); border-radius:10px; padding:20px; margin-bottom:14px; display:flex; gap:16px;}
+  .blog-card .blog-thumb{width:96px; height:96px; border-radius:8px; object-fit:cover; flex-shrink:0; background:var(--cream);}
+  .blog-card .blog-body{flex:1; min-width:0;}
+  .blog-title-row{display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:6px;}
+  .blog-title-row h3{font-family:'Lora',serif; font-size:16.5px; font-weight:600;}
+  .status-draft{background:#eee; color:#666;}
+  .status-published{background:#e4ede6; color:var(--sage-dark);}
+  .blog-excerpt{font-size:13.5px; color:var(--muted); line-height:1.6; margin-bottom:12px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;}
+  .blog-actions{display:flex; gap:8px;}
+  .blog-actions button{border:none; padding:7px 14px; border-radius:6px; font-size:12.5px; font-weight:600; cursor:pointer;}
+  .btn-edit{background:#fff; color:var(--ink); border:1px solid var(--line) !important;}
 </style>
 </head>
 <body>
@@ -68,7 +101,14 @@
 </div>
 
 <div class="wrap panel" id="panel">
-  <h1>Testimonials Admin</h1>
+  <h1>Admin Panel</h1>
+
+  <div class="tabs">
+    <button class="active" data-tab="feedback" onclick="setTab('feedback')">Feedback</button>
+    <button data-tab="blogs" onclick="setTab('blogs')">Blogs</button>
+  </div>
+
+  <div class="tab-panel active" id="tab-feedback">
 
   <div class="card">
     <h2>Generate a Unique Review Link</h2>
@@ -104,6 +144,46 @@
     </div>
     <div id="reviewList"><p class="empty">Loading…</p></div>
   </div>
+
+  </div>
+  <!-- /tab-feedback -->
+
+  <div class="tab-panel" id="tab-blogs">
+
+  <div class="card">
+    <h2 id="blogFormTitle">Write a New Blog Post</h2>
+    <input type="hidden" id="blogId" value="">
+    <input type="text" id="blogTitle" placeholder="Blog title" style="width:100%; padding:12px 13px; border:1px solid var(--line); border-radius:6px; font-size:15px; background:var(--cream);">
+    <div class="field-label">Content</div>
+    <textarea id="blogContent" placeholder="Likho apna blog post yahan…"></textarea>
+
+    <div class="field-label">Images (multiple select kar sakte ho)</div>
+    <input type="file" id="blogImageInput" accept="image/*" multiple onchange="handleImageSelect(event)">
+    <div class="image-preview-row" id="imagePreviewRow"></div>
+
+    <div class="blog-form-actions">
+      <div class="field-label" style="margin:0;">Status:</div>
+      <select id="blogStatus" class="blog-status-select">
+        <option value="Draft">Draft (sirf aapko dikhega)</option>
+        <option value="Published">Published (website par live)</option>
+      </select>
+      <button class="btn-primary" onclick="saveBlog()" id="saveBlogBtn">Save Blog Post</button>
+      <button class="btn-secondary" onclick="resetBlogForm()">Clear</button>
+      <span id="blogSaveStatus" style="font-size:13px;"></span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+      <h2 style="margin-bottom:0;">All Blog Posts</h2>
+      <button type="button" onclick="fetchBlogs()" style="background:#fff; border:1px solid var(--line); color:var(--sage-dark); padding:7px 14px; border-radius:6px; font-weight:600; font-size:13px; cursor:pointer;">⟳ Refresh</button>
+    </div>
+    <div id="blogList" style="margin-top:18px;"><p class="empty">Loading…</p></div>
+  </div>
+
+  </div>
+  <!-- /tab-blogs -->
+
 </div>
 
 <script src="config.js"></script>
@@ -117,6 +197,18 @@
   var currentFilter = 'all';
   var pollTimer = null;
   var POLL_MS = 15000; // auto-refresh every 15s so new submissions show up without a manual reload
+
+  var allBlogs = [];
+  var pendingImages = []; // { url } objects already uploaded to Drive for the post being edited/created
+
+  function setTab(tab){
+    document.querySelectorAll('.tabs button').forEach(function(b){
+      b.classList.toggle('active', b.getAttribute('data-tab') === tab);
+    });
+    document.getElementById('tab-feedback').classList.toggle('active', tab === 'feedback');
+    document.getElementById('tab-blogs').classList.toggle('active', tab === 'blogs');
+    if(tab === 'blogs' && !allBlogs.length) fetchBlogs();
+  }
 
   function login(){
     var pw = document.getElementById('passwordInput').value.trim();
@@ -318,6 +410,193 @@
     var div = document.createElement('div');
     div.textContent = str == null ? '' : String(str);
     return div.innerHTML;
+  }
+
+  // ---------------- BLOGS ----------------
+
+  function fetchBlogs(){
+    document.getElementById('blogList').innerHTML = '<p class="empty">Loading…</p>';
+    fetch(ENDPOINT_URL + '?action=adminBlogs&key=' + encodeURIComponent(adminKey))
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        if(data && data.error === 'unauthorized'){ return; }
+        allBlogs = data || [];
+        renderBlogList();
+      })
+      .catch(function(){
+        document.getElementById('blogList').innerHTML = '<p class="empty">Could not load blog posts.</p>';
+      });
+  }
+
+  function renderBlogList(){
+    var list = document.getElementById('blogList');
+    if(!allBlogs.length){
+      list.innerHTML = '<p class="empty">Koi blog post nahi hai abhi. Upar se ek likh do!</p>';
+      return;
+    }
+    list.innerHTML = allBlogs.map(function(b){
+      var status = (b.status || 'Draft');
+      var statusClass = status.toLowerCase() === 'published' ? 'status-published' : 'status-draft';
+      var thumb = (b.images && b.images.length) ? b.images[0] : '';
+      return (
+        '<div class="blog-card">' +
+          (thumb ? '<img class="blog-thumb" src="' + escapeHtml(thumb) + '">' : '<div class="blog-thumb"></div>') +
+          '<div class="blog-body">' +
+            '<div class="blog-title-row">' +
+              '<h3>' + escapeHtml(b.title) + '</h3>' +
+              '<span class="status-badge ' + statusClass + '">' + escapeHtml(status) + '</span>' +
+            '</div>' +
+            '<p class="blog-excerpt">' + escapeHtml(b.content) + '</p>' +
+            '<div class="blog-actions">' +
+              '<button class="btn-edit" onclick="editBlog(\'' + b.id + '\')">Edit</button>' +
+              '<button class="btn-delete" onclick="deleteBlogFn(\'' + b.id + '\')">Delete</button>' +
+            '</div>' +
+          '</div>' +
+        '</div>'
+      );
+    }).join('');
+  }
+
+  function handleImageSelect(evt){
+    var files = Array.prototype.slice.call(evt.target.files || []);
+    if(!files.length) return;
+    var statusEl = document.getElementById('blogSaveStatus');
+    statusEl.style.color = 'var(--muted)';
+    statusEl.textContent = 'Uploading ' + files.length + ' image(s)…';
+
+    var uploadOne = function(file){
+      return new Promise(function(resolve){
+        var reader = new FileReader();
+        reader.onload = function(){
+          var payload = new URLSearchParams();
+          payload.set('action', 'uploadBlogImage');
+          payload.set('key', adminKey);
+          payload.set('imageData', reader.result);
+          payload.set('fileName', file.name);
+          payload.set('mimeType', file.type || 'image/jpeg');
+          fetch(ENDPOINT_URL, { method: 'POST', body: payload })
+            .then(function(res){ return res.json(); })
+            .then(function(data){
+              if(data && data.success){ pendingImages.push({ url: data.url }); }
+              resolve();
+            })
+            .catch(function(){ resolve(); });
+        };
+        reader.readAsDataURL(file);
+      });
+    };
+
+    Promise.all(files.map(uploadOne)).then(function(){
+      statusEl.textContent = '';
+      renderImagePreviews();
+      evt.target.value = ''; // allow re-selecting the same file again later
+    });
+  }
+
+  function renderImagePreviews(){
+    var row = document.getElementById('imagePreviewRow');
+    row.innerHTML = pendingImages.map(function(img, i){
+      return (
+        '<div class="image-preview">' +
+          '<img src="' + escapeHtml(img.url) + '">' +
+          '<button type="button" class="remove-img" onclick="removeImage(' + i + ')">×</button>' +
+        '</div>'
+      );
+    }).join('');
+  }
+
+  function removeImage(i){
+    pendingImages.splice(i, 1);
+    renderImagePreviews();
+  }
+
+  function resetBlogForm(){
+    document.getElementById('blogId').value = '';
+    document.getElementById('blogTitle').value = '';
+    document.getElementById('blogContent').value = '';
+    document.getElementById('blogStatus').value = 'Draft';
+    document.getElementById('blogFormTitle').textContent = 'Write a New Blog Post';
+    document.getElementById('saveBlogBtn').textContent = 'Save Blog Post';
+    document.getElementById('blogSaveStatus').textContent = '';
+    pendingImages = [];
+    renderImagePreviews();
+  }
+
+  function editBlog(id){
+    var b = allBlogs.find(function(x){ return x.id === id; });
+    if(!b) return;
+    document.getElementById('blogId').value = b.id;
+    document.getElementById('blogTitle').value = b.title;
+    document.getElementById('blogContent').value = b.content;
+    document.getElementById('blogStatus').value = (b.status && b.status.toLowerCase() === 'published') ? 'Published' : 'Draft';
+    document.getElementById('blogFormTitle').textContent = 'Edit Blog Post';
+    document.getElementById('saveBlogBtn').textContent = 'Update Blog Post';
+    pendingImages = (b.images || []).map(function(url){ return { url: url }; });
+    renderImagePreviews();
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  function saveBlog(){
+    var id = document.getElementById('blogId').value;
+    var title = document.getElementById('blogTitle').value.trim();
+    var content = document.getElementById('blogContent').value.trim();
+    var status = document.getElementById('blogStatus').value;
+    var statusEl = document.getElementById('blogSaveStatus');
+    var btn = document.getElementById('saveBlogBtn');
+
+    if(!title){ statusEl.style.color = 'var(--red)'; statusEl.textContent = 'Title likhna zaroori hai.'; return; }
+
+    btn.disabled = true;
+    var oldText = btn.textContent;
+    btn.textContent = 'Saving…';
+    statusEl.style.color = 'var(--muted)';
+    statusEl.textContent = '';
+
+    var payload = new URLSearchParams();
+    payload.set('action', 'saveBlog');
+    payload.set('key', adminKey);
+    payload.set('id', id);
+    payload.set('title', title);
+    payload.set('content', content);
+    payload.set('status', status);
+    payload.set('images', JSON.stringify(pendingImages.map(function(i){ return i.url; })));
+
+    fetch(ENDPOINT_URL, { method: 'POST', body: payload })
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        if(data && data.success){
+          statusEl.style.color = 'var(--sage-dark)';
+          statusEl.textContent = '✓ Saved';
+          resetBlogForm();
+          fetchBlogs();
+        } else {
+          statusEl.style.color = 'var(--red)';
+          statusEl.textContent = 'Could not save' + (data && data.message ? ' (' + data.message + ')' : '') + '.';
+        }
+      })
+      .catch(function(){
+        statusEl.style.color = 'var(--red)';
+        statusEl.textContent = 'Could not connect while saving.';
+      })
+      .finally(function(){
+        btn.disabled = false;
+        btn.textContent = oldText;
+      });
+  }
+
+  function deleteBlogFn(id){
+    if(!confirm('Ye blog post permanently delete karna hai?')) return;
+    allBlogs = allBlogs.filter(function(b){ return b.id !== id; }); // optimistic
+    renderBlogList();
+
+    var payload = new URLSearchParams();
+    payload.set('action', 'deleteBlog');
+    payload.set('key', adminKey);
+    payload.set('id', id);
+    fetch(ENDPOINT_URL, { method: 'POST', body: payload })
+      .then(function(res){ return res.json(); })
+      .then(function(){ fetchBlogs(); })
+      .catch(function(){ fetchBlogs(); });
   }
 </script>
 </body>
