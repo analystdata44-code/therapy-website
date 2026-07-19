@@ -3,1915 +3,271 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Good Earth Citizen — Trauma, Healing &amp; Wellness</title>
+<title>Admin — Testimonials</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@400;500;600;700&family=Caveat:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --cream: #F1EEE7;
-    --cream-deep: #E9E4DA;
-    --card: #FFFFFF;
-    --ink: #33433E;
-    --navy: #223138;
-    --muted: #57645F;
-    --sage: #7E9686;
-    --sage-dark: #647B6C;
-    --sage-soft: #AFC0B4;
-    --line: #D8D2C4;
-    --gold: #B9895A;
-    --deepgreen: #40543F;
+    --cream:#F1EEE7; --card:#FFFFFF; --ink:#33433E; --muted:#57645F;
+    --sage:#7E9686; --sage-dark:#647B6C; --line:#D8D2C4; --gold:#B9895A;
+    --red:#a34a3a; --red-bg:#f6e9e6;
   }
   *{margin:0;padding:0;box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
-  body{
-    background:var(--cream);
-    color:var(--ink);
-    font-family:'Inter',sans-serif;
-    -webkit-font-smoothing:antialiased;
-    overflow-x:hidden;
-  }
-  @media (prefers-reduced-motion: reduce){
-    *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; scroll-behavior:auto !important;}
-  }
-  a{color:inherit; text-decoration:none;}
-  button{font-family:inherit; cursor:pointer;}
-  ul{list-style:none;}
-  .wrap{max-width:1100px; margin:0 auto; padding:0 32px;}
+  body{background:var(--cream); color:var(--ink); font-family:'Inter',sans-serif; min-height:100vh;}
+  .wrap{max-width:920px; margin:0 auto; padding:40px 20px 80px;}
+  h1{font-family:'Lora',serif; font-weight:600; font-size:26px; margin-bottom:26px;}
+  h2{font-family:'Lora',serif; font-weight:600; font-size:18px; margin-bottom:14px;}
 
-  /* ---------- NAV ---------- */
-  header{
-    position:sticky; top:0; z-index:50;
-    background:rgba(241,238,231,0.92);
-    backdrop-filter:blur(10px);
-    border-bottom:1px solid var(--line);
-  }
-  nav{
-    display:flex; align-items:center; justify-content:space-between;
-    padding:20px 32px; max-width:1100px; margin:0 auto;
-  }
-  .logo{font-family:'Lora',serif; font-size:19px; font-weight:500; color:var(--ink); display:flex; align-items:center; gap:10px;}
-  .logo img{height:34px; width:auto; display:block;}
-  .logo .logo-text{line-height:1.15;}
-  .logo .logo-text span{display:block; font-size:10px; font-weight:500; letter-spacing:0.14em; color:var(--sage-dark); text-transform:uppercase; margin-top:1px;}
-  .nav-links{display:flex; gap:22px; font-size:13.5px;}
-  .nav-links a{position:relative; color:var(--muted); padding:4px 0; transition:color .25s ease;}
-  .nav-links a::after{content:''; position:absolute; left:0; bottom:0; width:0; height:1px; background:var(--sage-dark); transition:width .3s ease;}
-  .nav-links a:hover{color:var(--ink);}
-  .nav-links a:hover::after{width:100%;}
-  .nav-links a.active-link{color:var(--ink);}
-  .nav-links a.active-link::after{width:100%;}
-  .nav-cta{
-    background:var(--sage); border:1px solid var(--sage); padding:11px 22px; font-size:13.5px;
-    font-weight:600; color:#fff; border-radius:4px;
-    transition:background .25s ease, transform .25s ease;
-  }
-  .nav-cta:hover{background:var(--sage-dark); transform:translateY(-1px);}
-  .menu-btn{display:none; background:none; border:none; font-size:22px; color:var(--ink); line-height:1; padding:4px 6px;}
-  .mobile-menu{display:none;}
+  /* Login */
+  #loginBox{max-width:360px; margin:80px auto; background:#fff; padding:36px; border-radius:12px; border:1px solid var(--line); text-align:center;}
+  #loginBox input{width:100%; padding:12px 14px; border:1px solid var(--line); border-radius:6px; font-size:14.5px; margin:16px 0; background:var(--cream);}
+  #loginBox button{width:100%; background:var(--sage); color:#fff; border:none; padding:13px; border-radius:6px; font-weight:600; cursor:pointer;}
+  #loginBox button:hover{background:var(--sage-dark);}
+  #loginError{color:var(--red); font-size:13px; margin-top:8px;}
 
-  /* ---------- HERO (two-column: text left, image right) ---------- */
-  .hero{padding:80px 0 90px;}
-  .hero-grid{display:grid; grid-template-columns:1.05fr 0.95fr; gap:56px; align-items:center;}
-  .hero h1{
-    font-family:'Lora',serif; font-weight:500; font-size:clamp(32px,4.4vw,50px);
-    line-height:1.25; color:var(--ink);
-    opacity:0; animation:fadeUp .8s ease forwards;
-  }
-  .hero h1 .line2{display:block; color:var(--sage-dark); font-style:italic; font-weight:400; margin-top:4px; animation-delay:.18s;}
-  .hero p.lede{
-    margin:26px 0 0; max-width:520px; font-size:16px; line-height:1.85; color:var(--muted);
-    opacity:0; animation:fadeUp .8s ease forwards; animation-delay:.34s;
-  }
-  .hero p.lede2{
-    margin-top:14px; font-family:'Lora',serif; font-style:italic; color:var(--sage-dark); font-size:15px;
-    opacity:0; animation:fadeUp .8s ease forwards; animation-delay:.46s;
-  }
-  .hero-ctas{
-    margin-top:36px; display:flex; gap:16px; flex-wrap:wrap;
-    opacity:0; animation:fadeUp .8s ease forwards; animation-delay:.58s;
-  }
-  .hero-image{
-    position:relative; border-radius:50%; overflow:hidden;
-    aspect-ratio:3/2; box-shadow:0 20px 50px -20px rgba(51,67,62,0.28);
-    opacity:0; animation:fadeUp 1s ease forwards; animation-delay:.3s;
-  }
-  .hero-image img{width:100%; height:100%; object-fit:cover; display:block;}
-  .btn-primary{
-    background:var(--sage); color:#fff; border:1px solid var(--sage); border-radius:4px;
-    font-size:14px; font-weight:600; padding:15px 28px;
-    display:inline-flex; align-items:center; gap:8px;
-    transition:background .25s ease, transform .25s ease;
-  }
-  .btn-primary:hover{background:var(--sage-dark); transform:translateY(-2px);}
-  .btn-outline{
-    border:1px solid var(--sage); border-radius:4px; color:var(--sage-dark); background:none;
-    font-size:14px; font-weight:600; padding:15px 28px;
-    transition:background .25s ease, color .25s ease, transform .25s ease;
-  }
-  .btn-outline:hover{background:var(--sage); color:#fff; transform:translateY(-2px);}
-  @keyframes fadeUp{from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);}}
+  /* Panel */
+  .panel{display:none;}
+  .card{background:#fff; border:1px solid var(--line); border-radius:10px; padding:26px; margin-bottom:26px;}
+  .row{display:flex; gap:12px; flex-wrap:wrap;}
+  .row input[type="text"]{flex:1; min-width:180px; padding:11px 13px; border:1px solid var(--line); border-radius:6px; font-size:14px; background:var(--cream);}
+  .row button{background:var(--sage); color:#fff; border:none; padding:11px 20px; border-radius:6px; font-weight:600; cursor:pointer; white-space:nowrap;}
+  .row button:hover{background:var(--sage-dark);}
+  .link-output{margin-top:14px; display:none; background:var(--cream); border:1px dashed var(--line); border-radius:6px; padding:12px 14px; font-size:13.5px; word-break:break-all; justify-content:space-between; align-items:center; gap:10px;}
+  .link-output button{background:var(--gold); flex-shrink:0;}
 
-  .quote-line{
-    margin:70px auto 0; max-width:720px; text-align:center;
-    font-family:'Lora',serif; font-style:italic; font-size:18px; line-height:1.7; color:var(--muted);
-    border-top:1px solid var(--line); padding-top:40px;
-  }
-  .full-lede{
-    max-width:760px; margin:20px auto 0; text-align:center;
-    font-size:15.5px; line-height:1.85; color:var(--muted);
-  }
+  .filters{display:flex; gap:8px; margin-bottom:18px;}
+  .filters button{background:#fff; border:1px solid var(--line); color:var(--muted); padding:8px 16px; border-radius:20px; font-size:13px; font-weight:600; cursor:pointer;}
+  .filters button.active{background:var(--sage); color:#fff; border-color:var(--sage);}
 
-  /* ---------- SECTION GENERIC ---------- */
-  .section{padding:100px 0;}
-  .section-alt{background:var(--cream-deep);}
-  .section-eyebrow{font-size:12px; letter-spacing:0.18em; text-transform:uppercase; color:var(--sage-dark); font-weight:600; margin-bottom:16px;}
-  .section-head{max-width:680px; margin-bottom:50px;}
-  .section-head h2{font-family:'Lora',serif; font-weight:500; font-size:clamp(26px,3.2vw,38px); line-height:1.3; color:var(--ink);}
-  .section-head h2 em{color:var(--sage-dark); font-style:italic; font-weight:400;}
-  .section-head p{margin-top:18px; font-size:15.5px; line-height:1.8; color:var(--muted); max-width:600px;}
-
-  /* Introduction — radial layout */
-  .intro-wrap{max-width:1280px;}
-  .intro-top{display:flex; gap:30px; align-items:flex-start;}
-  .intro-left{width:380px; flex-shrink:0; padding-top:4px;}
-  .intro-left .section-eyebrow{margin-bottom:14px;}
-  .intro-heading{font-family:'Lora',serif; font-weight:500; font-size:clamp(28px,3.4vw,40px); line-height:1.22; color:var(--ink);}
-  .intro-heading em{color:var(--sage-dark); font-style:italic; font-weight:400;}
-  .intro-divider{display:flex; align-items:center; gap:10px; margin:22px 0;}
-  .intro-divider .d-line{width:38px; height:1px; background:var(--sage-dark);}
-  .intro-divider svg{width:26px; height:16px; color:var(--sage-soft);}
-  .intro-lede{font-size:15px; line-height:1.85; color:var(--muted);}
-  .intro-bold{margin-top:20px; font-weight:600; color:var(--ink); font-size:15px;}
-
-  /* Non-overlapping, grid-based radial layout — cards flow around the
-     center portrait using named grid areas instead of absolute positioning,
-     so nothing can ever overlap at any viewport width. */
-  .intro-radial{
-    flex:1;
-    display:grid;
-    grid-template-columns: 1fr 1.25fr 1fr;
-    grid-template-areas:
-      "top   top   top"
-      "left1 image right1"
-      "left2 image right2";
-    column-gap:22px; row-gap:22px;
-    align-items:center;
-  }
-  .radial-center-wrap{
-    grid-area:image; position:relative; z-index:1;
-    display:flex; align-items:center; justify-content:center;
-  }
-  .radial-center-bg{
-    position:absolute; left:50%; top:52%; transform:translate(-50%,-50%);
-    width:82%; height:88%; border-radius:50% 50% 46% 46% / 55% 55% 45% 45%;
-    background:#E7E3D9; opacity:.55; z-index:-1;
-  }
-  .radial-center-wrap img{width:100%; max-width:300px; height:auto; display:block; position:relative;}
-
-  .radial-card{
-    background:#FEFAF8; border-radius:10px; width:100%; height:100%;
-    padding:26px 22px 22px; box-shadow:0 18px 36px -20px rgba(51,67,62,.28);
-    display:flex; flex-direction:column; align-items:center; text-align:center; position:relative;
-  }
-  .radial-card .r-icon{
-    width:46px; height:46px; border-radius:50%; display:flex; align-items:center; justify-content:center;
-    margin:0 auto 14px; color:#fff; flex-shrink:0;
-  }
-  .radial-card .r-icon svg{width:22px; height:22px;}
-  .radial-card .r-icon-img{width:46px; height:46px; border-radius:50%; overflow:hidden; background:#9FAEA3; margin:0 auto 14px;}
-  .radial-card .r-icon-img img{width:100%; height:100%; object-fit:cover; display:block; transform:scale(1.55);}
-  .radial-card h4{font-family:'Inter',sans-serif; font-size:15px; font-weight:700; color:var(--ink); line-height:1.32; margin-bottom:8px; max-width:26ch;}
-  .radial-card p{font-size:13px; color:var(--muted); line-height:1.6; max-width:28ch;}
-
-  .card-top{grid-area:top; max-width:320px; justify-self:center;}
-  .card-left1{grid-area:left1;}
-  .card-left2{grid-area:left2;}
-  .card-right1{grid-area:right1;}
-  .card-right2{grid-area:right2;}
-
-  /* Scroll-in reveal animation for the 5 pattern cards */
-  .radial-card[data-reveal]{
-    opacity:0; transform:translateY(28px);
-    transition:opacity .7s cubic-bezier(.22,.61,.36,1), transform .7s cubic-bezier(.22,.61,.36,1);
-    transition-delay:var(--reveal-delay, 0s);
-  }
-  .radial-card[data-reveal].in-view{ opacity:1; transform:translateY(0); }
-  @media (prefers-reduced-motion: reduce){
-    .radial-card[data-reveal]{ opacity:1; transform:none; transition:none; }
-  }
-
-  /* Connector lines + dots linking each card toward the center portrait */
-  .card-left1::before, .card-left2::before,
-  .card-right1::before, .card-right2::before{
-    content:''; position:absolute; top:50%; width:48px; height:0;
-    border-top:1.5px dashed #C3CDC5; z-index:0;
-  }
-  .card-left1::before, .card-left2::before{ right:-48px; }
-  .card-right1::before, .card-right2::before{ left:-48px; }
-
-  .card-left1::after, .card-left2::after,
-  .card-right1::after, .card-right2::after{
-    content:''; position:absolute; top:50%; width:10px; height:10px; border-radius:50%;
-    transform:translateY(-50%); z-index:1; box-shadow:0 0 0 3px var(--cream-deep);
-  }
-  .card-left1::after, .card-left2::after{ right:-48px; transform:translate(50%,-50%); }
-  .card-right1::after, .card-right2::after{ left:-48px; transform:translate(-50%,-50%); }
-
-  .card-top::before{
-    content:''; position:absolute; left:50%; bottom:-38px; width:0; height:38px;
-    border-left:1.5px dashed #C3CDC5; transform:translateX(-50%); z-index:0;
-  }
-  .card-top::after{
-    content:''; position:absolute; left:50%; bottom:-38px; width:10px; height:10px; border-radius:50%;
-    transform:translate(-50%,50%); z-index:1; box-shadow:0 0 0 3px var(--cream-deep);
-  }
-
-  .card-top::after{background:#7E9686;}
-  .card-left1::after{background:#C9A27E;}
-  .card-left2::after{background:#9E8FBF;}
-  .card-right1::after{background:#6E93A6;}
-  .card-right2::after{background:#C9A27E;}
-
-  .ic-sage{background:#7E9686;}
-  .ic-blue{background:#6E93A6;}
-  .ic-tan{background:#C9A27E;}
-  .ic-purple{background:#9E8FBF;}
-
-  .intro-quote-bar{
-    margin-top:56px; background:var(--card); border:1px solid var(--line); border-radius:10px;
-    padding:32px 40px; display:flex; align-items:center; gap:20px; position:relative; overflow:hidden;
-  }
-  .quote-icon{
-    width:46px; height:46px; border-radius:50%; background:#E6EEE8; display:flex; align-items:center;
-    justify-content:center; flex-shrink:0; color:var(--sage-dark);
-  }
-  .quote-icon svg{width:20px; height:20px;}
-  .intro-quote-bar p{font-size:16.5px; color:var(--ink); line-height:1.7;}
-  .intro-quote-bar p strong{
-    font-family:'Lora',serif; font-style:italic; color:var(--sage-dark); font-weight:500;
-    display:block; margin:3px 0;
-  }
-  .quote-branch{position:absolute; right:24px; bottom:-14px; width:150px; height:auto; opacity:.7; object-fit:contain;}
-
-  .intro-feature-bar{
-    margin-top:24px; background:var(--card); border:1px solid var(--line); border-radius:10px;
-    overflow:hidden; display:grid; grid-template-columns:1fr 1fr 1fr 1fr 1.15fr; align-items:stretch;
-  }
-  .feature-photo{position:relative; min-height:180px; background:#DCE3D9; overflow:hidden;}
-  .feature-photo img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block;}
-  .feature-item{
-    padding:30px 22px; text-align:center; border-left:1px solid var(--line);
-    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:9px;
-  }
-  .feature-item .f-icon{
-    width:44px; height:44px; border-radius:50%; background:var(--cream-deep);
-    display:flex; align-items:center; justify-content:center; color:var(--sage-dark);
-  }
-  .feature-item .f-icon svg{width:20px; height:20px;}
-  .feature-item .f-icon-img{background:#9FAEA3; overflow:hidden;}
-  .feature-item .f-icon-img img{width:100%; height:100%; object-fit:cover; display:block; transform:scale(1.55);}
-  .feature-item h5{font-size:14.5px; font-weight:700; color:var(--ink);}
-  .feature-item p{font-size:12.5px; color:var(--muted); line-height:1.5;}
-  .feature-cta{
-    padding:30px 26px; text-align:center; border-left:1px solid var(--line);
-    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px;
-  }
-  .feature-cta h4{font-family:'Lora',serif; font-style:italic; font-size:22px; color:var(--sage-dark); font-weight:500;}
-  .feature-cta .btn-primary{padding:12px 22px; font-size:13px; margin-top:2px;}
-  .feature-cta span{font-size:11.5px; color:var(--muted);}
-
-  @media (max-width:1180px){
-    .radial-card{padding:18px;}
-  }
-  @media (max-width:1000px){
-    .intro-top{flex-direction:column; align-items:stretch;}
-    .intro-left{width:100%;}
-    .intro-radial{
-      margin-top:36px; column-gap:16px; row-gap:16px;
-      grid-template-columns:1fr 1fr;
-      grid-template-areas:
-        "image image"
-        "top   top"
-        "left1 right1"
-        "left2 right2";
-    }
-    .card-top{max-width:none;}
-    .radial-card::before, .radial-card::after{display:none;}
-    .radial-center-wrap img{max-width:220px;}
-    .intro-feature-bar{grid-template-columns:1fr 1fr; }
-    .feature-photo{grid-column:1/-1; min-height:140px;}
-    .feature-cta{grid-column:1/-1; border-left:none; border-top:1px solid var(--line);}
-  }
-  @media (max-width:640px){
-    .intro-radial{
-      grid-template-columns:1fr;
-      grid-template-areas:
-        "image"
-        "top"
-        "left1"
-        "left2"
-        "right1"
-        "right2";
-    }
-    .intro-feature-bar{grid-template-columns:1fr;}
-    .feature-item{border-left:none; border-top:1px solid var(--line);}
-  }
-
-  /* About / training */
-  .about-grid{display:grid; grid-template-columns:1.1fr 0.9fr; gap:60px; align-items:start;}
-  .about-grid p{font-size:15.5px; line-height:1.85; color:var(--muted); margin-bottom:18px;}
-  .training-card{background:var(--card); border:1px solid var(--line); border-radius:6px; padding:32px;}
-  .training-card h4{font-family:'Lora',serif; font-size:18px; font-weight:500; margin-bottom:18px; color:var(--ink);}
-  .training-card li{
-    font-size:14px; color:var(--muted); line-height:1.7; padding-left:18px; position:relative; margin-bottom:12px;
-  }
-  .training-card li::before{content:'✓'; position:absolute; left:0; color:var(--sage-dark); font-size:12px; top:3px;}
-
-  /* ---------- APPROACH (redesigned) ---------- */
-  .approach-section{padding:100px 0 0;}
-  .approach-head{display:flex; align-items:center; gap:14px; margin-bottom:6px;}
-  .approach-badge{
-    width:52px; height:52px; border-radius:50%; border:1.5px solid var(--gold);
-    display:flex; align-items:center; justify-content:center; flex-shrink:0; color:var(--gold);
-  }
-  .approach-badge svg{width:24px; height:24px;}
-  .approach-head h2{
-    font-family:'Lora',serif; font-weight:700; font-size:clamp(30px,3.6vw,44px); color:var(--navy);
-  }
-  .approach-head h2 span{color:var(--gold);}
-  .approach-sub{
-    font-family:'Caveat',cursive; font-size:26px; line-height:1.35; color:var(--muted);
-    margin:6px 0 4px 66px;
-  }
-  .approach-underline{margin:8px 0 44px 66px; width:190px; height:14px; color:var(--sage-soft);}
-
-  .approach-grid{display:grid; grid-template-columns:1.05fr 0.95fr; gap:54px; align-items:start;}
-  .approach-features{display:flex; flex-direction:column;}
-  .approach-feature{display:flex; align-items:flex-start; gap:18px; padding:22px 0; border-bottom:1px solid var(--line);}
-  .approach-feature p{font-size:15px; line-height:1.8; color:var(--muted);}
-  .approach-feature-icon{
-    width:52px; height:52px; border-radius:50%; flex-shrink:0;
-    display:flex; align-items:center; justify-content:center; background:var(--cream-deep); color:var(--sage-dark);
-  }
-  .approach-feature-icon svg{width:24px; height:24px;}
-  .approach-highlight{
-    background:var(--deepgreen); border-radius:10px; padding:26px 24px; display:flex; align-items:flex-start; gap:18px; margin-top:24px;
-  }
-  .approach-highlight .approach-feature-icon{background:rgba(255,255,255,0.14); color:#fff;}
-  .approach-highlight h4{font-family:'Lora',serif; font-weight:600; font-size:16.5px; color:#fff; line-height:1.4; margin-bottom:8px;}
-  .approach-highlight p{font-size:14px; line-height:1.75; color:rgba(255,255,255,0.82);}
-
-  .approach-image-col{position:relative;}
-  .approach-image-frame{
-    position:relative; border-radius:50% 50% 46% 46% / 58% 58% 42% 42%; overflow:hidden; aspect-ratio:1/1.08;
-    box-shadow:0 30px 60px -24px rgba(51,67,62,0.4); border:6px solid var(--card);
-  }
-  .approach-image-frame img{width:100%; height:100%; object-fit:cover; display:block;}
-  .approach-image-ring{
-    position:absolute; inset:-14px; border-radius:50% 50% 46% 46% / 58% 58% 42% 42%; border:2px dashed var(--gold); opacity:.55; pointer-events:none;
-  }
-  .approach-image-icons{
-    position:absolute; left:-24px; top:0; width:70px; height:100%; z-index:3;
-  }
-  .approach-image-icon{
-    position:absolute; left:0; width:64px; height:64px; border-radius:50%; overflow:hidden;
-    border:4px solid var(--card); box-shadow:0 14px 28px -12px rgba(51,67,62,0.4);
-    background:var(--cream);
-  }
-  .approach-image-icon img{width:100%; height:100%; object-fit:cover; display:block;}
-  .approach-quote-bubble{
-    position:absolute; right:0; bottom:-6%; width:190px; height:190px; border-radius:50%;
-    background:var(--sage-dark); color:#fff; display:flex; flex-direction:column; align-items:center;
-    justify-content:center; text-align:center; padding:24px; box-shadow:0 20px 44px -16px rgba(51,67,62,0.45);
-  }
-  .approach-quote-bubble .qmark{font-family:'Lora',serif; font-size:34px; line-height:1; color:var(--sage-soft); margin-bottom:4px;}
-  .approach-quote-bubble p{font-family:'Lora',serif; font-style:italic; font-size:15px; line-height:1.4;}
-  .approach-quote-bubble svg{width:16px; height:16px; margin-top:8px; opacity:.9;}
-
-  .how-i-work{background:var(--cream-deep); padding:70px 0; margin-top:90px;}
-  .how-i-work h3{
-    text-align:center; font-size:13px; font-weight:700; letter-spacing:0.22em; color:var(--sage-dark);
-    text-transform:uppercase; margin-bottom:44px;
-  }
-  .hiw-grid{display:grid; grid-template-columns:repeat(5,1fr); gap:24px;}
-  .hiw-item{text-align:center;}
-  .hiw-icon{
-    width:64px; height:64px; border-radius:50%; margin:0 auto 16px; display:flex; align-items:center;
-    justify-content:center; color:#fff;
-  }
-  .hiw-icon svg{width:26px; height:26px;}
-  .hiw-item h5{font-size:13.5px; font-weight:700; letter-spacing:0.02em; color:var(--ink); margin-bottom:8px;}
-  .hiw-item p{font-size:12.5px; line-height:1.55; color:var(--muted);}
-
-  .approach-bottom{padding:100px 0;}
-  .approach-bottom-grid{display:grid; grid-template-columns:1fr 1fr; gap:0; align-items:stretch; background:var(--cream); border-radius:12px; overflow:hidden;}
-  .approach-training{padding:56px 56px 56px 4px;}
-  .approach-training-head{display:flex; align-items:center; gap:14px; margin-bottom:26px;}
-  .approach-training-head .approach-badge{border-color:var(--gold); color:var(--gold);}
-  .approach-training-head h3{font-family:'Lora',serif; font-weight:600; font-size:26px; color:var(--navy);}
-  .approach-training-list li{
-    display:flex; align-items:center; gap:16px; padding:14px 0; border-bottom:1px solid var(--line); font-size:14.5px; color:var(--ink);
-  }
-  .approach-training-list li:last-child{border-bottom:none;}
-  .approach-training-icon{
-    width:38px; height:38px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; color:#fff;
-  }
-  .approach-training-icon svg{width:17px; height:17px;}
-  .approach-badge img, .approach-feature-icon img, .approach-highlight .approach-feature-icon img, .approach-training-icon img{
-    width:100%; height:100%; object-fit:cover; border-radius:50%; display:block;
-  }
-  .approach-closing{position:relative; min-height:460px;}
-  .approach-closing img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block;}
-  .approach-closing::before{
-    content:''; position:absolute; inset:0; background:linear-gradient(180deg,rgba(241,238,231,0.15),rgba(51,67,62,0.28));
-  }
-  .approach-closing-quote{
-    position:relative; z-index:1; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center;
-    text-align:center; padding:48px; font-family:'Caveat',cursive; font-size:30px; line-height:1.35; color:#fff;
-    text-shadow:0 2px 12px rgba(0,0,0,0.28);
-  }
-  .approach-closing-quote svg{width:22px; height:22px; margin-top:14px; color:#fff;}
-  .approach-closing-illustration{background:var(--cream-deep);}
-  .approach-closing-illustration img{position:relative; object-fit:contain; padding:20px;}
-  .approach-closing-illustration::before{content:none;}
-
-  @media (max-width:900px){
-    .approach-grid{grid-template-columns:1fr;}
-    .approach-sub, .approach-underline{margin-left:0;}
-    .hiw-grid{grid-template-columns:1fr 1fr; row-gap:32px;}
-    .approach-bottom-grid{grid-template-columns:1fr;}
-    .approach-training{padding:40px;}
-    .approach-closing{min-height:320px;}
-    .approach-image-icons{left:-14px; width:52px;}
-    .approach-image-icon{width:48px; height:48px; border-width:3px;}
-  }
-  @media (max-width:560px){
-    .hiw-grid{grid-template-columns:1fr;}
-  }
-  @media (max-width:900px){
-    .approach-head{gap:12px; justify-content:center;}
-    .approach-badge{width:44px; height:44px;}
-    .approach-badge svg{width:20px; height:20px;}
-    .approach-sub{font-size:22px; text-align:center;}
-    .approach-underline{margin-bottom:34px; margin-left:auto; margin-right:auto; display:block;}
-    .approach-features{align-items:center;}
-    .approach-feature{
-      flex-direction:column; align-items:center; text-align:center;
-      gap:14px; padding:22px 4px;
-    }
-    .approach-feature-icon{width:56px; height:56px;}
-    .approach-feature-icon svg{width:24px; height:24px;}
-    .approach-feature p{font-size:14px; text-align:center;}
-    .approach-highlight{
-      flex-direction:column; align-items:center; text-align:center;
-      padding:26px 22px; gap:14px;
-    }
-    .approach-highlight h4, .approach-highlight p{text-align:center;}
-  }
-
-  /* Services */
-  .services-diagram{
-    display:flex; justify-content:center; align-items:center;
-    margin:0 auto 50px; max-width:900px;
-  }
-  .services-diagram img{width:100%; height:auto; display:block; margin:0 auto;}
-  @media (max-width:640px){
-    .services-diagram{margin:0 -20px 24px; justify-content:center; padding:0 8px;}
-    .services-diagram img{width:100%; max-width:600px; height:auto; margin:0 auto;}
-  }
-  .service-card{
-    background:var(--card); border:1px solid var(--line); border-radius:8px;
-    padding:36px 36px; margin-bottom:22px;
-  }
-  .service-card h3{font-family:'Lora',serif; font-size:23px; font-weight:500; color:var(--ink); margin-bottom:8px;}
-  .service-card .s-tag{font-size:13.5px; color:var(--sage-dark); font-style:italic; font-family:'Lora',serif; margin-bottom:16px;}
-  .service-card ul{display:grid; grid-template-columns:1fr 1fr; gap:8px 24px; margin-top:14px;}
-  .service-card li{font-size:14px; color:var(--muted); line-height:1.6; padding-left:16px; position:relative;}
-  .service-card li::before{content:'•'; position:absolute; left:0; color:var(--sage);}
-  .service-card .note{margin-top:16px; font-size:13.5px; color:var(--muted); font-style:italic;}
-
-  /* Services — always-visible icon cards with scroll-reveal + hover animation */
-  .services-grid{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
-  .service-acc{
-    background:var(--card); border:1px solid var(--line); border-radius:10px;
-    padding:26px 26px 28px;
-    transition:transform .4s cubic-bezier(.22,.61,.36,1), box-shadow .4s ease, border-color .4s ease;
-  }
-  .service-acc:hover{
-    transform:translateY(-6px);
-    box-shadow:0 22px 44px -22px rgba(51,67,62,.32);
-    border-color:var(--sage-soft);
-  }
-  .sc-head{display:flex; align-items:flex-start; gap:16px; margin-bottom:18px;}
-  .sc-icon{
-    width:46px; height:46px; border-radius:50%; flex-shrink:0;
-    display:flex; align-items:center; justify-content:center; color:#fff;
-    transition:transform .4s cubic-bezier(.22,.61,.36,1);
-  }
-  .service-acc:hover .sc-icon{transform:scale(1.1) rotate(-6deg);}
-  .sc-icon svg{width:21px; height:21px;}
-  .sc-head-text{flex:1; padding-top:1px;}
-  .sc-head-text h3{font-family:'Lora',serif; font-size:18.5px; font-weight:500; color:var(--ink); margin-bottom:5px; line-height:1.3;}
-  .sc-head-text h3 .sc-sub{font-size:13px; font-weight:400; color:var(--muted); font-style:italic; font-family:'Lora',serif;}
-  .sc-head-text p{font-size:13px; color:var(--muted); line-height:1.55;}
-  .sc-body{padding-left:62px;}
-  .sc-body ul{margin-top:2px; margin-bottom:14px;}
-  .sc-body li{font-size:13.5px; color:var(--muted); line-height:1.65; padding-left:16px; position:relative; margin-bottom:6px;}
-  .sc-body li::before{content:'•'; position:absolute; left:0; color:var(--sage);}
-  .sc-body .note{font-size:13px; color:var(--sage-dark); font-style:italic; font-family:'Lora',serif;}
-  .ic-sage{background:var(--sage);}
-  .ic-tan{background:#C9A27E;}
-  .ic-blue{background:#6E93A6;}
-  .ic-purple{background:#9E8FBF;}
-  .ic-gold{background:var(--gold);}
-  .ic-moss{background:var(--sage-dark);}
-
-  /* Scroll-in reveal, staggered per card via --reveal-delay inline style */
-  .service-acc[data-reveal]{
-    opacity:0; transform:translateY(30px);
-    transition:opacity .7s cubic-bezier(.22,.61,.36,1), transform .7s cubic-bezier(.22,.61,.36,1), box-shadow .4s ease, border-color .4s ease;
-    transition-delay:var(--reveal-delay,0s);
-  }
-  .service-acc[data-reveal].in-view{opacity:1; transform:translateY(0);}
-  .service-acc[data-reveal].in-view:hover{transform:translateY(-6px);}
-  @media (prefers-reduced-motion: reduce){
-    .service-acc[data-reveal]{opacity:1; transform:none; transition:none;}
-  }
-
-  @media (max-width:760px){
-    .services-grid{grid-template-columns:1fr;}
-    .sc-body{padding-left:0; margin-top:4px;}
-  }
-
-  /* Corporate */
-  .corp-section{
-    position:relative;
-    background:
-      radial-gradient(ellipse 60% 50% at 15% 8%, rgba(255,250,238,.55), transparent 60%),
-      radial-gradient(ellipse 55% 45% at 88% 95%, rgba(224,218,201,.4), transparent 60%),
-      #F8F6F2;
-    overflow:hidden;
-  }
-  .corp-section::before{
-    content:''; position:absolute; inset:0; pointer-events:none; z-index:0;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    opacity:.6;
-  }
-  .corp-section > .wrap{position:relative; z-index:1;}
-  .corp-grid-wrap{position:relative;}
-  .corp-organic{
-    position:absolute; top:-30px; left:0; width:100%; height:calc(100% + 60px);
-    opacity:.16; mix-blend-mode:soft-light; pointer-events:none; z-index:0;
-  }
-  .corp-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:28px; margin-top:44px; position:relative; z-index:1;}
-  .corp-card{
-    background:var(--card); border:1px solid var(--line); border-radius:12px;
-    overflow:hidden; position:relative;
-    transition:transform .4s cubic-bezier(.22,.61,.36,1), box-shadow .4s ease, border-color .4s ease;
-  }
-  .corp-card:hover{transform:translateY(-6px); box-shadow:0 24px 46px -24px rgba(51,67,62,.32); border-color:var(--sage-soft);}
-  .corp-accent{height:5px; width:100%;}
-  .corp-accent.sage{background:var(--sage);}
-  .corp-accent.tan{background:#C9A27E;}
-  .corp-media{position:relative; height:180px; overflow:hidden;}
-  .corp-media img{width:100%; height:100%; object-fit:cover; display:block; transition:transform .5s ease;}
-  .corp-card:hover .corp-media img{transform:scale(1.06);}
-  .corp-body{padding:28px 28px 30px;}
-  .corp-title-row{display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;}
-  .corp-card h4{font-family:'Lora',serif; font-size:20px; font-weight:500; color:var(--ink);}
-  .corp-title-icon-wrap{
-    width:36px; height:36px; border-radius:50%; flex-shrink:0; overflow:hidden;
-    display:flex; align-items:center; justify-content:center;
-    border:1px solid var(--line); box-shadow:inset 0 0 0 1px rgba(255,255,255,.4);
-  }
-  .corp-title-icon-wrap.sage{background:var(--sage);}
-  .corp-title-icon-wrap.tan{background:#C9A27E;}
-  .corp-title-icon{width:100%; height:100%; object-fit:cover; display:block;}
-  .corp-card li{font-size:14px; color:var(--muted); line-height:1.85; padding-left:16px; position:relative;}
-  .corp-card li::before{content:'•'; position:absolute; left:0; color:var(--sage-dark);}
-  .corp-card[data-reveal]{
-    opacity:0; transform:translateY(30px);
-    transition:opacity .7s cubic-bezier(.22,.61,.36,1), transform .7s cubic-bezier(.22,.61,.36,1), box-shadow .4s ease, border-color .4s ease;
-    transition-delay:var(--reveal-delay,0s);
-  }
-  .corp-card[data-reveal].in-view{opacity:1; transform:translateY(0);}
-  .corp-card[data-reveal].in-view:hover{transform:translateY(-6px);}
-  @media (max-width:760px){
-    .corp-grid{grid-template-columns:1fr; gap:22px;}
-    .corp-organic{display:none;}
-    .corp-title-icon-wrap{width:72px; height:72px; border-width:2px;}
-    .corp-media{height:200px;}
-    .corp-card h4{font-size:19px;}
-  }
-
-  /* Start Here */
-  .start-section{position:relative; overflow:hidden;}
-  .start-section::before{
-    content:''; position:absolute; top:-120px; right:-140px; width:420px; height:420px;
-    border-radius:50%; background:radial-gradient(circle, rgba(126,150,134,.14), rgba(126,150,134,0) 70%);
-    pointer-events:none;
-  }
-  .start-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:28px; margin-top:44px; position:relative; z-index:1;}
-  .start-card{
-    background:var(--card); border:1px solid var(--line); border-radius:14px;
-    padding:38px 34px 34px; position:relative; overflow:hidden;
-    transition:transform .4s cubic-bezier(.22,.61,.36,1), box-shadow .4s ease, border-color .4s ease;
-  }
-  .start-card::before{
-    content:''; position:absolute; top:0; left:0; width:100%; height:4px;
-    background:linear-gradient(90deg,var(--sage),var(--sage-soft));
-  }
-  .start-card:hover{transform:translateY(-6px); box-shadow:0 24px 46px -24px rgba(51,67,62,.32); border-color:var(--sage-soft);}
-  .start-num{
-    font-family:'Lora',serif; font-size:14px; font-weight:600; color:var(--sage-dark); letter-spacing:.02em;
-    display:inline-flex; align-items:center; justify-content:center; width:42px; height:42px; border-radius:50%;
-    background:var(--cream-deep); border:1px solid var(--line); margin-bottom:22px;
-  }
-  .start-card h4{font-family:'Lora',serif; font-size:19px; font-weight:500; color:var(--ink); margin-bottom:12px;}
-  .start-card p{font-size:14.5px; color:var(--muted); line-height:1.85;}
-  .fit-note{
-    margin-top:36px; background:var(--card); border:1px solid var(--line); border-radius:14px;
-    padding:30px 34px; display:flex; gap:20px; align-items:flex-start; position:relative; z-index:1;
-    box-shadow:0 22px 44px -30px rgba(51,67,62,.28);
-  }
-  .fit-note-icon{
-    flex-shrink:0; width:42px; height:42px; border-radius:50%; background:var(--cream-deep);
-    border:1px solid var(--line); display:flex; align-items:center; justify-content:center;
-  }
-  .fit-note-icon svg{width:19px; height:19px;}
-  .fit-note-text{font-size:14px; color:var(--muted); line-height:1.85; padding-top:2px;}
-  .fit-note-text strong{color:var(--ink); font-weight:600;}
-  .start-cta{
-    margin-top:40px; display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap;
-    background:linear-gradient(120deg, var(--sage) 0%, var(--sage-dark) 100%); border-radius:14px;
-    padding:28px 34px; position:relative; z-index:1;
-  }
-  .start-cta p{color:rgba(255,255,255,.92); font-size:15px; font-family:'Lora',serif; font-weight:500; max-width:420px;}
-  .start-cta a{
-    background:#fff; color:var(--sage-dark); border-radius:4px; padding:13px 26px; font-size:13.5px;
-    font-weight:600; white-space:nowrap; transition:transform .25s ease, box-shadow .25s ease;
-  }
-  .start-cta a:hover{transform:translateY(-2px); box-shadow:0 14px 26px -12px rgba(0,0,0,.35);}
-  @media (max-width:520px){ .start-cta{flex-direction:column; align-items:flex-start;} }
-  .start-card[data-reveal], .fit-note[data-reveal], .start-cta[data-reveal]{
-    opacity:0; transform:translateY(28px);
-    transition:opacity .7s cubic-bezier(.22,.61,.36,1), transform .7s cubic-bezier(.22,.61,.36,1), box-shadow .4s ease, border-color .4s ease;
-    transition-delay:var(--reveal-delay,0s);
-  }
-  .start-card[data-reveal].in-view, .fit-note[data-reveal].in-view, .start-cta[data-reveal].in-view{
-    opacity:1; transform:translateY(0);
-  }
-  @media (prefers-reduced-motion: reduce){
-    .start-card[data-reveal], .fit-note[data-reveal], .start-cta[data-reveal]{ opacity:1; transform:none; transition:none; }
-  }
-
-  /* Contact */
-  .contact-section{background:var(--ink); color:var(--cream); padding:100px 0;}
-  .contact-grid{display:grid; grid-template-columns:1.1fr 0.9fr; gap:56px; align-items:end;}
-  .contact-grid h2{font-family:'Lora',serif; font-weight:500; font-size:clamp(28px,3.4vw,40px); line-height:1.3;}
-  .contact-grid h2 em{color:var(--sage-soft); font-style:italic; font-weight:400;}
-  .contact-grid p{margin-top:20px; color:#C9D0CA; line-height:1.8; font-size:15px; max-width:440px;}
-  .contact-right{display:flex; flex-direction:column; gap:20px;}
-  .contact-item{border-bottom:1px solid rgba(255,255,255,0.18); padding-bottom:16px;}
-  .contact-item .label{font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#9AA69F; margin-bottom:6px;}
-  .contact-item .value{font-family:'Lora',serif; font-size:18px;}
-  .contact-quick{display:flex; flex-direction:column; gap:6px; margin-top:22px;}
-  .contact-quick a{font-size:14px; color:#C9D0CA; transition:color .2s ease;}
-  .contact-quick a:hover{color:#fff;}
-  .contact-form{display:flex; flex-direction:column; gap:16px;}
-  .contact-form label{font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#9AA69F; margin-bottom:8px; display:block;}
-  .contact-form input, .contact-form textarea{
-    width:100%; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.22);
-    border-radius:6px; padding:13px 15px; font-family:inherit; font-size:14.5px; color:#fff;
-    transition:border-color .2s ease, background .2s ease;
-  }
-  .contact-form input::placeholder, .contact-form textarea::placeholder{color:#8B978F;}
-  .contact-form input:focus, .contact-form textarea:focus{
-    outline:none; border-color:var(--sage-soft); background:rgba(255,255,255,0.1);
-  }
-  .contact-form textarea{resize:vertical; min-height:100px; line-height:1.6;}
-  .contact-form .btn-light{align-self:flex-start; border:none; margin-top:2px;}
-  .contact-note{font-size:12px; color:#8B978F; margin-top:-4px;}
-  .btn-light{
-    margin-top:6px; align-self:flex-start; background:var(--sage); border:1px solid var(--sage); border-radius:4px;
-    padding:15px 28px; font-size:14px; font-weight:600; color:#fff;
-    transition:background .25s ease, transform .25s ease;
-  }
-  .btn-light:hover{background:var(--sage-soft); color:var(--ink); transform:translateY(-2px);}
-
-  footer{padding:30px; text-align:center; font-size:12.5px; color:var(--muted); background:var(--cream-deep); border-top:1px solid var(--line);}
-
-  /* ---------- BOOKING MODAL ---------- */
-  .booking-overlay{
-    position:fixed; inset:0; background:rgba(34,49,56,0.55); backdrop-filter:blur(4px);
-    display:none; align-items:flex-start; justify-content:center; z-index:200;
-    padding:64px 20px; overflow-y:auto;
-  }
-  .booking-overlay.open{display:flex;}
-  .booking-modal{
-    background:var(--card); border-radius:16px; width:100%; max-width:640px;
-    padding:40px 44px 32px; position:relative; box-shadow:0 40px 80px -20px rgba(20,28,25,.45);
-    animation:bookingIn .35s cubic-bezier(.22,.61,.36,1);
-  }
-  @keyframes bookingIn{ from{opacity:0; transform:translateY(16px) scale(.98);} to{opacity:1; transform:translateY(0) scale(1);} }
-  .booking-close{
-    position:absolute; top:20px; right:20px; width:34px; height:34px; border-radius:50%;
-    border:1px solid var(--line); background:var(--cream); color:var(--muted); font-size:16px;
-    display:flex; align-items:center; justify-content:center; transition:background .2s ease, color .2s ease;
-  }
-  .booking-close:hover{background:var(--sage); color:#fff; border-color:var(--sage);}
-  .booking-head{text-align:center; margin-bottom:30px;}
-  .booking-head h3{font-family:'Lora',serif; font-weight:500; font-size:clamp(22px,3vw,27px); color:var(--ink);}
-  .booking-head p{margin-top:10px; font-size:14px; color:var(--muted); line-height:1.75; max-width:460px; margin-left:auto; margin-right:auto;}
-  .b-field{margin-bottom:20px;}
-  .b-row{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
-  .b-field label{display:block; font-size:13px; font-weight:600; color:var(--ink); margin-bottom:9px;}
-  .b-field .opt{font-weight:400; color:var(--muted);}
-  .b-field input[type="text"], .b-field input[type="email"], .b-field input[type="tel"],
-  .b-field input[type="date"], .b-field select, .b-field textarea{
-    width:100%; border:1px solid var(--line); border-radius:6px; background:var(--cream);
-    padding:12px 14px; font-family:inherit; font-size:14px; color:var(--ink);
-    transition:border-color .2s ease, box-shadow .2s ease;
-  }
-  .b-field input::placeholder, .b-field textarea::placeholder{color:#A6A196;}
-  .b-field input:focus, .b-field select:focus, .b-field textarea:focus{
-    outline:none; border-color:var(--sage); box-shadow:0 0 0 3px rgba(126,150,134,.18);
-  }
-  .b-field textarea{resize:vertical; min-height:78px; line-height:1.6;}
-  .b-select-wrap{position:relative;}
-  .b-select-wrap select{appearance:none; -webkit-appearance:none; padding-right:36px; cursor:pointer;}
-  .b-select-wrap svg, .b-date-wrap svg{
-    position:absolute; right:13px; top:50%; transform:translateY(-50%); width:16px; height:16px;
-    color:var(--sage-dark); pointer-events:none;
-  }
-  .b-date-wrap{position:relative;}
-  .b-date-wrap input[type="date"]{padding-right:36px;}
-  .b-radio-group{display:flex; flex-direction:column; gap:10px; padding-top:2px;}
-  .b-radio{display:flex; align-items:center; gap:9px; font-size:14px; color:var(--ink); cursor:pointer;}
-  .b-radio input{accent-color:var(--sage-dark); width:15px; height:15px; cursor:pointer;}
-  .booking-footer{
-    margin-top:26px; padding-top:22px; border-top:1px solid var(--line);
-    display:flex; align-items:center; justify-content:space-between; gap:18px; flex-wrap:wrap;
-  }
-  .booking-footer-note{font-size:12.5px; color:var(--muted); line-height:1.65;}
-  .b-submit{
-    background:var(--ink); color:#fff; border:none; border-radius:100px; padding:14px 26px;
-    font-size:14px; font-weight:600; display:inline-flex; align-items:center; gap:8px;
-    transition:background .25s ease, transform .25s ease; white-space:nowrap;
-  }
-  .b-submit:hover{background:var(--navy); transform:translateY(-2px);}
-  .b-submit:disabled{opacity:.65; cursor:default; transform:none;}
-  .booking-error{
-    display:none; margin-top:16px; background:#FBEAEA; border:1px solid #E3B4B4; color:#8A3A3A;
-    border-radius:8px; padding:12px 16px; font-size:13px; line-height:1.6;
-  }
-  .booking-error.show{display:block;}
-  .booking-success{display:none; text-align:center; padding:24px 6px 8px;}
-  .booking-success.show{display:block;}
-  .booking-success .b-success-icon{
-    width:56px; height:56px; border-radius:50%; background:var(--sage); color:#fff;
-    display:flex; align-items:center; justify-content:center; margin:0 auto 18px;
-  }
-  .booking-success .b-success-icon svg{width:26px; height:26px;}
-  .booking-success h4{font-family:'Lora',serif; font-size:21px; font-weight:500; color:var(--ink); margin-bottom:10px;}
-  .booking-success p{font-size:14px; color:var(--muted); line-height:1.75; max-width:380px; margin:0 auto;}
-  .booking-form.hide{display:none;}
-  @media (max-width:560px){
-    .booking-modal{padding:32px 22px 26px;}
-    .b-row{grid-template-columns:1fr; gap:0;}
-    .booking-footer{flex-direction:column; align-items:stretch;}
-    .b-submit{justify-content:center;}
-  }
-
-  @media (max-width:860px){
-    .nav-links{display:none;}
-    .menu-btn{display:block;}
-    .mobile-menu{
-      flex-direction:column; background:var(--cream); border-top:1px solid var(--line);
-      padding:6px 20px 20px; max-height:0; overflow:hidden;
-      transition:max-height .35s ease, padding .35s ease;
-    }
-    .mobile-menu.open{display:flex; max-height:400px; padding:10px 20px 22px;}
-    .mobile-menu a{padding:13px 2px; font-size:15.5px; color:var(--ink); border-bottom:1px solid var(--line);}
-    .mobile-menu a:last-child{border-bottom:none;}
-    .mobile-cta{
-      margin-top:10px; text-align:center; border-radius:4px; background:var(--sage); color:#fff !important;
-      padding:13px 22px;
-    }
-    .hero{padding:56px 0 64px;}
-    .hero-grid{grid-template-columns:1fr; gap:36px;}
-    .hero-image{order:-1; aspect-ratio:3/2;}
-    .hero-ctas{justify-content:center;}
-    .hero-ctas a{flex:1 1 auto; text-align:center;}
-    .about-grid{grid-template-columns:1fr; gap:40px;}
-    .service-card{padding:28px 24px;}
-    .service-card ul{grid-template-columns:1fr;}
-    .corp-grid{grid-template-columns:1fr;}
-    .start-grid{grid-template-columns:1fr;}
-    .contact-grid{grid-template-columns:1fr; gap:40px;}
-    .wrap{padding:0 20px;}
-    nav{padding:16px 20px; gap:10px;}
-    .logo{gap:8px; min-width:0;}
-    .logo img{height:26px;}
-    .logo .logo-text{font-size:14px; white-space:nowrap;}
-    .logo .logo-text span{display:none;}
-    .nav-cta{padding:9px 14px; font-size:12.5px; white-space:nowrap;}
-    .intro-quote-bar{flex-direction:column; align-items:flex-start; padding:26px 24px 34px; gap:14px;}
-    .quote-branch{width:100px; right:12px; bottom:-10px; opacity:.5;}
-    .approach-quote-bubble{width:130px; height:130px; padding:14px; right:-6px;}
-    .approach-quote-bubble p{font-size:12px;}
-    .approach-quote-bubble .qmark{font-size:24px;}
-  }
-  @media (min-width:861px){
-    .mobile-menu{display:none !important;}
-  }
-  @media (max-width:480px){
-    .hero-ctas{flex-direction:column;}
-    .approach-quote-bubble{position:static; margin-top:18px; width:100%; height:auto; border-radius:12px; flex-direction:row; justify-content:center; gap:10px;}
-    .approach-image-icons{display:none;}
-  }
-  @media (max-width:380px){
-    .logo .logo-text{font-size:12.5px;}
-    .nav-cta{padding:8px 11px; font-size:11.5px;}
-  }
-
-  /* ---------- TESTIMONIALS ---------- */
-  .testimonial-section{position:relative; overflow:hidden;}
-  .testimonial-section .wrap{position:relative; z-index:1;}
-  /* Full, uncropped decorative background image — sized to the section's
-     width so the whole image is always visible (never cropped/zoomed). */
-  .testimonial-bg{
-    position:absolute; top:0; left:0; width:100%; height:auto;
-    z-index:0; pointer-events:none; user-select:none; display:block;
-  }
-  .testimonial-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:28px; margin-top:44px;}
-  .testimonial-card{
-    background:var(--card); border:1px solid var(--line); border-radius:14px;
-    padding:34px 30px 30px; position:relative;
-    transition:transform .4s cubic-bezier(.22,.61,.36,1), box-shadow .4s ease, border-color .4s ease;
-  }
-  .testimonial-card:hover{transform:translateY(-6px); box-shadow:0 24px 46px -24px rgba(51,67,62,.32); border-color:var(--sage-soft);}
-  .testimonial-quote{font-family:'Lora',serif; font-size:42px; line-height:1; color:var(--sage-soft); display:block; margin-bottom:4px;}
-  .testimonial-card p.t-body{font-size:14.5px; line-height:1.85; color:var(--muted); font-style:italic;}
-  .testimonial-author{margin-top:22px; padding-top:18px; border-top:1px solid var(--line);}
-  .testimonial-author .t-name{display:block; font-family:'Lora',serif; font-size:15px; font-weight:600; color:var(--ink);}
-  .testimonial-author .t-context{display:block; font-size:12.5px; color:var(--sage-dark); margin-top:2px; letter-spacing:.02em;}
-  .testimonial-note{margin-top:36px; font-size:13px; color:var(--muted); text-align:center; max-width:640px; margin-left:auto; margin-right:auto; line-height:1.8;}
-  .testimonial-card[data-reveal]{
-    opacity:0; transform:translateY(28px);
-    transition:opacity .7s cubic-bezier(.22,.61,.36,1), transform .7s cubic-bezier(.22,.61,.36,1), box-shadow .4s ease, border-color .4s ease;
-    transition-delay:var(--reveal-delay,0s);
-  }
-  .testimonial-card[data-reveal].in-view{opacity:1; transform:translateY(0);}
-
-  /* ---------- FROM MY YELLOW CHAIR ---------- */
-  .chair-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:28px; margin-top:44px;}
-  .chair-card{
-    background:var(--card); border:1px solid var(--line); border-radius:14px;
-    padding:32px 28px 28px; position:relative; overflow:hidden;
-    transition:transform .4s cubic-bezier(.22,.61,.36,1), box-shadow .4s ease, border-color .4s ease;
-  }
-  .chair-card::before{content:''; position:absolute; top:0; left:0; width:100%; height:4px; background:linear-gradient(90deg,var(--gold),var(--sage-soft));}
-  .chair-card:hover{transform:translateY(-6px); box-shadow:0 24px 46px -24px rgba(51,67,62,.32); border-color:var(--sage-soft);}
-  .chair-date{font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--sage-dark); font-weight:600; margin-bottom:14px;}
-  .chair-card h4{font-family:'Lora',serif; font-size:18.5px; font-weight:500; color:var(--ink); margin-bottom:12px; line-height:1.35;}
-  .chair-card p{font-size:14px; color:var(--muted); line-height:1.8;}
-  .chair-read{display:inline-flex; align-items:center; gap:6px; margin-top:18px; font-size:13.5px; font-weight:600; color:var(--sage-dark); position:relative;}
-  .chair-read::after{content:''; position:absolute; left:0; bottom:-3px; width:0; height:1px; background:var(--sage-dark); transition:width .3s ease;}
-  .chair-read:hover::after{width:100%;}
-  .chair-card[data-reveal]{
-    opacity:0; transform:translateY(28px);
-    transition:opacity .7s cubic-bezier(.22,.61,.36,1), transform .7s cubic-bezier(.22,.61,.36,1), box-shadow .4s ease, border-color .4s ease;
-    transition-delay:var(--reveal-delay,0s);
-  }
-  .chair-card[data-reveal].in-view{opacity:1; transform:translateY(0);}
-
-  @media (max-width:860px){
-    .testimonial-grid{grid-template-columns:1fr;}
-    .chair-grid{grid-template-columns:1fr;}
-  }
+  .review-card{background:#fff; border:1px solid var(--line); border-radius:10px; padding:20px; margin-bottom:14px;}
+  .review-top{display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:10px;}
+  .stars-display{color:var(--gold); font-size:16px; letter-spacing:2px;}
+  .status-badge{font-size:11px; font-weight:700; padding:4px 10px; border-radius:20px; text-transform:uppercase; letter-spacing:0.4px;}
+  .status-pending{background:#f4ecd8; color:#8a6a2f;}
+  .status-approved{background:#e4ede6; color:var(--sage-dark);}
+  .status-rejected{background:var(--red-bg); color:var(--red);}
+  .review-text{font-size:14.5px; line-height:1.7; margin-bottom:12px;}
+  .review-meta{font-size:12.5px; color:var(--muted); margin-bottom:14px;}
+  .review-actions{display:flex; gap:8px;}
+  .review-actions button{border:none; padding:8px 16px; border-radius:6px; font-size:13px; font-weight:600; cursor:pointer;}
+  .btn-approve{background:var(--sage); color:#fff;}
+  .btn-approve:hover{background:var(--sage-dark);}
+  .btn-reject{background:#fff; color:var(--red); border:1px solid var(--red) !important;}
+  .btn-delete{background:#fff; color:var(--muted); border:1px solid var(--line) !important;}
+  .empty{text-align:center; color:var(--muted); padding:40px 0; font-size:14px;}
 </style>
 </head>
 <body>
 
-<header>
-  <nav>
-    <div class="logo">
-      <img src="assets/logo-icon.png" alt="Good Earth Citizen leaf mark">
-      <div class="logo-text">Good Earth Citizen</div>
-    </div>
-    <div class="nav-links">
-      <a href="#home">Home</a>
-      <a href="#services">Services</a>
-      <a href="#about">About</a>
-      <a href="#corporate">Corporate</a>
-      <a href="#testimonial">Testimonial</a>
-      <a href="#yellow-chair">From My Yellow Chair</a>
-      <a href="#contact">Contact</a>
-    </div>
-    <a href="#contact" class="nav-cta js-open-booking">Book Now</a>
-    <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false">☰</button>
-  </nav>
-  <div class="mobile-menu" id="mobileMenu">
-    <a href="#home">Home</a>
-    <a href="#services">Services</a>
-    <a href="#about">About</a>
-    <a href="#corporate">Corporate</a>
-    <a href="#testimonial">Testimonial</a>
-    <a href="#yellow-chair">From My Yellow Chair</a>
-    <a href="#contact">Contact</a>
-    <a href="#contact" class="nav-cta mobile-cta js-open-booking">Book Now</a>
-  </div>
-</header>
-
-<div id="view-home">
-<!-- PAGE 1 — HOME -->
-<section class="hero" id="home">
-  <div class="wrap">
-    <div class="hero-grid">
-      <div>
-        <h1>Helping you heal patterns the mind understands<span class="line2">but the body still carries.</span></h1>
-        <p class="lede">You analyse the patterns clearly — and yet your body still reaches for the smallest triggers. That's a nervous system imprint.</p>
-        <p class="lede2">Let's rewire it together.</p>
-        <div class="hero-ctas">
-          <a href="#contact" class="btn-primary js-open-booking">Book Consultation →</a>
-          <a href="#services" class="btn-outline">Explore Services</a>
-        </div>
-      </div>
-      <div class="hero-image">
-        <img src="assets/hero-therapy.png" alt="A warm, sunlit therapy session between two people seated in a calming room">
-      </div>
-    </div>
-    <p class="full-lede">At its core, therapy is not about becoming someone new. It is about understanding yourself more deeply and learning to live with greater clarity, compassion and freedom.</p>
-    <p class="quote-line">"You don't have to have a clear reason. You don't have to have the right words. Starting is enough."</p>
-  </div>
-</section>
-
-<!-- PAGE 2 — INTRODUCTION -->
-<section class="section section-alt" id="introduction">
-  <div class="wrap intro-wrap">
-
-    <div class="intro-top">
-      <div class="intro-left">
-        <div class="section-eyebrow">You're not alone</div>
-        <h2 class="intro-heading">Most people who come here are <em>not<br>"broken."</em></h2>
-        <div class="intro-divider">
-          <span class="d-line"></span>
-          <svg viewBox="0 0 40 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 20C10 10 18 6 26 6M26 6C24 8 24 12 26 14M26 6C23 5 20 5 18 8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-        </div>
-        <p class="intro-lede">They are thoughtful, self-aware, and often doing well in many areas of life — yet something inside still feels unsettled.</p>
-        <p class="intro-bold">You may notice patterns like:</p>
-      </div>
-
-      <div class="intro-radial">
-        <div class="radial-center-wrap">
-          <div class="radial-center-bg"></div>
-          <img src="assets/woman-illustration.png" alt="Line-art illustration of a woman gently hugging herself" loading="lazy">
-        </div>
-
-        <div class="radial-card card-top" data-reveal style="--reveal-delay:0s">
-          <div class="r-icon r-icon-img"><img src="assets/icon-overwhelmed.png" alt="Feeling overwhelmed in relationships icon" loading="lazy"></div>
-          <h4>Feeling overwhelmed in relationships</h4>
-          <p>You care deeply, but relationships often leave you drained or confused.</p>
-        </div>
-
-        <div class="radial-card card-left1" data-reveal style="--reveal-delay:0.1s">
-          <div class="r-icon r-icon-img"><img src="assets/icon-boundaries.png" alt="Struggling with boundaries icon" loading="lazy"></div>
-          <h4>Struggling with boundaries</h4>
-          <p>You find it hard to say no, or feel guilty when you do.</p>
-        </div>
-
-        <div class="radial-card card-right1" data-reveal style="--reveal-delay:0.2s">
-          <div class="r-icon r-icon-img"><img src="assets/icon-freezing.png" alt="Freezing in conflict icon" loading="lazy"></div>
-          <h4>Freezing in conflict</h4>
-          <p>When tension rises, you shut down, avoid, or become numb.</p>
-        </div>
-
-        <div class="radial-card card-left2" data-reveal style="--reveal-delay:0.3s">
-          <div class="r-icon ic-purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 20s-7-4.35-9.5-9C1 7.5 3 4 6.5 4c2 0 3.5 1.2 4.5 2.8C12 5.2 13.5 4 15.5 4 19 4 21 7.5 21.5 11 19 15.65 12 20 12 20z" stroke-dasharray="2 2.4"/></svg></div>
-          <h4>Feeling disconnected from your body or emotions</h4>
-          <p>You may feel numb, checked out, or unfamiliar with what you need.</p>
-        </div>
-
-        <div class="radial-card card-right2" data-reveal style="--reveal-delay:0.4s">
-          <div class="r-icon r-icon-img"><img src="assets/icon-selfdoubt.png" alt="Carrying self-doubt icon" loading="lazy"></div>
-          <h4>Carrying self-doubt that doesn't make sense logically</h4>
-          <p>You second-guess yourself, feel not enough, or live in constant overthinking.</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="intro-quote-bar">
-      <div class="quote-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 21C7 18 4 14.5 4 10a5 5 0 0 1 8-4 5 5 0 0 1 8 4c0 4.5-3 8-8 11z"/></svg></div>
-      <p>You may understand your story. <strong>But the reactions are automatic.</strong> That's where deeper work begins.</p>
-      <img class="quote-branch" src="assets/leaf-branch.png" alt="" loading="lazy">
-    </div>
-
-    <div class="intro-feature-bar">
-      <div class="feature-photo">
-        <img src="assets/feature-photo.png" alt="A potted plant and a lit candle resting on a soft sage-green throw" loading="lazy">
-      </div>
-      <div class="feature-item">
-        <div class="f-icon f-icon-img"><img src="assets/icon-feature-human.png" alt="You are not too much icon" loading="lazy"></div>
-        <h5>You are not too much.</h5>
-        <p>You're human.</p>
-      </div>
-      <div class="feature-item">
-        <div class="f-icon f-icon-img"><img src="assets/icon-feature-healing.png" alt="Healing is possible icon" loading="lazy"></div>
-        <h5>Healing is possible.</h5>
-        <p>And we're here to walk with you.</p>
-      </div>
-      <div class="feature-item">
-        <div class="f-icon f-icon-img"><img src="assets/icon-feature-support.png" alt="You don't have to do it alone icon" loading="lazy"></div>
-        <h5>You don't have to do it alone.</h5>
-        <p>Support can make all the difference.</p>
-      </div>
-      <div class="feature-cta">
-        <h4>Ready to begin?</h4>
-        <a href="#contact" class="btn-primary js-open-booking">Start Your Journey →</a>
-        <span>Compassionate. Confidential. Here for you.</span>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<!-- PAGE 3 — MY APPROACH / ABOUT -->
-<section class="approach-section" id="about">
-  <div class="wrap">
-
-    <div class="approach-head">
-      <div class="approach-badge">
-        <img src="assets/icon-approach-badge.png" alt="Decorative leaf icon">
-      </div>
-      <h2>My <span>Approach</span></h2>
-    </div>
-    <p class="approach-sub">Working with the mind,<br>the body, and what lies beneath.</p>
-    <svg class="approach-underline" viewBox="0 0 190 14" fill="none"><path d="M2 8c30-10 60 6 90-2s60 6 96-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-
-    <div class="approach-grid">
-      <div>
-        <div class="approach-features">
-          <div class="approach-feature">
-            <div class="approach-feature-icon">
-              <img src="assets/icon-brain-heart.png" alt="Mind icon">
-            </div>
-            <p>My work integrates psychotherapy, trauma-informed care, somatic awareness and subconscious healing. We explore patterns gently while also paying attention to how they live in the body and in everyday life.</p>
-          </div>
-          <div class="approach-feature">
-            <div class="approach-feature-icon">
-              <img src="assets/icon-heart-leaf.png" alt="Meditation icon">
-            </div>
-            <p>Alongside psychological and body-based work, I also remain open to the deeper inner questions many people carry — around meaning, identity and a sense of connection with themselves.</p>
-          </div>
-        </div>
-        <div class="approach-highlight">
-          <div class="approach-feature-icon">
-            <img src="assets/icon-leaf-sprout.png" alt="Heart and leaf growth icon">
-          </div>
-          <div>
-            <h4>For some, this becomes an important part of the healing process.</h4>
-            <p>When it does, we explore it in a grounded and thoughtful way, always anchored in emotional safety and clarity.</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="approach-image-col">
-        <div class="approach-image-icons">
-          <div class="approach-image-icon" style="top:4%"><img src="assets/icon-lotus-meditation.png" alt="Meditation icon"></div>
-          <div class="approach-image-icon" style="top:27%"><img src="assets/icon-mind.png" alt="Mind icon"></div>
-          <div class="approach-image-icon" style="top:50%"><img src="assets/icon-heart-hands.png" alt="Heart in hands icon"></div>
-          <div class="approach-image-icon" style="top:73%"><img src="assets/icon-meditation.png" alt="Lotus meditation icon"></div>
-        </div>
-        <div class="approach-image-frame">
-          <div class="approach-image-ring"></div>
-          <img src="assets/approach-hero-stones.png" alt="Stacked balancing stones by a lake at sunrise, symbolizing calm and balance">
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="how-i-work">
-  <div class="wrap">
-    <h3>How I Work</h3>
-    <div class="hiw-grid">
-      <div class="hiw-item">
-        <div class="hiw-icon" style="background:var(--deepgreen);">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/><path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M9 15.5 12 12l3 3.5" stroke-opacity="0"/><path d="M14.5 9.5c1 .8 1.2 2 .5 3"/></svg>
-        </div>
-        <h5>TRAUMA-INFORMED<br>&amp; SAFE</h5>
-        <p>Emotional safety comes first.</p>
-      </div>
-      <div class="hiw-item">
-        <div class="hiw-icon" style="background:var(--sage-soft);">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="6" r="2.2"/><path d="M6 20c0-3 3-5 6-5s6 2 6 5"/><path d="M8 12c1.5 1 6.5 1 8 0"/></svg>
-        </div>
-        <h5>MIND–BODY<br>INTEGRATION</h5>
-        <p>Working with both psychology and the body.</p>
-      </div>
-      <div class="hiw-item">
-        <div class="hiw-icon" style="background:var(--deepgreen);">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21V11"/><path d="M12 11C7 11 4 8 4 3c5 0 8 3 8 8z"/><path d="M12 11c5 0 8-3 8-8-5 0-8 3-8 8z"/></svg>
-        </div>
-        <h5>COMPASSIONATE<br>&amp; COLLABORATIVE</h5>
-        <p>We explore together, at your pace.</p>
-      </div>
-      <div class="hiw-item">
-        <div class="hiw-icon" style="background:var(--sage-soft);">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>
-        </div>
-        <h5>HOLISTIC &amp;<br>WHOLE-PERSON</h5>
-        <p>Addressing mind, body, emotions and deeper self.</p>
-      </div>
-      <div class="hiw-item">
-        <div class="hiw-icon" style="background:var(--sage-dark);">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 17c4 0 4-8 8-8s4 8 8 8"/></svg>
-        </div>
-        <h5>MEANING &amp;<br>CONNECTION</h5>
-        <p>Supporting you in finding clarity and direction.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="approach-bottom">
-  <div class="wrap">
-    <div class="approach-bottom-grid">
-      <div class="approach-training">
-        <div class="approach-training-head">
-          <div class="approach-badge">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1.5 3 3 6 3s6-1.5 6-3v-5"/></svg>
-          </div>
-          <h3>Professional Training</h3>
-        </div>
-        <ul class="approach-training-list">
-          <li>
-            <div class="approach-training-icon">
-              <img src="assets/icon-graduation.png" alt="Graduation cap icon">
-            </div>
-            Master's degree in Psychology
-          </li>
-          <li>
-            <div class="approach-training-icon">
-              <img src="assets/2.png" alt="Lotus meditation icon">
-            </div>
-            Training in Psychotherapy and Counselling
-          </li>
-          <li>
-            <div class="approach-training-icon">
-              <img src="assets/3.png" alt="Heart in hands icon">
-            </div>
-            Certification in Trauma-Focused Therapy
-          </li>
-          <li>
-            <div class="approach-training-icon">
-              <img src="assets/4.png" alt="Brain with heart icon">
-            </div>
-            Certified Clinical Hypnotherapist (ongoing)
-          </li>
-          <li>
-            <div class="approach-training-icon" style="background:var(--deepgreen);">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.5"/><path d="M5 21v-1.5A5.5 5.5 0 0 1 10.5 14h3A5.5 5.5 0 0 1 19 19.5V21"/></svg>
-            </div>
-            Training in somatic and<br>nervous system–based approaches
-          </li>
-          <li>
-            <div class="approach-training-icon">
-              <img src="assets/5.png" alt="Leaf sprout icon">
-            </div>
-            Ongoing supervision and<br>continued learning as part of practice
-          </li>
-        </ul>
-      </div>
-      <div class="approach-closing approach-closing-illustration">
-        <img src="assets/approach-quote-illustration.png" alt="Line-art illustration of a woman with leaves and the quote: a gentle space for healing, growth and coming home to yourself">
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- PAGE 4 — SERVICES -->
-<section class="section section-alt" id="services">
-  <div class="wrap">
-    <div class="section-head">
-      <div class="section-eyebrow">Services</div>
-      <h2>Every person's process is different. <em>We decide together.</em></h2>
-    </div>
-
-    <div class="services-diagram">
-      <img src="assets/services-diagram.png" alt="Diagram showing five services — Trauma Focused Therapy, Somatic Work, Hypnotherapy, Self Integration, and Individual Therapy — around a central meditating figure">
-    </div>
-
-    <div class="services-grid">
-
-      <div class="service-acc" data-reveal style="--reveal-delay:0s">
-        <div class="sc-head">
-          <span class="sc-icon ic-sage">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>
-          </span>
-          <div class="sc-head-text">
-            <h3>Individual Therapy</h3>
-            <p>A space to understand yourself more clearly and work through patterns that affect your day-to-day life.</p>
-          </div>
-        </div>
-        <div class="sc-body">
-          <ul>
-            <li>Inner child work to process early experiences and parental dynamics</li>
-            <li>Relationship challenges, including attachment patterns and communication</li>
-            <li>Anxiety, overthinking and emotional overwhelm</li>
-            <li>Self-worth, identity and confidence</li>
-            <li>Navigating life transitions and decision-making</li>
-          </ul>
-          <div class="note">Paced carefully so you feel supported as you explore and shift these patterns.</div>
-        </div>
-      </div>
-
-      <div class="service-acc" data-reveal style="--reveal-delay:0.08s">
-        <div class="sc-head">
-          <span class="sc-icon ic-tan">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 5-3.5 8-7 9-3.5-1-7-4-7-9V6l7-3z"/><path d="M12 15.2s-3.2-2.1-3.2-4.4c0-1.2 1-2.1 2.1-2.1.6 0 1.1.3 1.1.3s.5-.3 1.1-.3c1.1 0 2.1.9 2.1 2.1 0 2.3-3.2 4.4-3.2 4.4z"/></svg>
-          </span>
-          <div class="sc-head-text">
-            <h3>Trauma-Focused Therapy</h3>
-            <p>Understanding and processing past experiences, reducing triggers, building safety.</p>
-          </div>
-        </div>
-        <div class="sc-body">
-          <ul>
-            <li>Processing childhood trauma, emotional neglect, or criticism</li>
-            <li>Understanding triggers and reducing emotional reactivity</li>
-            <li>Working through shame, fear, or chronic self-doubt</li>
-            <li>Healing patterns of hypervigilance, freeze, or shutdown</li>
-            <li>Rebuilding a sense of safety within yourself</li>
-          </ul>
-          <div class="note">Gradual and always guided by your capacity.</div>
-        </div>
-      </div>
-
-      <div class="service-acc" data-reveal style="--reveal-delay:0.16s">
-        <div class="sc-head">
-          <span class="sc-icon ic-blue">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20c-5 0-8-3-8-7 2 2 4 3 8 3s6-1 8-3c0 4-3 7-8 7z"/><path d="M12 16V9"/><path d="M12 9c-1.5-2-1.5-5 0-7 1.5 2 1.5 5 0 7z"/><path d="M12 10c-2-1.5-5-1.5-6.5 0 1.5 1.5 4.5 1.5 6.5 0z"/><path d="M12 10c2-1.5 5-1.5 6.5 0-1.5 1.5-4.5 1.5-6.5 0z"/></svg>
-          </span>
-          <div class="sc-head-text">
-            <h3>Somatic Work</h3>
-            <p>Working with the body to release stress, regulate emotions and build internal safety.</p>
-          </div>
-        </div>
-        <div class="sc-body">
-          <ul>
-            <li>Noticing and understanding body-based responses (tightness, breath, shutdown)</li>
-            <li>Learning to regulate your nervous system in moments of stress</li>
-            <li>Releasing stored tension and survival responses</li>
-            <li>Building a greater sense of safety and presence in your body</li>
-            <li>Reducing anxiety that feels physical or immediate</li>
-          </ul>
-          <div class="note">Helps shift patterns that talking alone often cannot reach.</div>
-        </div>
-      </div>
-
-      <div class="service-acc" data-reveal style="--reveal-delay:0.24s">
-        <div class="sc-head">
-          <span class="sc-icon ic-purple">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/><path d="M17 3v3M15.5 4.5h3"/></svg>
-          </span>
-          <div class="sc-head-text">
-            <h3>Hypnotherapy</h3>
-            <p>Subconscious work for deeper patterns, beliefs, and emotional responses.</p>
-          </div>
-        </div>
-        <div class="sc-body">
-          <ul>
-            <li>Identifying and shifting core beliefs about yourself</li>
-            <li>Working with repeating relationship patterns</li>
-            <li>Addressing performance anxiety or confidence blocks</li>
-            <li>Processing emotional memories linked to past experiences</li>
-            <li>Working through sexual blocks or body-based inhibitions</li>
-          </ul>
-          <div class="note">You remain aware and in control throughout the process.</div>
-        </div>
-      </div>
-
-      <div class="service-acc" data-reveal style="--reveal-delay:0.32s">
-        <div class="sc-head">
-          <span class="sc-icon ic-gold">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8.2"/><path d="M12 3.8a4.2 4.2 0 0 1 0 8.4 4.2 4.2 0 0 0 0 8.4 8.2 8.2 0 0 1 0-16.8z" fill="currentColor" stroke="none"/><circle cx="12" cy="8" r="1.3" fill="currentColor" stroke="none"/><circle cx="12" cy="16" r="1.3" fill="#fff" stroke="none"/></svg>
-          </span>
-          <div class="sc-head-text">
-            <h3>Self Integration Work <span class="sc-sub">(Shadow Work)</span></h3>
-            <p>Working with different parts of self to create internal coherence and stability.</p>
-          </div>
-        </div>
-        <div class="sc-body">
-          <ul>
-            <li>Working with conflicting parts (e.g. one part wants closeness, another pulls away)</li>
-            <li>Understanding protective patterns like perfectionism or people-pleasing</li>
-            <li>Reconnecting with younger or vulnerable parts of yourself</li>
-            <li>Reducing inner conflict and self-criticism</li>
-            <li>Building a more stable and cohesive sense of self</li>
-          </ul>
-          <div class="note">Over time, this creates a deeper sense of internal steadiness.</div>
-        </div>
-      </div>
-
-      <div class="service-acc" data-reveal style="--reveal-delay:0.4s">
-        <div class="sc-head">
-          <span class="sc-icon ic-moss">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>
-          </span>
-          <div class="sc-head-text">
-            <h3>Mindset &amp; Personal Growth</h3>
-            <p>For those who feel stuck in their thinking, direction or decision-making.</p>
-          </div>
-        </div>
-        <div class="sc-body">
-          <ul>
-            <li>Identifying and shifting limiting beliefs</li>
-            <li>Working through imposter syndrome and self-doubt</li>
-            <li>Improving clarity in career or academic decisions</li>
-            <li>Building focus, motivation, and consistency</li>
-            <li>Developing a healthier relationship with failure and growth</li>
-          </ul>
-          <div class="note">More forward-focused, while still grounded in self-awareness.</div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<!-- PAGE 5 — CORPORATE / NGO / HOSPITAL -->
-<section class="section corp-section" id="corporate">
-  <div class="wrap">
-    <div class="section-head">
-      <div class="section-eyebrow">Corporate · NGO · Hospital</div>
-      <h2>Supporting emotional wellbeing <em>and performance</em> across organizations.</h2>
-    </div>
-    <div class="corp-grid-wrap">
-      <svg class="corp-organic" viewBox="0 0 1200 480" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <g fill="none" stroke="#708B61" stroke-width="1.1" stroke-linecap="round">
-          <path d="M70,60 C140,110 170,150 190,205 C210,258 250,290 310,300"/>
-          <path d="M190,205 C165,220 130,222 95,205"/>
-          <path d="M250,180 C270,165 300,158 330,163"/>
-          <path d="M310,300 C370,320 410,300 440,255 C470,210 520,195 590,205"/>
-          <path d="M440,255 C455,285 485,305 520,308"/>
-          <path d="M400,235 C415,215 445,200 475,202"/>
-          <path d="M590,205 C650,215 685,250 705,300 C725,350 765,375 830,378"/>
-          <path d="M705,300 C680,315 650,318 620,308"/>
-          <path d="M650,255 C670,238 700,228 730,232"/>
-          <path d="M830,378 C880,392 915,375 940,335 C965,295 1010,278 1075,285"/>
-          <path d="M940,335 C955,362 985,382 1020,388"/>
-          <path d="M900,318 C918,300 948,288 978,292"/>
-        </g>
-        <g fill="#708B61">
-          <ellipse cx="95" cy="205" rx="9" ry="3.4" transform="rotate(150 95 205)"/>
-          <ellipse cx="330" cy="163" rx="8" ry="3" transform="rotate(-15 330 163)"/>
-          <ellipse cx="520" cy="308" rx="9" ry="3.2" transform="rotate(40 520 308)"/>
-          <ellipse cx="475" cy="202" rx="7.5" ry="2.8" transform="rotate(-10 475 202)"/>
-          <ellipse cx="620" cy="308" rx="8.5" ry="3" transform="rotate(150 620 308)"/>
-          <ellipse cx="730" cy="232" rx="7.5" ry="2.8" transform="rotate(-8 730 232)"/>
-          <ellipse cx="1020" cy="388" rx="9" ry="3.2" transform="rotate(35 1020 388)"/>
-          <ellipse cx="978" cy="292" rx="7.5" ry="2.8" transform="rotate(-12 978 292)"/>
-          <ellipse cx="190" cy="205" rx="6.5" ry="2.5" transform="rotate(70 190 205)"/>
-          <ellipse cx="705" cy="300" rx="6.5" ry="2.5" transform="rotate(65 705 300)"/>
-        </g>
-      </svg>
-      <div class="corp-grid">
-      <div class="corp-card" data-reveal style="--reveal-delay:0s">
-        <div class="corp-accent sage"></div>
-        <div class="corp-media">
-          <img src="assets/corp-corporate.png" alt="Corporate boardroom meeting">
-        </div>
-        <div class="corp-body">
-          <div class="corp-title-row">
-            <h4>Corporate</h4>
-            <span class="corp-title-icon-wrap sage"><img class="corp-title-icon" src="assets/icon-corporate.png" alt=""></span>
-          </div>
-          <ul>
-            <li>Emotional regulation</li>
-            <li>Burnout prevention</li>
-            <li>Leadership awareness</li>
-            <li>Communication</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="corp-card" data-reveal style="--reveal-delay:0.12s">
-        <div class="corp-accent tan"></div>
-        <div class="corp-media">
-          <img src="assets/corp-ngo.png" alt="Support circle group session">
-        </div>
-        <div class="corp-body">
-          <div class="corp-title-row">
-            <h4>NGOs</h4>
-            <span class="corp-title-icon-wrap tan"><img class="corp-title-icon" src="assets/icon-ngo.png" alt=""></span>
-          </div>
-          <ul>
-            <li>Compassion fatigue</li>
-            <li>Secondary trauma</li>
-            <li>Resilience</li>
-            <li>Boundary work</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="corp-card" data-reveal style="--reveal-delay:0.24s">
-        <div class="corp-accent sage"></div>
-        <div class="corp-media">
-          <img src="assets/corp-hospital.png" alt="Doctor and nurse in consultation room">
-        </div>
-        <div class="corp-body">
-          <div class="corp-title-row">
-            <h4>Hospitals</h4>
-            <span class="corp-title-icon-wrap sage"><img class="corp-title-icon" src="assets/icon-hospital.png" alt=""></span>
-          </div>
-          <ul>
-            <li>Burnout support</li>
-            <li>Stress regulation</li>
-            <li>Critical incident processing</li>
-            <li>Team resilience</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-    </div>
-  </div>
-</section>
-
-<!-- PAGE 6 — START HERE -->
-<section class="section section-alt start-section" id="start">
-  <div class="wrap">
-    <div class="section-head">
-      <div class="section-eyebrow">Start Here</div>
-      <h2>You don't need to be in a crisis <em>to begin therapy.</em></h2>
-      <p>Most people start because something doesn't feel quite right. You may feel stuck in certain patterns, overwhelmed more often than you'd like, or simply sense that the way you've been coping is no longer working. You don't have to have a clear reason or the right words. Starting is enough.</p>
-    </div>
-    <div class="start-grid">
-      <div class="start-card" data-reveal style="--reveal-delay:0s">
-        <div class="start-num">01</div>
-        <h4>What it's like to begin</h4>
-        <p>It's normal to feel unsure — will I know what to say, will this help, am I overthinking this. These questions are part of the process. The first session is simply a conversation: we take time to understand what's bringing you in and what you're hoping for. There's no pressure to go deeper than you're ready for.</p>
-      </div>
-      <div class="start-card" data-reveal style="--reveal-delay:0.12s">
-        <div class="start-num">02</div>
-        <h4>A note on discomfort</h4>
-        <p>Therapy can feel uncomfortable at times. You may find yourself noticing things you've avoided or sitting with unfamiliar emotions. That discomfort isn't the goal — it's part of making space for something new. Over time, therapy helps you understand your patterns, feel more steady, and build a more supportive relationship with yourself.</p>
-      </div>
-    </div>
-    <div class="fit-note" data-reveal style="--reveal-delay:0.2s">
-      <div class="fit-note-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#647B6C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="9"></circle>
-          <line x1="12" y1="8" x2="12" y2="12.5"></line>
-          <circle cx="12" cy="16" r="0.6" fill="#647B6C"></circle>
-        </svg>
-      </div>
-      <div class="fit-note-text">
-        <strong>Who this work may not be for:</strong> This work may not be the right fit if you are currently experiencing a severe psychiatric crisis that requires medical or hospital-based care, or if you are seeking diagnosis or medication management, which is best handled by a psychiatrist. If you're unsure whether this approach is right for you, we can explore that together during an initial consultation.
-      </div>
-    </div>
-    <div class="start-cta" data-reveal style="--reveal-delay:0.28s">
-      <p>Still deciding? A short intro call can help you figure out if this is the right fit — no commitment needed.</p>
-      <a href="#contact" class="js-open-booking">Book Consultation</a>
-    </div>
-  </div>
-</section>
-
-<!-- CONTACT -->
-<section class="contact-section" id="contact">
-  <div class="wrap contact-grid">
-    <div>
-      <h2>If you're here, a part of you is <em>already ready.</em></h2>
-      <p>You don't have to feel completely certain. You just have to be willing to begin. Reach out even if you're unsure whether therapy is right for you.</p>
-      <div class="contact-quick">
-        <a href="mailto:hello@mindhaventherapy.com">hello@mindhaventherapy.com</a>
-        <a href="tel:+9198XXXXXXXX">+91 98XXX XXXXX</a>
-      </div>
-    </div>
-    <div class="contact-right">
-      <form class="contact-form" id="quickContactForm">
-        <div>
-          <label for="qcEmail">Your Email</label>
-          <input type="email" id="qcEmail" name="email" placeholder="you@example.com" required>
-        </div>
-        <div>
-          <label for="qcPhone">Contact Number</label>
-          <input type="tel" id="qcPhone" name="phone" placeholder="+91 98765 43210" required>
-        </div>
-        <div>
-          <label for="qcMessage">Message</label>
-          <textarea id="qcMessage" name="message" placeholder="What would you like to share?" required></textarea>
-        </div>
-        <button type="submit" class="btn-light">Send Message</button>
-        <p class="contact-note">This opens your email app to send the message to us.</p>
-      </form>
-    </div>
-  </div>
-</section>
+<div id="loginBox">
+  <h1 style="margin-bottom:6px;">Admin Login</h1>
+  <p style="color:var(--muted); font-size:13.5px;">Enter your admin password to continue.</p>
+  <input type="password" id="passwordInput" placeholder="Password">
+  <button onclick="login()">Login</button>
+  <p id="loginError"></p>
 </div>
-<!-- /view-home -->
 
-<!-- TESTIMONIALS (own view, hidden by default, shown via nav) -->
-<div id="view-testimonial" style="display:none;">
-<section class="section section-alt testimonial-section" id="testimonial">
-  <img class="testimonial-bg" src="assets/background.png" alt="">
-  <div class="wrap">
-    <div class="section-head">
-      <div class="section-eyebrow">Client Voices</div>
-      <h2>Stories of <em>change and healing.</em></h2>
-      <p>Shared with permission, and kept anonymous to protect confidentiality. Every journey looks different — these are a few reflections from people who've walked part of theirs here.</p>
+<div class="wrap panel" id="panel">
+  <h1>Testimonials Admin</h1>
+
+  <div class="card">
+    <h2>Generate a Unique Review Link</h2>
+    <p style="color:var(--muted); font-size:13.5px; margin-bottom:14px;">Har customer ke liye ek naya link banao, phir use email/WhatsApp par bhej do. Har link sirf ek baar use ho sakta hai.</p>
+    <div class="row">
+      <input type="text" id="customerLabel" placeholder="Customer name or note (optional, sirf aapke reference ke liye)">
+      <button onclick="generateLink()">Generate Link</button>
     </div>
-    <div class="testimonial-grid" id="testimonialGrid">
-      <p style="grid-column:1/-1; text-align:center; color:var(--muted); font-size:14px;">Loading testimonials…</p>
-    </div>
-    <p class="testimonial-note">Names, ages, and identifying details have been changed. Testimonials are shared only with a client's explicit, written consent.</p>
-  </div>
-</section>
-<section class="section section-alt start-section">
-  <div class="wrap">
-    <div class="start-cta" data-reveal style="--reveal-delay:0s">
-      <p>Curious what this could look like for you? A short conversation is a good place to start.</p>
-      <a href="#contact" class="js-open-booking">Book Consultation</a>
+    <div class="link-output" id="linkOutput">
+      <span id="linkText"></span>
+      <button onclick="copyLink()">Copy</button>
     </div>
   </div>
-</section>
-</div>
-<!-- /view-testimonial -->
 
-<!-- FROM MY YELLOW CHAIR (own view, hidden by default, shown via nav) -->
-<div id="view-yellowchair" style="display:none;">
-<section class="section yellow-chair-section" id="yellow-chair">
-  <div class="wrap">
-    <div class="section-head">
-      <div class="section-eyebrow">From My Yellow Chair</div>
-      <h2>Reflections <em>between sessions.</em></h2>
-      <p>Occasional notes on trauma, healing, and being human — written from the chair where I sit with people every day.</p>
-    </div>
-    <div class="chair-grid">
-      <div class="chair-card" data-reveal style="--reveal-delay:0s">
-        <div class="chair-date">June 2026</div>
-        <h4>On Sitting With Silence</h4>
-        <p>Not every quiet moment in a session needs to be filled. Some of the most important shifts happen in the pause before someone finds the words.</p>
-      </div>
-      <div class="chair-card" data-reveal style="--reveal-delay:0.12s">
-        <div class="chair-date">May 2026</div>
-        <h4>What Trauma Teaches Us About Safety</h4>
-        <p>Trauma often rewires how safe feels in the body, long after the danger has passed. Healing is, in many ways, teaching the nervous system a new story.</p>
-      </div>
-      <div class="chair-card" data-reveal style="--reveal-delay:0.24s">
-        <div class="chair-date">April 2026</div>
-        <h4>The Chair Doesn't Fix You — It Holds You</h4>
-        <p>People sometimes arrive expecting to be fixed. What I try to offer instead is a steady, non-judgmental presence while they do their own slow, real work.</p>
+  <div class="card">
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+      <h2 style="margin-bottom:0;">Feedback</h2>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span id="lastUpdated" style="font-size:12px; color:var(--muted);"></span>
+        <button type="button" onclick="fetchReviews(false)" style="background:#fff; border:1px solid var(--line); color:var(--sage-dark); padding:7px 14px; border-radius:6px; font-weight:600; font-size:13px; cursor:pointer;">⟳ Refresh</button>
       </div>
     </div>
-  </div>
-</section>
-<section class="section section-alt start-section">
-  <div class="wrap">
-    <div class="start-cta" data-reveal style="--reveal-delay:0s">
-      <p>Something here resonate with you? Let's talk about what you're carrying.</p>
-      <a href="#contact" class="js-open-booking">Book Consultation</a>
+    <div class="filters" style="margin-top:14px;">
+      <button class="active" data-filter="all" onclick="setFilter('all')">All</button>
+      <button data-filter="pending" onclick="setFilter('pending')">Pending</button>
+      <button data-filter="approved" onclick="setFilter('approved')">Approved</button>
+      <button data-filter="rejected" onclick="setFilter('rejected')">Rejected</button>
     </div>
-  </div>
-</section>
-</div>
-<!-- /view-yellowchair -->
-
-<footer>
-  © 2026 Mind Haven Therapy — Trauma, Healing &amp; Wellness. All rights reserved.
-</footer>
-
-<!-- BOOKING MODAL -->
-<div class="booking-overlay" id="bookingOverlay">
-  <div class="booking-modal" role="dialog" aria-modal="true" aria-labelledby="bookingTitle">
-    <button class="booking-close" id="bookingClose" aria-label="Close">✕</button>
-
-    <form class="booking-form" id="bookingForm">
-      <div class="booking-head">
-        <h3 id="bookingTitle">Begin With a Conversation</h3>
-        <p>Sometimes the hardest step is simply reaching out. This consultation is a calm, confidential space to explore whether working together feels right for you.</p>
-      </div>
-
-      <div class="b-field">
-        <label for="bName">Your Name</label>
-        <input type="text" id="bName" name="name" placeholder="Enter your full name" required>
-      </div>
-
-      <div class="b-field">
-        <label for="bEmail">Email Address</label>
-        <input type="email" id="bEmail" name="email" placeholder="you@example.com" required>
-      </div>
-
-      <div class="b-row">
-        <div class="b-field">
-          <label for="bPhone">Phone Number <span class="opt">(Optional)</span></label>
-          <input type="tel" id="bPhone" name="phone" placeholder="+91 98765 43210">
-        </div>
-        <div class="b-field">
-          <label>Preferred Session</label>
-          <div class="b-radio-group">
-            <label class="b-radio"><input type="radio" name="session" value="Online" checked> Online</label>
-            <label class="b-radio"><input type="radio" name="session" value="In Person"> In Person</label>
-          </div>
-        </div>
-      </div>
-
-      <div class="b-row">
-        <div class="b-field">
-          <label for="bDate">Preferred Date</label>
-          <div class="b-date-wrap">
-            <input type="date" id="bDate" name="date">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"></rect><line x1="8" y1="3" x2="8" y2="7"></line><line x1="16" y1="3" x2="16" y2="7"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-          </div>
-        </div>
-        <div class="b-field">
-          <label for="bTime">Preferred Time</label>
-          <div class="b-select-wrap">
-            <select id="bTime" name="time">
-              <option value="">Choose a time</option>
-              <option>Morning (9 AM – 12 PM)</option>
-              <option>Afternoon (12 – 4 PM)</option>
-              <option>Evening (4 – 7 PM)</option>
-            </select>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-          </div>
-        </div>
-      </div>
-
-      <div class="b-field">
-        <label for="bReason">What brings you here?</label>
-        <textarea id="bReason" name="reason" placeholder="You don't need to have the right words. Share as much or as little as feels comfortable."></textarea>
-      </div>
-
-      <div class="b-field">
-        <label for="bNotes">Anything you'd like me to know? <span class="opt">(Optional)</span></label>
-        <textarea id="bNotes" name="notes" placeholder="Any questions, concerns, or preferences."></textarea>
-      </div>
-
-      <div class="booking-footer">
-        <div class="booking-footer-note">Confidential • Online &amp; In-Person<br>Response within 24–48 hours.</div>
-        <button type="submit" class="b-submit">Book Your Consultation <span aria-hidden="true">→</span></button>
-      </div>
-      <div class="booking-error" id="bookingError"></div>
-    </form>
-
-    <div class="booking-success" id="bookingSuccess">
-      <div class="b-success-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-      </div>
-      <h4>Thank you for reaching out</h4>
-      <p>Your request has been received. We'll get back to you within 24–48 hours to confirm your consultation.</p>
-    </div>
+    <div id="reviewList"><p class="empty">Loading…</p></div>
   </div>
 </div>
 
-
+<script src="config.js"></script>
 <script>
-  (function(){
-    var btn = document.getElementById('menuBtn');
-    var menu = document.getElementById('mobileMenu');
-    if(!btn || !menu) return;
-    function closeMenu(){
-      menu.classList.remove('open');
-      btn.setAttribute('aria-expanded','false');
-      btn.textContent = '☰';
+  // 👇 Script URL ab config.js me ek hi jagah set hota hai (TESTIMONIALS_SCRIPT_URL).
+  //    Yahan alag se paste karne ki zaroorat nahi.
+  var ENDPOINT_URL = (typeof TESTIMONIALS_SCRIPT_URL !== 'undefined') ? TESTIMONIALS_SCRIPT_URL : "PASTE_YOUR_TESTIMONIALS_APPS_SCRIPT_URL_HERE";
+
+  var adminKey = '';
+  var allReviews = [];
+  var currentFilter = 'all';
+  var pollTimer = null;
+  var POLL_MS = 15000; // auto-refresh every 15s so new submissions show up without a manual reload
+
+  function login(){
+    var pw = document.getElementById('passwordInput').value.trim();
+    if(!pw){ return; }
+    adminKey = pw;
+    document.getElementById('loginError').textContent = '';
+    fetchReviews(true);
+  }
+
+  function startPolling(){
+    if(pollTimer) clearInterval(pollTimer);
+    pollTimer = setInterval(function(){ fetchReviews(false); }, POLL_MS);
+  }
+
+  // Stay logged in across a page refresh, and refresh the moment the tab
+  // becomes visible again (e.g. switching back from WhatsApp/email).
+  (function restoreSession(){
+    var saved = sessionStorage.getItem('testimonials_admin_key');
+    if(saved){
+      adminKey = saved;
+      fetchReviews(true);
     }
-    btn.addEventListener('click', function(){
-      var isOpen = menu.classList.toggle('open');
-      btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-      btn.textContent = isOpen ? '✕' : '☰';
-    });
-    menu.querySelectorAll('a').forEach(function(a){
-      a.addEventListener('click', closeMenu);
-    });
-    window.addEventListener('resize', function(){
-      if(window.innerWidth > 860) closeMenu();
-    });
   })();
-</script>
-<script>
-  (function(){
-    var TO_EMAIL = "hello@mindhaventherapy.com";
-    var form = document.getElementById('quickContactForm');
-    if(!form) return;
-    form.addEventListener('submit', function(e){
-      e.preventDefault();
-      var email = form.email.value.trim();
-      var phone = form.phone.value.trim();
-      var message = form.message.value.trim();
-      var subject = "New enquiry from " + email;
-      var body =
-        "Email: " + email + "\n" +
-        "Contact Number: " + phone + "\n\n" +
-        "Message:\n" + message;
-      var mailtoLink = "mailto:" + TO_EMAIL +
-        "?subject=" + encodeURIComponent(subject) +
-        "&body=" + encodeURIComponent(body);
-      window.location.href = mailtoLink;
+  document.addEventListener('visibilitychange', function(){
+    if(!document.hidden && adminKey) fetchReviews(false);
+  });
+
+  function baseShareUrl(){
+    // assumes share-your-experience.html sits in the same folder as this admin.html
+    return window.location.href.replace(/admin\.html.*$/, 'share-your-experience.html');
+  }
+
+  function generateLink(){
+    var randomId = 'r' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+    var link = baseShareUrl() + '?id=' + randomId;
+    document.getElementById('linkText').textContent = link;
+    document.getElementById('linkOutput').style.display = 'flex';
+    document.getElementById('linkOutput').dataset.link = link;
+  }
+
+  function copyLink(){
+    var link = document.getElementById('linkOutput').dataset.link;
+    navigator.clipboard.writeText(link).then(function(){
+      var btn = document.getElementById('linkOutput').querySelector('button');
+      var old = btn.textContent;
+      btn.textContent = 'Copied!';
+      setTimeout(function(){ btn.textContent = old; }, 1500);
     });
-  })();
-</script>
-<script>
-  (function(){
-    // 👇 YAHAN apna Google Apps Script "Web app URL" paste karo (BOOKING_BACKEND_Code.gs deploy karne ke baad milega)
-    var BOOKING_ENDPOINT_URL = "PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE";
+  }
 
-    var overlay = document.getElementById('bookingOverlay');
-    var closeBtn = document.getElementById('bookingClose');
-    var form = document.getElementById('bookingForm');
-    var success = document.getElementById('bookingSuccess');
-    var errorBox = document.getElementById('bookingError');
-    var submitBtn = form ? form.querySelector('.b-submit') : null;
-    var triggers = document.querySelectorAll('.js-open-booking');
-    if(!overlay) return;
+  function setFilter(f){
+    currentFilter = f;
+    document.querySelectorAll('.filters button').forEach(function(b){
+      b.classList.toggle('active', b.getAttribute('data-filter') === f);
+    });
+    renderReviews();
+  }
 
-    function openModal(e){
-      if(e) e.preventDefault();
-      overlay.classList.add('open');
-      document.body.style.overflow = 'hidden';
-      form.classList.remove('hide');
-      success.classList.remove('show');
-      if(errorBox) errorBox.classList.remove('show');
-    }
-    function closeModal(){
-      overlay.classList.remove('open');
-      document.body.style.overflow = '';
-    }
-    triggers.forEach(function(t){ t.addEventListener('click', openModal); });
-    if(closeBtn) closeBtn.addEventListener('click', closeModal);
-    overlay.addEventListener('click', function(e){ if(e.target === overlay) closeModal(); });
-    document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && overlay.classList.contains('open')) closeModal(); });
-
-    if(form){
-      form.addEventListener('submit', function(e){
-        e.preventDefault();
-        if(errorBox) errorBox.classList.remove('show');
-
-        if(!BOOKING_ENDPOINT_URL || BOOKING_ENDPOINT_URL.indexOf('PASTE_YOUR') === 0){
-          if(errorBox){
-            errorBox.textContent = "Booking backend not connected yet — see BOOKING_BACKEND_Code.gs setup instructions.";
-            errorBox.classList.add('show');
+  function fetchReviews(isLoginAttempt){
+    fetch(ENDPOINT_URL + '?action=list&key=' + encodeURIComponent(adminKey))
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        if(data && data.error === 'unauthorized'){
+          sessionStorage.removeItem('testimonials_admin_key');
+          if(isLoginAttempt){
+            document.getElementById('loginError').textContent = 'Incorrect password.';
           }
           return;
         }
-
-        var data = new URLSearchParams(new FormData(form));
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Sending…';
-
-        fetch(BOOKING_ENDPOINT_URL, { method: 'POST', body: data })
-          .then(function(){
-            form.classList.add('hide');
-            success.classList.add('show');
-          })
-          .catch(function(){
-            if(errorBox){
-              errorBox.textContent = "Something went wrong sending your request. Please try again or email us directly.";
-              errorBox.classList.add('show');
-            }
-          })
-          .finally(function(){
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = 'Book Your Consultation <span aria-hidden="true">→</span>';
-          });
+        if(isLoginAttempt){
+          document.getElementById('loginBox').style.display = 'none';
+          document.getElementById('panel').style.display = 'block';
+          sessionStorage.setItem('testimonials_admin_key', adminKey);
+          startPolling();
+        }
+        allReviews = data || [];
+        renderReviews();
+        var lu = document.getElementById('lastUpdated');
+        if(lu) lu.textContent = 'Updated ' + new Date().toLocaleTimeString();
+      })
+      .catch(function(){
+        if(isLoginAttempt){
+          document.getElementById('loginError').textContent = 'Could not connect. Check the endpoint URL.';
+          sessionStorage.removeItem('testimonials_admin_key');
+        }
       });
-    }
-  })();
-</script>
-<script>
-  (function(){
-    var items = document.querySelectorAll('[data-reveal]');
-    if(!items.length) return;
-    if(!('IntersectionObserver' in window)){
-      items.forEach(function(el){ el.classList.add('in-view'); });
+  }
+
+  function renderReviews(){
+    var list = document.getElementById('reviewList');
+    var filtered = allReviews.filter(function(r){
+      if(currentFilter === 'all') return true;
+      var s = (r.status || 'pending').toLowerCase() || 'pending';
+      return s === currentFilter;
+    });
+
+    if(!filtered.length){
+      list.innerHTML = '<p class="empty">No reviews here.</p>';
       return;
     }
-    var io = new IntersectionObserver(function(entries){
-      entries.forEach(function(entry){
-        if(entry.isIntersecting){
-          entry.target.classList.add('in-view');
-          io.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.2, rootMargin: '0px 0px -40px 0px' });
-    items.forEach(function(el){ io.observe(el); });
-  })();
-</script>
-<script src="config.js"></script>
-<script>
-  (function(){
-    // 👇 Script URL ab config.js me ek hi jagah set hota hai (TESTIMONIALS_SCRIPT_URL).
-    //    Yahan alag se paste karne ki zaroorat nahi.
-    var TESTIMONIALS_ENDPOINT_URL = (typeof TESTIMONIALS_SCRIPT_URL !== 'undefined') ? TESTIMONIALS_SCRIPT_URL : "PASTE_YOUR_TESTIMONIALS_APPS_SCRIPT_URL_HERE";
 
-    var grid = document.getElementById('testimonialGrid');
-    if(!grid) return;
+    list.innerHTML = filtered.map(function(r){
+      var status = (r.status || '').trim().toLowerCase() || 'pending';
+      var statusClass = status === 'approved' ? 'status-approved' : (status === 'rejected' ? 'status-rejected' : 'status-pending');
+      var displayName = r.anonymous ? 'Anonymous' : (r.name || 'Anonymous');
+      var stars = '★★★★★☆☆☆☆☆'.slice(5 - r.rating, 10 - r.rating);
+      return (
+        '<div class="review-card">' +
+          '<div class="review-top">' +
+            '<div class="stars-display">' + stars + '</div>' +
+            '<span class="status-badge ' + statusClass + '">' + status + '</span>' +
+          '</div>' +
+          '<p class="review-text">' + escapeHtml(r.quote) + '</p>' +
+          '<p class="review-meta">' + escapeHtml(displayName) + (r.email ? ' · ' + escapeHtml(r.email) : '') + (r.timestamp ? ' · ' + escapeHtml(new Date(r.timestamp).toLocaleDateString()) : '') + '</p>' +
+          '<div class="review-actions">' +
+            '<button class="btn-approve" onclick="updateStatus(' + r.rowNumber + ', \'approve\')">Approve</button>' +
+            '<button class="btn-reject" onclick="updateStatus(' + r.rowNumber + ', \'reject\')">Reject</button>' +
+            '<button class="btn-delete" onclick="updateStatus(' + r.rowNumber + ', \'delete\')">Delete</button>' +
+          '</div>' +
+        '</div>'
+      );
+    }).join('');
+  }
 
-    function escapeHtml(str){
-      var div = document.createElement('div');
-      div.textContent = str == null ? '' : String(str);
-      return div.innerHTML;
-    }
+  function updateStatus(rowNumber, action){
+    if(action === 'delete' && !confirm('Delete this review permanently?')) return;
 
-    function renderTestimonials(items){
-      if(!items || !items.length){
-        grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:var(--muted); font-size:14px;">No testimonials yet.</p>';
-        return;
-      }
-      function starsHtml(rating){
-        var r = Math.max(0, Math.min(5, Math.round(Number(rating) || 0)));
-        if(!r) return '';
-        var out = '<div class="t-stars" aria-label="' + r + ' out of 5 stars" style="margin-bottom:10px; color:var(--gold); font-size:15px; letter-spacing:2px;">';
-        for(var s=0; s<5; s++){ out += s < r ? '★' : '☆'; }
-        out += '</div>';
-        return out;
-      }
-
-      var html = items.map(function(item, i){
-        var delay = (i * 0.12).toFixed(2) + 's';
-        return (
-          '<div class="testimonial-card" data-reveal style="--reveal-delay:' + delay + '">' +
-            starsHtml(item.rating) +
-            '<span class="testimonial-quote">"</span>' +
-            '<p class="t-body">' + escapeHtml(item.quote) + '</p>' +
-            '<div class="testimonial-author">' +
-              '<span class="t-name">' + escapeHtml(item.name) + '</span>' +
-              '<span class="t-context">' + escapeHtml(item.context) + '</span>' +
-            '</div>' +
-          '</div>'
-        );
-      }).join('');
-      grid.innerHTML = html;
-
-      // re-run the reveal-on-scroll animation for the newly inserted cards
-      var items2 = grid.querySelectorAll('[data-reveal]');
-      if('IntersectionObserver' in window){
-        var io = new IntersectionObserver(function(entries){
-          entries.forEach(function(entry){
-            if(entry.isIntersecting){
-              entry.target.classList.add('in-view');
-              io.unobserve(entry.target);
-            }
-          });
-        }, { threshold: 0.2, rootMargin: '0px 0px -40px 0px' });
-        items2.forEach(function(el){ io.observe(el); });
-      } else {
-        items2.forEach(function(el){ el.classList.add('in-view'); });
-      }
-    }
-
-    if(!TESTIMONIALS_ENDPOINT_URL || TESTIMONIALS_ENDPOINT_URL.indexOf('PASTE_YOUR') === 0){
-      grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:var(--muted); font-size:14px;">Testimonials backend not connected yet — see Testimonials_Backend_Code.gs setup instructions.</p>';
+    // Optimistic update: move the card into the right tab immediately,
+    // instead of waiting on a full refetch (which can lag a moment behind
+    // the sheet write).
+    if(action === 'delete'){
+      allReviews = allReviews.filter(function(r){ return r.rowNumber !== rowNumber; });
     } else {
-      fetch(TESTIMONIALS_ENDPOINT_URL)
-        .then(function(res){ return res.json(); })
-        .then(function(data){ renderTestimonials(data); })
-        .catch(function(){
-          grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:var(--muted); font-size:14px;">Could not load testimonials right now.</p>';
-        });
+      var newStatus = action === 'approve' ? 'Approved' : 'Rejected';
+      allReviews = allReviews.map(function(r){
+        if(r.rowNumber === rowNumber) r.status = newStatus;
+        return r;
+      });
     }
-  })();
-</script>
-<script>
-  (function(){
-    var viewHome = document.getElementById('view-home');
-    var viewTestimonial = document.getElementById('view-testimonial');
-    var viewChair = document.getElementById('view-yellowchair');
-    if(!viewHome || !viewTestimonial || !viewChair) return;
+    renderReviews();
 
-    function showView(hash){
-      if(hash === 'testimonial'){
-        viewHome.style.display = 'none';
-        viewChair.style.display = 'none';
-        viewTestimonial.style.display = 'block';
-        window.scrollTo(0,0);
-      } else if(hash === 'yellow-chair'){
-        viewHome.style.display = 'none';
-        viewTestimonial.style.display = 'none';
-        viewChair.style.display = 'block';
-        window.scrollTo(0,0);
-      } else {
-        viewTestimonial.style.display = 'none';
-        viewChair.style.display = 'none';
-        viewHome.style.display = 'block';
-        if(hash){
-          var target = document.getElementById(hash);
-          if(target){
-            setTimeout(function(){ target.scrollIntoView({behavior:'smooth', block:'start'}); }, 0);
-          }
-        }
-      }
-    }
+    var payload = new URLSearchParams();
+    payload.set('action', action);
+    payload.set('key', adminKey);
+    payload.set('rowNumber', rowNumber);
+    fetch(ENDPOINT_URL, { method: 'POST', body: payload })
+      .then(function(res){ return res.json(); })
+      .then(function(){ fetchReviews(false); }) // re-sync with the sheet as the source of truth
+      .catch(function(){ fetchReviews(false); });
+  }
 
-    function currentHash(){
-      return window.location.hash.replace('#','');
-    }
-
-    window.addEventListener('hashchange', function(){ showView(currentHash()); });
-    showView(currentHash());
-  })();
+  function escapeHtml(str){
+    var div = document.createElement('div');
+    div.textContent = str == null ? '' : String(str);
+    return div.innerHTML;
+  }
 </script>
 </body>
 </html>
