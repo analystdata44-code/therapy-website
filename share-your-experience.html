@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Share Your Experience — Healing Within</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#F3EFE6; --card:#FFFFFF; --ink:#33433E; --muted:#5C6A63;
+    --sage:#7E9686; --sage-dark:#647B6C; --sage-pale:#E7EEE8;
+    --line:#DAD4C6; --gold:#D9A24B; --red:#a34a3a;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    font-family:'Inter',sans-serif; color:var(--ink); min-height:100vh;
+    background:var(--cream) url('assets/background.png') no-repeat center top / cover;
+    background-attachment:fixed;
+  }
+
+  /* ---------- Top bar / logo ---------- */
+  .topbar{display:flex; align-items:center; gap:12px; padding:34px 5vw 0;}
+  .topbar .leaf{width:38px; height:38px; flex-shrink:0;}
+  .topbar .brand-name{font-family:'Lora',serif; font-size:19px; font-weight:600; color:var(--ink);}
+  .topbar .brand-sub{font-size:12.5px; color:var(--muted); letter-spacing:0.3px;}
+
+  /* ---------- Page grid ---------- */
+  .layout{
+    display:grid; grid-template-columns:1fr minmax(320px,560px) 1fr;
+    gap:40px; align-items:start; max-width:1440px; margin:0 auto;
+    padding:50px 5vw 90px;
+  }
+
+  /* ---------- Left column ---------- */
+  .left-col{padding-top:40px;}
+  .left-col h1{font-family:'Lora',serif; font-weight:500; font-size:34px; line-height:1.25; color:var(--ink);}
+  .left-col h1 .accent{color:var(--sage);}
+  .left-col .lede{font-size:14.5px; color:var(--muted); line-height:1.75; margin:20px 0 34px; max-width:320px;}
+  .squiggle{width:130px; height:26px; margin-bottom:34px; opacity:0.55;}
+
+  .feature{display:flex; gap:14px; align-items:flex-start; padding:16px 0; border-top:1px solid var(--line);}
+  .feature:first-of-type{border-top:1px solid var(--line);}
+  .feature .icon-circle{
+    width:40px; height:40px; border-radius:50%; background:var(--sage-pale);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .feature .icon-circle svg{width:18px; height:18px; stroke:var(--sage-dark);}
+  .feature h3{font-size:14px; font-weight:700; margin-bottom:3px;}
+  .feature p{font-size:12.5px; color:var(--muted); line-height:1.55;}
+
+  /* ---------- Center card ---------- */
+  .card{
+    background:var(--card); border-radius:16px; padding:44px 40px 36px;
+    box-shadow:0 30px 70px -28px rgba(51,67,62,0.35); border:1px solid rgba(218,212,198,0.6);
+  }
+  .card-icon{
+    width:56px; height:56px; border-radius:50%; background:var(--sage); margin:0 auto 18px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .card-icon svg{width:24px; height:24px; stroke:#fff; fill:none;}
+  .card h2{font-family:'Lora',serif; font-weight:500; font-size:25px; text-align:center; color:var(--ink);}
+  .divider{width:60px; height:1px; background:var(--line); margin:14px auto; position:relative;}
+  .divider::after{content:"♡"; position:absolute; left:50%; top:50%; transform:translate(-50%,-52%); background:#fff; padding:0 8px; font-size:11px; color:var(--sage);}
+  .card .sub{text-align:center; font-size:13.5px; color:var(--muted); line-height:1.7; max-width:400px; margin:0 auto 30px;}
+
+  .field-label{font-size:13.5px; font-weight:700; color:var(--ink); margin-bottom:10px; display:block;}
+  .field-block{margin-bottom:24px;}
+
+  .stars-input{display:flex; justify-content:center; gap:10px; font-size:32px; line-height:1; margin-bottom:8px;}
+  .stars-input span{cursor:pointer; color:#DAD4C6; transition:color .15s ease, transform .15s ease;}
+  .stars-input span.active{color:var(--gold);}
+  .stars-input span:hover{transform:scale(1.12);}
+  .stars-caption{text-align:center; font-size:12px; color:var(--muted);}
+
+  textarea{
+    width:100%; border:1px solid var(--line); border-radius:8px; padding:14px 16px;
+    font-family:inherit; font-size:14px; color:var(--ink); background:var(--cream);
+    resize:vertical; min-height:110px;
+  }
+  textarea:focus{outline:none; border-color:var(--sage);}
+  .char-count{text-align:right; font-size:11.5px; color:var(--muted); margin-top:6px;}
+
+  .toggle-row{
+    display:flex; align-items:center; gap:14px; background:var(--sage-pale);
+    border-radius:10px; padding:14px 16px;
+  }
+  .toggle-row .icon-circle{width:36px; height:36px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+  .toggle-row .icon-circle svg{width:16px; height:16px; stroke:var(--sage-dark);}
+  .toggle-row .txt{flex:1;}
+  .toggle-row .txt strong{display:block; font-size:13.5px; font-weight:700; margin-bottom:2px;}
+  .toggle-row .txt span{font-size:12px; color:var(--muted);}
+  .switch{position:relative; width:42px; height:24px; flex-shrink:0;}
+  .switch input{opacity:0; width:0; height:0;}
+  .switch .track{position:absolute; inset:0; background:#C6C0B0; border-radius:20px; cursor:pointer; transition:background .2s ease;}
+  .switch .track::before{content:""; position:absolute; width:18px; height:18px; left:3px; top:3px; background:#fff; border-radius:50%; transition:transform .2s ease;}
+  .switch input:checked + .track{background:var(--sage);}
+  .switch input:checked + .track::before{transform:translateX(18px);}
+
+  .input-with-icon{position:relative;}
+  .input-with-icon svg{position:absolute; left:14px; top:50%; transform:translateY(-50%); width:16px; height:16px; stroke:var(--muted);}
+  .input-with-icon input{
+    width:100%; border:1px solid var(--line); border-radius:8px; padding:13px 14px 13px 40px;
+    font-family:inherit; font-size:14px; color:var(--ink); background:var(--cream);
+  }
+  .input-with-icon input:focus{outline:none; border-color:var(--sage);}
+
+  .privacy-box{
+    display:flex; gap:12px; align-items:flex-start; background:var(--sage-pale);
+    border-radius:10px; padding:16px; margin-bottom:26px;
+  }
+  .privacy-box .icon-circle{width:36px; height:36px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+  .privacy-box .icon-circle svg{width:16px; height:16px; stroke:var(--sage-dark);}
+  .privacy-box strong{display:block; font-size:13px; font-weight:700; margin-bottom:3px;}
+  .privacy-box p{font-size:12px; color:var(--muted); line-height:1.6;}
+
+  .submit-btn{
+    width:100%; background:var(--sage); color:#fff; border:none; border-radius:8px;
+    font-size:15px; font-weight:600; padding:16px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; gap:9px;
+    transition:background .2s ease;
+  }
+  .submit-btn svg{width:16px; height:16px; fill:#fff;}
+  .submit-btn:hover{background:var(--sage-dark);}
+  .submit-btn:disabled{opacity:0.6; cursor:not-allowed;}
+  .thankyou-line{display:flex; align-items:center; justify-content:center; gap:8px; font-size:12.5px; color:var(--muted); margin-top:16px;}
+  .thankyou-line svg{width:14px; height:14px; stroke:var(--sage-dark);}
+  .error-msg{font-size:13px; color:var(--red); text-align:center; margin-top:14px;}
+
+  /* ---------- Right column ---------- */
+  .right-col{padding-top:200px; text-align:right;}
+  .right-col .quote-mark{font-family:'Lora',serif; font-size:52px; color:var(--sage); line-height:0.6; opacity:0.65;}
+  .right-col blockquote{font-family:'Lora',serif; font-style:italic; font-weight:500; font-size:22px; color:var(--ink); line-height:1.4; max-width:230px; margin-left:auto;}
+
+  /* ---------- Bottom "what happens next" ---------- */
+  .next-wrap{max-width:1000px; margin:0 auto; padding:0 5vw 70px;}
+  .next-card{background:rgba(255,255,255,0.92); backdrop-filter:blur(4px); border-radius:16px; padding:34px 30px; border:1px solid rgba(218,212,198,0.6);}
+  .next-card h3{font-family:'Lora',serif; font-weight:500; font-size:19px; text-align:center; margin-bottom:26px;}
+  .steps{display:grid; grid-template-columns:repeat(4,1fr); gap:10px;}
+  .step{text-align:center; position:relative;}
+  .step .icon-circle{width:46px; height:46px; border-radius:50%; background:var(--sage-pale); margin:0 auto 12px; display:flex; align-items:center; justify-content:center;}
+  .step .icon-circle svg{width:19px; height:19px; stroke:var(--sage-dark);}
+  .step h4{font-size:13.5px; font-weight:700; margin-bottom:4px;}
+  .step p{font-size:11.5px; color:var(--muted); line-height:1.5;}
+  .step-arrow{position:absolute; top:23px; right:-14px; font-size:16px; color:var(--line);}
+  .step:last-child .step-arrow{display:none;}
+
+  /* ---------- States ---------- */
+  .state-box{text-align:center; padding:30px 10px;}
+  .state-box .big-icon{font-size:40px; margin-bottom:16px;}
+  .state-box h2{font-family:'Lora',serif; font-weight:500; font-size:22px; margin-bottom:10px;}
+  .state-box p{color:var(--muted); font-size:14px; line-height:1.7;}
+  .hidden{display:none !important;}
+
+  /* ---------- Responsive ---------- */
+  @media (max-width:980px){
+    .layout{grid-template-columns:1fr; max-width:560px;}
+    .left-col, .right-col{padding-top:0; text-align:left;}
+    .right-col blockquote{margin-left:0;}
+    .right-col{display:none;}
+  }
+  @media (max-width:600px){
+    .steps{grid-template-columns:1fr 1fr; row-gap:24px;}
+    .step-arrow{display:none;}
+    .card{padding:32px 22px 28px;}
+    .topbar{padding:24px 6vw 0;}
+    .layout{padding:34px 6vw 60px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <svg class="leaf" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="20" cy="20" r="19" fill="#E7EEE8"/>
+    <path d="M20 28C20 28 12 24 12 16C12 12 15 9 20 9C25 9 28 12 28 16C28 24 20 28 20 28Z" stroke="#647B6C" stroke-width="1.4"/>
+    <path d="M20 28V13" stroke="#647B6C" stroke-width="1.4"/>
+  </svg>
+  <div>
+    <div class="brand-name">Healing Within</div>
+    <div class="brand-sub">Therapy &amp; Wellness</div>
+  </div>
+</div>
+
+<div class="layout">
+
+  <!-- LEFT COLUMN -->
+  <div class="left-col">
+    <h1>Your Experience<br><span class="accent">Matters</span></h1>
+    <p class="lede">Your words have the power to help others feel less alone and take the first step toward healing.</p>
+
+    <svg class="squiggle" viewBox="0 0 130 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M2 10C20 2 30 22 48 12C60 5 65 18 80 10C95 2 100 16 110 10" stroke="#7E9686" stroke-width="1.2"/>
+      <path d="M108 6C111 3 116 3 118 8C120 12 116 14 113 12" stroke="#7E9686" stroke-width="1.2"/>
+    </svg>
+
+    <div class="feature">
+      <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l7 3v6c0 5-3 8-7 9-4-1-7-4-7-9V5l7-3z"/></svg></div>
+      <div><h3>Safe &amp; Confidential</h3><p>Your privacy is always our top priority.</p></div>
+    </div>
+    <div class="feature">
+      <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.35-9.5-8.5C.5 8.5 3 5 6.5 5c2 0 3.5 1 5.5 3 2-2 3.5-3 5.5-3C21 5 23.5 8.5 21.5 12.5 19 16.65 12 21 12 21z"/></svg></div>
+      <div><h3>100% Optional</h3><p>Sharing is completely your choice.</p></div>
+    </div>
+    <div class="feature">
+      <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.4"/><path d="M3 20c0-3 2.7-5 6-5s6 2 6 5"/><path d="M15 15.2c2.6.4 4 2 4 4.8"/></svg></div>
+      <div><h3>Helps Others</h3><p>Your experience can inspire and support someone in need.</p></div>
+    </div>
+  </div>
+
+  <!-- CENTER CARD -->
+  <div>
+
+    <div id="loadingState" class="card state-box">
+      <p style="color:var(--muted); font-size:14px;">Loading…</p>
+    </div>
+
+    <div id="alreadySubmittedState" class="card state-box hidden">
+      <div class="big-icon">✓</div>
+      <h2>You've already shared your experience</h2>
+      <p>Thank you — we've already received your review. Each link can only be used once.</p>
+    </div>
+
+    <div id="formState" class="card hidden">
+      <div class="card-icon"><svg viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.35-9.5-8.5C.5 8.5 3 5 6.5 5c2 0 3.5 1 5.5 3 2-2 3.5-3 5.5-3C21 5 23.5 8.5 21.5 12.5 19 16.65 12 21 12 21z"/></svg></div>
+      <h2>Share Your Experience</h2>
+      <div class="divider"></div>
+      <p class="sub">Your feedback helps others feel more comfortable taking the first step. This will be reviewed before it's published.</p>
+
+      <form id="experienceForm">
+        <div class="field-block">
+          <label class="field-label" style="text-align:center;">Overall Experience *</label>
+          <div class="stars-input" id="starRating">
+            <span data-val="1">★</span>
+            <span data-val="2">★</span>
+            <span data-val="3">★</span>
+            <span data-val="4">★</span>
+            <span data-val="5">★</span>
+          </div>
+          <p class="stars-caption">Click to rate your experience</p>
+        </div>
+
+        <div class="field-block">
+          <label class="field-label" for="reviewText">Tell us about your experience *</label>
+          <textarea id="reviewText" maxlength="1000" required placeholder="Share what stood out to you..."></textarea>
+          <div class="char-count"><span id="charCount">0</span>/1000</div>
+        </div>
+
+        <div class="field-block toggle-row">
+          <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l7 3v6c0 5-3 8-7 9-4-1-7-4-7-9V5l7-3z"/><path d="M9 12l2 2 4-4" stroke="none"/><circle cx="12" cy="12" r="3.2"/></svg></div>
+          <div class="txt"><strong>Publish my review anonymously</strong><span>Your name and details will never be shown publicly.</span></div>
+          <label class="switch">
+            <input type="checkbox" id="anonCheck">
+            <span class="track"></span>
+          </label>
+        </div>
+
+        <div class="field-block">
+          <label class="field-label" for="nameInput">Name (Optional)</label>
+          <div class="input-with-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c0-4 3.1-6.5 7-6.5s7 2.5 7 6.5"/></svg>
+            <input type="text" id="nameInput" placeholder="Your name">
+          </div>
+        </div>
+
+        <div class="field-block">
+          <label class="field-label" for="emailInput">Email (Optional)</label>
+          <div class="input-with-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+            <input type="text" id="emailInput" placeholder="Your email (will not be published)">
+          </div>
+        </div>
+
+        <div class="privacy-box">
+          <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
+          <div><strong>Your Privacy Matters</strong><p>We respect your privacy. Your review will be reviewed before it's published. We will never share your personal information.</p></div>
+        </div>
+
+        <button type="submit" class="submit-btn" id="submitBtn">
+          <svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
+          Submit Your Review
+        </button>
+        <p class="error-msg hidden" id="errorMsg"></p>
+        <div class="thankyou-line">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l7 3v6c0 5-3 8-7 9-4-1-7-4-7-9V5l7-3z"/></svg>
+          Thank you for helping others on their healing journey.
+        </div>
+      </form>
+    </div>
+
+  </div>
+
+  <!-- RIGHT COLUMN -->
+  <div class="right-col">
+    <div class="quote-mark">&rdquo;</div>
+    <blockquote>Healing begins when someone feels heard.</blockquote>
+  </div>
+
+</div>
+
+<div class="next-wrap">
+  <div class="next-card">
+    <h3>What Happens Next?</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
+        <h4>You Submit</h4><p>Your review is received.</p>
+        <span class="step-arrow">→</span>
+      </div>
+      <div class="step">
+        <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.4"/><path d="M3 20c0-3 2.7-5 6-5s6 2 6 5"/><path d="M15 15.2c2.6.4 4 2 4 4.8"/></svg></div>
+        <h4>We Review</h4><p>We carefully read your feedback.</p>
+        <span class="step-arrow">→</span>
+      </div>
+      <div class="step">
+        <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg></div>
+        <h4>We Publish</h4><p>Your review is published (if approved).</p>
+        <span class="step-arrow">→</span>
+      </div>
+      <div class="step">
+        <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.35-9.5-8.5C.5 8.5 3 5 6.5 5c2 0 3.5 1 5.5 3 2-2 3.5-3 5.5-3C21 5 23.5 8.5 21.5 12.5 19 16.65 12 21 12 21z"/></svg></div>
+        <h4>You Inspire</h4><p>Your words help others find hope.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  // 👇 YAHAN wahi Web app URL paste karo jo index.html me TESTIMONIALS_ENDPOINT_URL me use kiya hai
+  var SUBMIT_ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbwWCGxsa9gysRvYaFW22_7IHA16-gIhUU3lb3OnAD3NiYBYNYX0aBWL4FFsPBNmX7310Q/exec";
+
+  var loadingState = document.getElementById('loadingState');
+  var alreadyState = document.getElementById('alreadySubmittedState');
+  var formState = document.getElementById('formState');
+  var form = document.getElementById('experienceForm');
+  var starWrap = document.getElementById('starRating');
+  var stars = starWrap.querySelectorAll('span');
+  var anonCheck = document.getElementById('anonCheck');
+  var nameInput = document.getElementById('nameInput');
+  var emailInput = document.getElementById('emailInput');
+  var reviewText = document.getElementById('reviewText');
+  var charCount = document.getElementById('charCount');
+  var errorMsg = document.getElementById('errorMsg');
+  var submitBtn = document.getElementById('submitBtn');
+  var selectedRating = 0;
+
+  function showState(el){
+    [loadingState, alreadyState, formState].forEach(function(s){ s.classList.add('hidden'); });
+    el.classList.remove('hidden');
+  }
+
+  function getId(){
+    var params = new URLSearchParams(window.location.search);
+    var id = (params.get('id') || '').trim();
+    if(id) return id;
+    var fallback = localStorage.getItem('sye_fallback_id');
+    if(!fallback){
+      fallback = 'anon-' + Date.now() + '-' + Math.random().toString(36).slice(2,8);
+      localStorage.setItem('sye_fallback_id', fallback);
+    }
+    return fallback;
+  }
+
+  var customerId = getId();
+
+  stars.forEach(function(star){
+    star.addEventListener('click', function(){
+      selectedRating = Number(star.getAttribute('data-val'));
+      stars.forEach(function(s){
+        s.classList.toggle('active', Number(s.getAttribute('data-val')) <= selectedRating);
+      });
+    });
+  });
+
+  reviewText.addEventListener('input', function(){
+    charCount.textContent = reviewText.value.length;
+  });
+
+  anonCheck.addEventListener('change', function(){
+    if(anonCheck.checked) nameInput.value = '';
+  });
+
+  if(!SUBMIT_ENDPOINT_URL || SUBMIT_ENDPOINT_URL.indexOf('PASTE_YOUR') === 0){
+    showState(formState);
+    errorMsg.textContent = "Backend not connected yet — see Testimonials_Backend_Code.gs setup instructions.";
+    errorMsg.classList.remove('hidden');
+    submitBtn.disabled = true;
+  } else {
+    fetch(SUBMIT_ENDPOINT_URL + '?action=check&id=' + encodeURIComponent(customerId))
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        if(data && data.submitted){
+          showState(alreadyState);
+        } else {
+          showState(formState);
+        }
+      })
+      .catch(function(){
+        showState(formState);
+      });
+  }
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    errorMsg.classList.add('hidden');
+
+    var text = reviewText.value.trim();
+    if(!selectedRating){
+      errorMsg.textContent = "Please select an overall experience rating.";
+      errorMsg.classList.remove('hidden');
+      return;
+    }
+    if(!text){
+      errorMsg.textContent = "Please tell us about your experience.";
+      errorMsg.classList.remove('hidden');
+      return;
+    }
+
+    var payload = new URLSearchParams();
+    payload.set('id', customerId);
+    payload.set('rating', String(selectedRating));
+    payload.set('quote', text);
+    payload.set('anonymous', anonCheck.checked ? 'true' : 'false');
+    payload.set('name', anonCheck.checked ? '' : nameInput.value.trim());
+    payload.set('email', emailInput.value.trim());
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Submitting…';
+
+    fetch(SUBMIT_ENDPOINT_URL, { method: 'POST', body: payload })
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        if(data && data.success === false && data.message === 'already_submitted'){
+          showState(alreadyState);
+        } else {
+          showState(alreadyState);
+          alreadyState.querySelector('h2').textContent = 'Thank you for your review!';
+          alreadyState.querySelector('p').textContent = "We've received your feedback. It will appear on our site once reviewed.";
+        }
+      })
+      .catch(function(){
+        errorMsg.textContent = "Something went wrong. Please try again.";
+        errorMsg.classList.remove('hidden');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg> Submit Your Review';
+      });
+  });
+})();
+</script>
+</body>
+</html>
