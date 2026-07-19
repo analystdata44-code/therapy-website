@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1516,31 +1514,8 @@
       <h2>Stories of <em>change and healing.</em></h2>
       <p>Shared with permission, and kept anonymous to protect confidentiality. Every journey looks different — these are a few reflections from people who've walked part of theirs here.</p>
     </div>
-    <div class="testimonial-grid">
-      <div class="testimonial-card" data-reveal style="--reveal-delay:0s">
-        <span class="testimonial-quote">"</span>
-        <p class="t-body">I came in unable to even name what I was feeling. Slowly, I found language for things I'd been carrying quietly for years — and space to finally put some of it down.</p>
-        <div class="testimonial-author">
-          <span class="t-name">R., 34</span>
-          <span class="t-context">Individual therapy · 1 year</span>
-        </div>
-      </div>
-      <div class="testimonial-card" data-reveal style="--reveal-delay:0.12s">
-        <span class="testimonial-quote">"</span>
-        <p class="t-body">This work helped me understand my triggers instead of being ruled by them. I still have hard days, but I meet them differently now — more like myself than I've felt in a long time.</p>
-        <div class="testimonial-author">
-          <span class="t-name">A., 29</span>
-          <span class="t-context">Trauma-focused therapy · 8 months</span>
-        </div>
-      </div>
-      <div class="testimonial-card" data-reveal style="--reveal-delay:0.24s">
-        <span class="testimonial-quote">"</span>
-        <p class="t-body">As someone who works in healthcare, I didn't think I had room to be the one who needed support. This space gently made room for that, without judgment.</p>
-        <div class="testimonial-author">
-          <span class="t-name">S., Physician</span>
-          <span class="t-context">Corporate wellness program</span>
-        </div>
-      </div>
+    <div class="testimonial-grid" id="testimonialGrid">
+      <p style="grid-column:1/-1; text-align:center; color:var(--muted); font-size:14px;">Loading testimonials…</p>
     </div>
     <p class="testimonial-note">Names, ages, and identifying details have been changed. Testimonials are shared only with a client's explicit, written consent.</p>
   </div>
@@ -1813,6 +1788,80 @@
       });
     }, { threshold: 0.2, rootMargin: '0px 0px -40px 0px' });
     items.forEach(function(el){ io.observe(el); });
+  })();
+</script>
+<script>
+  (function(){
+    // 👇 YAHAN apna Google Apps Script "Web app URL" paste karo
+    // (Testimonials_Backend_Code.gs deploy karne ke baad milega — instructions neeche di gayi hain)
+    var TESTIMONIALS_ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbwWCGxsa9gysRvYaFW22_7IHA16-gIhUU3lb3OnAD3NiYBYNYX0aBWL4FFsPBNmX7310Q/exec";
+
+    var grid = document.getElementById('testimonialGrid');
+    if(!grid) return;
+
+    function escapeHtml(str){
+      var div = document.createElement('div');
+      div.textContent = str == null ? '' : String(str);
+      return div.innerHTML;
+    }
+
+    function renderTestimonials(items){
+      if(!items || !items.length){
+        grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:var(--muted); font-size:14px;">No testimonials yet.</p>';
+        return;
+      }
+      function starsHtml(rating){
+        var r = Math.max(0, Math.min(5, Math.round(Number(rating) || 0)));
+        if(!r) return '';
+        var out = '<div class="t-stars" aria-label="' + r + ' out of 5 stars" style="margin-bottom:10px; color:var(--gold); font-size:15px; letter-spacing:2px;">';
+        for(var s=0; s<5; s++){ out += s < r ? '★' : '☆'; }
+        out += '</div>';
+        return out;
+      }
+
+      var html = items.map(function(item, i){
+        var delay = (i * 0.12).toFixed(2) + 's';
+        return (
+          '<div class="testimonial-card" data-reveal style="--reveal-delay:' + delay + '">' +
+            starsHtml(item.rating) +
+            '<span class="testimonial-quote">"</span>' +
+            '<p class="t-body">' + escapeHtml(item.quote) + '</p>' +
+            '<div class="testimonial-author">' +
+              '<span class="t-name">' + escapeHtml(item.name) + '</span>' +
+              '<span class="t-context">' + escapeHtml(item.context) + '</span>' +
+            '</div>' +
+          '</div>'
+        );
+      }).join('');
+      grid.innerHTML = html;
+
+      // re-run the reveal-on-scroll animation for the newly inserted cards
+      var items2 = grid.querySelectorAll('[data-reveal]');
+      if('IntersectionObserver' in window){
+        var io = new IntersectionObserver(function(entries){
+          entries.forEach(function(entry){
+            if(entry.isIntersecting){
+              entry.target.classList.add('in-view');
+              io.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.2, rootMargin: '0px 0px -40px 0px' });
+        items2.forEach(function(el){ io.observe(el); });
+      } else {
+        items2.forEach(function(el){ el.classList.add('in-view'); });
+      }
+    }
+
+    if(!TESTIMONIALS_ENDPOINT_URL || TESTIMONIALS_ENDPOINT_URL.indexOf('PASTE_YOUR') === 0){
+      grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:var(--muted); font-size:14px;">Testimonials backend not connected yet — see Testimonials_Backend_Code.gs setup instructions.</p>';
+    } else {
+      fetch(TESTIMONIALS_ENDPOINT_URL)
+        .then(function(res){ return res.json(); })
+        .then(function(data){ renderTestimonials(data); })
+        .catch(function(){
+          grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:var(--muted); font-size:14px;">Could not load testimonials right now.</p>';
+        });
+    }
   })();
 </script>
 <script>
