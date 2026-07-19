@@ -29,7 +29,7 @@
   .panel{display:none;}
   .card{background:#fff; border:1px solid var(--line); border-radius:10px; padding:26px; margin-bottom:26px;}
   .row{display:flex; gap:12px; flex-wrap:wrap;}
-  .row input[type="text"]{flex:1; min-width:180px; padding:11px 13px; border:1px solid var(--line); border-radius:6px; font-size:14px; background:var(--cream);}
+  .row input[type="text"], .row input[type="email"]{flex:1; min-width:180px; padding:11px 13px; border:1px solid var(--line); border-radius:6px; font-size:14px; background:var(--cream);}
   .row button{background:var(--sage); color:#fff; border:none; padding:11px 20px; border-radius:6px; font-weight:600; cursor:pointer; white-space:nowrap;}
   .row button:hover{background:var(--sage-dark);}
   .link-output{margin-top:14px; display:none; background:var(--cream); border:1px dashed var(--line); border-radius:6px; padding:12px 14px; font-size:13.5px; word-break:break-all; justify-content:space-between; align-items:center; gap:10px;}
@@ -72,14 +72,19 @@
 
   <div class="card">
     <h2>Generate a Unique Review Link</h2>
-    <p style="color:var(--muted); font-size:13.5px; margin-bottom:14px;">Har customer ke liye ek naya link banao, phir use email/WhatsApp par bhej do. Har link sirf ek baar use ho sakta hai.</p>
+    <p style="color:var(--muted); font-size:13.5px; margin-bottom:14px;">Har customer ke liye ek naya link banao. Neeche unka email daal kar seedha professional mail bhi bhej sakte ho — copy-paste ki zaroorat nahi.</p>
     <div class="row">
-      <input type="text" id="customerLabel" placeholder="Customer name or note (optional, sirf aapke reference ke liye)">
+      <input type="text" id="customerLabel" placeholder="Customer name (e.g. Priya Sharma)">
+      <input type="email" id="customerEmail" placeholder="Customer's email address">
       <button onclick="generateLink()">Generate Link</button>
     </div>
     <div class="link-output" id="linkOutput">
       <span id="linkText"></span>
       <button onclick="copyLink()">Copy</button>
+    </div>
+    <div id="emailAction" style="display:none; margin-top:14px;">
+      <button id="sendEmailBtn" onclick="sendEmail()" style="background:var(--gold); color:#fff; border:none; padding:11px 20px; border-radius:6px; font-weight:600; cursor:pointer;">✉ Send Email to Customer</button>
+      <span id="emailStatus" style="margin-left:12px; font-size:13px;"></span>
     </div>
   </div>
 
@@ -105,7 +110,7 @@
 <script>
   // 👇 Script URL ab config.js me ek hi jagah set hota hai (TESTIMONIALS_SCRIPT_URL).
   //    Yahan alag se paste karne ki zaroorat nahi.
-  var ENDPOINT_URL = (typeof TESTIMONIALS_SCRIPT_URL !== 'undefined') ? TESTIMONIALS_SCRIPT_URL : "https://script.google.com/macros/s/AKfycbyYWBlVamI6iuwRypddi_6f4vTq1gawcn-Qgs7rWYfJ1QE0efSccPtDoi-4eXpktNiMMA/exec";
+  var ENDPOINT_URL = (typeof TESTIMONIALS_SCRIPT_URL !== 'undefined') ? TESTIMONIALS_SCRIPT_URL : "PASTE_YOUR_TESTIMONIALS_APPS_SCRIPT_URL_HERE";
 
   var adminKey = '';
   var allReviews = [];
@@ -150,6 +155,52 @@
     document.getElementById('linkText').textContent = link;
     document.getElementById('linkOutput').style.display = 'flex';
     document.getElementById('linkOutput').dataset.link = link;
+    document.getElementById('emailAction').style.display = 'block';
+    document.getElementById('emailStatus').textContent = '';
+  }
+
+  function sendEmail(){
+    var link = document.getElementById('linkOutput').dataset.link;
+    var email = document.getElementById('customerEmail').value.trim();
+    var name = document.getElementById('customerLabel').value.trim();
+    var statusEl = document.getElementById('emailStatus');
+    var btn = document.getElementById('sendEmailBtn');
+
+    if(!link){ statusEl.style.color = 'var(--red)'; statusEl.textContent = 'Pehle "Generate Link" click karo.'; return; }
+    if(!email){ statusEl.style.color = 'var(--red)'; statusEl.textContent = 'Customer ka email daalo.'; return; }
+
+    btn.disabled = true;
+    var oldText = btn.textContent;
+    btn.textContent = 'Sending…';
+    statusEl.style.color = 'var(--muted)';
+    statusEl.textContent = '';
+
+    var payload = new URLSearchParams();
+    payload.set('action', 'sendEmail');
+    payload.set('key', adminKey);
+    payload.set('email', email);
+    payload.set('name', name);
+    payload.set('link', link);
+
+    fetch(ENDPOINT_URL, { method: 'POST', body: payload })
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        if(data && data.success){
+          statusEl.style.color = 'var(--sage-dark)';
+          statusEl.textContent = '✓ Email sent to ' + email;
+        } else {
+          statusEl.style.color = 'var(--red)';
+          statusEl.textContent = 'Could not send email' + (data && data.message ? ' (' + data.message + ')' : '') + '.';
+        }
+      })
+      .catch(function(){
+        statusEl.style.color = 'var(--red)';
+        statusEl.textContent = 'Could not connect while sending email.';
+      })
+      .finally(function(){
+        btn.disabled = false;
+        btn.textContent = oldText;
+      });
   }
 
   function copyLink(){
