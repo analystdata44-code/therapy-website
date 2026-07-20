@@ -6,6 +6,7 @@
 <title>Admin — Testimonials</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.snow.min.css" rel="stylesheet">
 <style>
   :root{
     --cream:#F1EEE7; --card:#FFFFFF; --ink:#33433E; --muted:#57645F;
@@ -65,6 +66,20 @@
 
   /* Blogs */
   textarea#blogContent{width:100%; padding:12px 13px; border:1px solid var(--line); border-radius:6px; font-size:14px; background:var(--cream); font-family:'Inter',sans-serif; min-height:140px; resize:vertical; margin-top:12px;}
+
+  /* Rich text editor (Quill) */
+  #blogEditorWrap{margin-top:10px; border-radius:8px; overflow:hidden; border:1px solid var(--line);}
+  .ql-toolbar.ql-snow{background:var(--cream); border:none; border-bottom:1px solid var(--line); font-family:'Inter',sans-serif;}
+  .ql-container.ql-snow{border:none; font-family:'Inter',sans-serif; font-size:14.5px;}
+  #blogEditor{background:#fff; min-height:280px; max-height:520px; overflow-y:auto; line-height:1.7;}
+  #blogEditor h2{font-family:'Lora',serif; font-size:20px; margin:14px 0 6px;}
+  #blogEditor h3{font-family:'Lora',serif; font-size:17px; margin:12px 0 6px;}
+  .ql-snow .ql-picker.ql-header .ql-picker-label::before,
+  .ql-snow .ql-picker.ql-header .ql-picker-item::before{content:'Paragraph';}
+  .ql-snow .ql-picker.ql-header .ql-picker-label[data-value="2"]::before,
+  .ql-snow .ql-picker.ql-header .ql-picker-item[data-value="2"]::before{content:'Heading';}
+  .ql-snow .ql-picker.ql-header .ql-picker-label[data-value="3"]::before,
+  .ql-snow .ql-picker.ql-header .ql-picker-item[data-value="3"]::before{content:'Subheading';}
   .field-label{font-size:12.5px; font-weight:600; color:var(--muted); margin:14px 0 6px;}
   #blogImageInput{margin-top:4px;}
   .image-preview-row{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;}
@@ -155,8 +170,32 @@
     <input type="hidden" id="blogId" value="">
     <input type="text" id="blogTitle" placeholder="Blog title" style="width:100%; padding:12px 13px; border:1px solid var(--line); border-radius:6px; font-size:15px; background:var(--cream);">
     <div class="field-label">Content</div>
-    <p style="font-size:12px; color:var(--muted); margin-bottom:8px;">Tip: start a line with <code>##</code> to turn it into a section heading (e.g. <code>## When Perfection Changes Its Outfit</code>). Leave a blank line between paragraphs. Use <code>**text**</code> for bold and <code>*text*</code> for italic. Lines starting with <code>-</code> become a bullet list.</p>
-    <textarea id="blogContent" placeholder="Write your blog post here…&#10;&#10;## First section heading&#10;Your paragraph text here.&#10;&#10;## Next section heading&#10;More text here…"></textarea>
+    <div id="blogEditorWrap">
+      <div id="blogToolbar">
+        <select class="ql-header">
+          <option value="2">Heading</option>
+          <option value="3">Subheading</option>
+          <option selected>Paragraph</option>
+        </select>
+        <button class="ql-bold"></button>
+        <button class="ql-italic"></button>
+        <button class="ql-underline"></button>
+        <button class="ql-strike"></button>
+        <button class="ql-script" value="sub"></button>
+        <button class="ql-script" value="super"></button>
+        <select class="ql-color"></select>
+        <select class="ql-background"></select>
+        <button class="ql-list" value="ordered"></button>
+        <button class="ql-list" value="bullet"></button>
+        <button class="ql-indent" value="-1"></button>
+        <button class="ql-indent" value="+1"></button>
+        <select class="ql-align"></select>
+        <button class="ql-blockquote"></button>
+        <button class="ql-link"></button>
+        <button class="ql-clean"></button>
+      </div>
+      <div id="blogEditor"></div>
+    </div>
 
     <div class="field-label">Category</div>
     <select id="blogCategory" class="blog-status-select" style="width:100%;">
@@ -200,10 +239,17 @@
 </div>
 
 <script src="config.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.min.js"></script>
 <script>
   // 👇 The script URL is now set in one place, in config.js (TESTIMONIALS_SCRIPT_URL).
   //    No need to paste it separately here.
   var ENDPOINT_URL = (typeof TESTIMONIALS_SCRIPT_URL !== 'undefined') ? TESTIMONIALS_SCRIPT_URL : "PASTE_YOUR_TESTIMONIALS_APPS_SCRIPT_URL_HERE";
+
+  var blogQuill = new Quill('#blogEditor', {
+    theme: 'snow',
+    modules: { toolbar: '#blogToolbar' },
+    placeholder: 'Write your blog post here…'
+  });
 
   var adminKey = '';
   var allReviews = [];
@@ -441,6 +487,18 @@
       });
   }
 
+  function contentToExcerpt(content){
+    var text = content || '';
+    if(/^\s*</.test(text)){
+      var div = document.createElement('div');
+      div.innerHTML = text;
+      text = div.textContent || div.innerText || '';
+    } else {
+      text = text.replace(/^##\s+.*$/gm, '');
+    }
+    return text.replace(/\s+/g, ' ').trim();
+  }
+
   function renderBlogList(){
     var list = document.getElementById('blogList');
     if(!allBlogs.length){
@@ -460,7 +518,7 @@
               '<span class="status-badge ' + statusClass + '">' + escapeHtml(status) + '</span>' +
             '</div>' +
             (b.category ? '<div style="font-size:12px; color:var(--sage-dark); font-weight:600; margin-bottom:8px;">' + escapeHtml(b.category) + '</div>' : '') +
-            '<p class="blog-excerpt">' + escapeHtml(b.content.replace(/^##\s+.*$/gm, '').replace(/\s+/g, ' ').trim()) + '</p>' +
+            '<p class="blog-excerpt">' + escapeHtml(contentToExcerpt(b.content)) + '</p>' +
             '<div class="blog-actions">' +
               '<a class="btn-edit" style="text-decoration:none; display:inline-block;" href="blog-post.html?id=' + encodeURIComponent(b.id) + '&key=' + encodeURIComponent(adminKey) + '" target="_blank">Preview</a>' +
               '<button class="btn-edit" onclick="editBlog(\'' + b.id + '\')">Edit</button>' +
@@ -559,7 +617,7 @@
   function resetBlogForm(){
     document.getElementById('blogId').value = '';
     document.getElementById('blogTitle').value = '';
-    document.getElementById('blogContent').value = '';
+    blogQuill.setContents([]);
     document.getElementById('blogCategory').value = 'Trauma & Healing';
     document.getElementById('blogStatus').value = 'Draft';
     document.getElementById('blogFormTitle').textContent = 'Write a New Blog Post';
@@ -569,12 +627,34 @@
     renderImagePreviews();
   }
 
+  // Older posts were saved as plain text with "## Heading" lines, blank-line
+  // paragraphs, and "- item" lists. Convert that into HTML so it loads correctly
+  // into the rich text editor. Posts saved by the new editor are already HTML
+  // (they start with a tag like "<p>" or "<h2>"), so they're used as-is.
+  function legacyContentToHtml(content){
+    if(/^\s*</.test(content)) return content; // already HTML
+    var blocks = content.split(/\n\s*\n/);
+    return blocks.map(function(block){
+      var trimmed = block.trim();
+      if(!trimmed) return '';
+      if(/^##\s+/.test(trimmed)){
+        return '<h2>' + escapeHtml(trimmed.replace(/^##\s+/, '')) + '</h2>';
+      }
+      var lines = trimmed.split('\n').map(function(l){ return l.trim(); }).filter(Boolean);
+      var isList = lines.length > 0 && lines.every(function(l){ return /^[-*]\s+/.test(l); });
+      if(isList){
+        return '<ul>' + lines.map(function(l){ return '<li>' + escapeHtml(l.replace(/^[-*]\s+/, '')) + '</li>'; }).join('') + '</ul>';
+      }
+      return '<p>' + escapeHtml(trimmed).replace(/\n/g, '<br>') + '</p>';
+    }).join('');
+  }
+
   function editBlog(id){
     var b = allBlogs.find(function(x){ return x.id === id; });
     if(!b) return;
     document.getElementById('blogId').value = b.id;
     document.getElementById('blogTitle').value = b.title;
-    document.getElementById('blogContent').value = b.content;
+    blogQuill.root.innerHTML = legacyContentToHtml(b.content || '');
     document.getElementById('blogCategory').value = b.category || 'Trauma & Healing';
     document.getElementById('blogStatus').value = (b.status && b.status.toLowerCase() === 'published') ? 'Published' : 'Draft';
     document.getElementById('blogFormTitle').textContent = 'Edit Blog Post';
@@ -587,13 +667,14 @@
   function saveBlog(){
     var id = document.getElementById('blogId').value;
     var title = document.getElementById('blogTitle').value.trim();
-    var content = document.getElementById('blogContent').value.trim();
+    var content = blogQuill.root.innerHTML.trim();
     var category = document.getElementById('blogCategory').value;
     var status = document.getElementById('blogStatus').value;
     var statusEl = document.getElementById('blogSaveStatus');
     var btn = document.getElementById('saveBlogBtn');
 
     if(!title){ statusEl.style.color = 'var(--red)'; statusEl.textContent = 'Please enter a title.'; return; }
+    if(blogQuill.getText().trim() === ''){ statusEl.style.color = 'var(--red)'; statusEl.textContent = 'Please write some content.'; return; }
 
     btn.disabled = true;
     var oldText = btn.textContent;
