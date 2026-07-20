@@ -3,187 +3,213 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Blog</title>
+<title>Article — Healing Within</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --cream: #F1EEE7;
-    --cream-deep: #E9E4DA;
-    --card: #FFFFFF;
-    --ink: #33433E;
-    --muted: #57645F;
-    --sage: #7E9686;
-    --sage-dark: #647B6C;
-    --sage-soft: #AFC0B4;
-    --line: #D8D2C4;
-    --gold: #B9895A;
+    --cream:#F1EEE7; --cream-deep:#E9E4DA; --card:#FFFFFF; --ink:#33433E;
+    --muted:#57645F; --sage:#7E9686; --sage-dark:#647B6C; --sage-soft:#AFC0B4;
+    --line:#D8D2C4; --gold:#B9895A;
   }
   *{margin:0;padding:0;box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
-  body{background:var(--cream); color:var(--ink); font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased;}
+  body{background:var(--cream); color:var(--ink); font-family:'Inter',sans-serif; line-height:1.7;}
 
-  .topbar{
-    background:var(--cream); border-bottom:1px solid var(--line);
-    padding:18px 24px; display:flex; align-items:center; justify-content:space-between;
+  .topbar{display:flex; align-items:center; justify-content:space-between; padding:26px 6vw; border-bottom:1px solid var(--line);}
+  .logo{font-family:'Lora',serif; font-size:19px; font-weight:500; color:var(--ink); display:flex; align-items:center; gap:10px; text-decoration:none;}
+  .back-link{font-size:13.5px; color:var(--sage-dark); font-weight:600; text-decoration:none; display:inline-flex; align-items:center; gap:6px;}
+  .back-link:hover{text-decoration:underline;}
+
+  .wrap{max-width:760px; margin:0 auto; padding:60px 6vw 100px;}
+
+  .meta-row{display:flex; align-items:center; gap:14px; font-size:12.5px; color:var(--muted); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:22px; flex-wrap:wrap;}
+  .cat-badge{background:var(--sage); color:#fff; padding:5px 13px; border-radius:20px; font-weight:600; letter-spacing:0.04em;}
+
+  h1.article-title{
+    font-family:'Inter',sans-serif; font-weight:700; font-size:clamp(24px,3.4vw,38px);
+    letter-spacing:0.09em; text-transform:uppercase; line-height:1.4; color:var(--ink);
+    margin-bottom:36px;
   }
-  .topbar-back{
-    font-size:13.5px; font-weight:600; color:var(--sage-dark); text-decoration:none;
-    display:inline-flex; align-items:center; gap:6px;
-  }
-  .topbar-back:hover{color:var(--ink);}
 
-  .wrap{max-width:720px; margin:0 auto; padding:50px 24px 90px;}
+  .hero-image{width:100%; border-radius:14px; overflow:hidden; margin-bottom:40px; background:var(--cream-deep);}
+  .hero-image img{width:100%; display:block; object-fit:cover; max-height:520px;}
 
-  .post-eyebrow{font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--sage-dark); font-weight:700; margin-bottom:14px;}
-  .post-title{font-family:'Lora',serif; font-weight:600; font-size:clamp(28px,4.4vw,42px); line-height:1.25; color:var(--ink); margin-bottom:18px;}
-  .post-meta{display:flex; align-items:center; gap:16px; font-size:13px; color:var(--muted); margin-bottom:32px; flex-wrap:wrap;}
-  .post-meta span{display:inline-flex; align-items:center; gap:6px;}
+  .article-body p{font-size:16px; color:var(--ink); margin-bottom:22px;}
+  .article-body p strong{color:var(--sage-dark);}
+  .article-body p em{color:var(--sage-dark); font-style:italic;}
 
-  .post-hero{width:100%; max-height:420px; object-fit:cover; border-radius:14px; margin-bottom:36px; display:block;}
-
-  .post-body{font-size:16px; line-height:1.9; color:#3d4a45;}
-  .post-body p{margin-bottom:22px;}
-  .post-body h2{
-    font-family:'Lora',serif; font-weight:600; font-size:clamp(21px,2.6vw,26px); color:var(--ink);
+  .article-body h2{
+    font-family:'Lora',serif; font-weight:600; font-size:26px; color:var(--sage-dark);
     margin:44px 0 18px; line-height:1.35;
   }
 
-  .post-gallery{display:flex; gap:12px; overflow-x:auto; margin:36px 0; padding-bottom:6px;}
-  .post-gallery img{width:220px; height:150px; object-fit:cover; border-radius:10px; flex-shrink:0;}
+  .article-body ul{margin:0 0 24px 22px;}
+  .article-body ul li{font-size:16px; color:var(--ink); margin-bottom:10px;}
 
-  .post-footer{margin-top:56px; padding-top:28px; border-top:1px solid var(--line); text-align:center;}
-  .post-footer a{
-    display:inline-flex; align-items:center; gap:8px; background:var(--sage); color:#fff;
-    text-decoration:none; padding:13px 28px; border-radius:8px; font-weight:600; font-size:14px;
-  }
-  .post-footer a:hover{background:var(--sage-dark);}
+  .inline-image{margin:36px 0; border-radius:12px; overflow:hidden; background:var(--cream-deep);}
+  .inline-image img{width:100%; display:block;}
+  .inline-image figcaption{font-size:12.5px; color:var(--muted); text-align:center; margin-top:10px; font-style:italic;}
 
-  .post-loading, .post-error{text-align:center; color:var(--muted); font-size:14.5px; padding:80px 0;}
+  .footer-nav{margin-top:70px; padding-top:30px; border-top:1px solid var(--line); text-align:center;}
+  .footer-nav a{color:var(--sage-dark); font-weight:600; text-decoration:none; font-size:14px;}
+  .footer-nav a:hover{text-decoration:underline;}
 
-  @media (max-width:560px){
-    .wrap{padding:34px 18px 60px;}
-    .post-hero{max-height:260px;}
-  }
+  .state-box{text-align:center; padding:120px 20px; color:var(--muted);}
+  .hidden{display:none !important;}
 </style>
 </head>
 <body>
 
 <div class="topbar">
-  <a class="topbar-back" href="index.html#yellow-chair">← Back to Blog</a>
+  <a class="logo" href="index.html">Healing Within</a>
+  <a class="back-link" href="index.html#yellow-chair">&larr; Back to Blog</a>
 </div>
 
 <div class="wrap">
-  <div id="postLoading" class="post-loading">Loading…</div>
-  <div id="postContent" style="display:none;">
-    <div class="post-eyebrow" id="postCategory"></div>
-    <h1 class="post-title" id="postTitle"></h1>
-    <div class="post-meta">
-      <span id="postDate"></span>
-      <span id="postReadTime"></span>
+  <div id="loadingState" class="state-box">Loading article…</div>
+  <div id="notFoundState" class="state-box hidden">This article could not be found, or is not yet published.</div>
+
+  <div id="articleState" class="hidden">
+    <div class="meta-row">
+      <span class="cat-badge" id="articleCategory"></span>
+      <span id="articleDate"></span>
     </div>
-    <img class="post-hero" id="postHero" style="display:none;">
-    <div class="post-body" id="postBody"></div>
-    <div class="post-gallery" id="postGallery" style="display:none;"></div>
-    <div class="post-footer">
-      <a href="index.html#yellow-chair">← Back to all articles</a>
+    <h1 class="article-title" id="articleTitle"></h1>
+    <div class="hero-image hidden" id="heroImageWrap">
+      <img id="heroImage" src="" alt="">
+    </div>
+    <div class="article-body" id="articleBody"></div>
+
+    <div class="footer-nav">
+      <a href="index.html#yellow-chair">&larr; Back to all articles</a>
     </div>
   </div>
 </div>
 
 <script src="config.js"></script>
 <script>
-  (function(){
-    var ENDPOINT_URL = (typeof TESTIMONIALS_SCRIPT_URL !== 'undefined') ? TESTIMONIALS_SCRIPT_URL : "PASTE_YOUR_TESTIMONIALS_APPS_SCRIPT_URL_HERE";
+(function(){
+  // Script URL config.js se aata hai (TESTIMONIALS_SCRIPT_URL) — ek hi jagah set karna hai
+  var ENDPOINT_URL = (typeof TESTIMONIALS_SCRIPT_URL !== 'undefined') ? TESTIMONIALS_SCRIPT_URL : "PASTE_YOUR_TESTIMONIALS_APPS_SCRIPT_URL_HERE";
 
-    function escapeHtml(str){
-      var div = document.createElement('div');
-      div.textContent = str == null ? '' : String(str);
-      return div.innerHTML;
+  var params = new URLSearchParams(window.location.search);
+  var postId = params.get('id') || '';
+  var adminKey = params.get('key') || ''; // agar admin panel se "Preview" khola gaya ho (drafts bhi dikhega)
+
+  var loadingState = document.getElementById('loadingState');
+  var notFoundState = document.getElementById('notFoundState');
+  var articleState = document.getElementById('articleState');
+
+  function escapeHtml(str){
+    var div = document.createElement('div');
+    div.textContent = str == null ? '' : String(str);
+    return div.innerHTML;
+  }
+
+  // Turn **bold** and *italic* into <strong>/<em> inside a line of text (after escaping)
+  function inlineFormat(escapedText){
+    return escapedText
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.+?)\*/g, '<em>$1</em>');
+  }
+
+  // Convert the plain-text/markdown-lite content into HTML.
+  // Supports: "## Heading" lines, blank-line-separated paragraphs, "- item" lists.
+  function renderContent(content, extraImages){
+    var blocks = content.split(/\n\s*\n/);
+    var html = '';
+    var imgPointer = 0; // extraImages[0] is used as the hero image already, so start from 1
+    var paraCount = 0;
+
+    blocks.forEach(function(block){
+      var trimmed = block.trim();
+      if(!trimmed) return;
+
+      if(/^##\s+/.test(trimmed)){
+        html += '<h2>' + inlineFormat(escapeHtml(trimmed.replace(/^##\s+/, ''))) + '</h2>';
+        return;
+      }
+
+      var lines = trimmed.split('\n').map(function(l){ return l.trim(); }).filter(Boolean);
+      var isList = lines.length > 0 && lines.every(function(l){ return /^[-*]\s+/.test(l); });
+
+      if(isList){
+        html += '<ul>' + lines.map(function(l){
+          return '<li>' + inlineFormat(escapeHtml(l.replace(/^[-*]\s+/, ''))) + '</li>';
+        }).join('') + '</ul>';
+        return;
+      }
+
+      html += '<p>' + inlineFormat(escapeHtml(trimmed)).replace(/\n/g, '<br>') + '</p>';
+      paraCount++;
+
+      // Sprinkle in any additional uploaded images every ~3 paragraphs
+      if(extraImages && extraImages.length > (imgPointer + 1) && paraCount % 3 === 0){
+        imgPointer++;
+        html += '<figure class="inline-image"><img src="' + escapeHtml(extraImages[imgPointer]) + '" alt=""></figure>';
+      }
+    });
+
+    return html;
+  }
+
+  function showArticle(post){
+    document.getElementById('articleCategory').textContent = post.category || 'Article';
+    var dateStr = '';
+    if(post.createdAt){
+      var d = new Date(post.createdAt);
+      if(!isNaN(d)) dateStr = d.toLocaleDateString(undefined, { year:'numeric', month:'long', day:'numeric' });
+    }
+    document.getElementById('articleDate').textContent = dateStr;
+    document.getElementById('articleTitle').textContent = post.title || '';
+
+    if(post.images && post.images.length){
+      document.getElementById('heroImage').src = post.images[0];
+      document.getElementById('heroImageWrap').classList.remove('hidden');
     }
 
-    function formatDate(iso){
-      if(!iso) return '';
-      var d = new Date(iso);
-      if(isNaN(d.getTime())) return '';
-      return d.toLocaleDateString('en-IN', { year:'numeric', month:'long', day:'numeric' });
-    }
+    document.getElementById('articleBody').innerHTML = renderContent(post.content || '', post.images || []);
 
-    function readTime(text){
-      var words = String(text || '').trim().split(/\s+/).filter(Boolean).length;
-      var minutes = Math.max(1, Math.round(words / 200));
-      return minutes + ' min read';
-    }
+    loadingState.classList.add('hidden');
+    articleState.classList.remove('hidden');
+    document.title = (post.title || 'Article') + ' — Healing Within';
+  }
 
-    // Turns plain text into HTML with heading support:
-    //  - a line starting with "## " becomes a section heading
-    //  - a blank line separates paragraphs
-    //  - single line breaks inside a paragraph become <br>
-    function renderContent(text){
-      var blocks = String(text || '').split(/\n\s*\n/);
-      return blocks.map(function(block){
-        var trimmed = block.trim();
-        if(!trimmed) return '';
-        if(/^##\s+/.test(trimmed)){
-          return '<h2>' + escapeHtml(trimmed.replace(/^##\s+/, '')) + '</h2>';
-        }
-        return '<p>' + escapeHtml(trimmed).replace(/\n/g, '<br>') + '</p>';
-      }).join('');
-    }
+  if(!ENDPOINT_URL || ENDPOINT_URL.indexOf('PASTE_YOUR') === 0){
+    loadingState.textContent = 'Backend not connected yet — see Testimonials_Backend_Code.gs setup instructions.';
+    return;
+  }
+  if(!postId){
+    loadingState.classList.add('hidden');
+    notFoundState.classList.remove('hidden');
+    return;
+  }
 
-    function showError(message){
-      document.getElementById('postLoading').textContent = message;
-    }
+  var action = adminKey ? 'adminBlogs' : 'blogs';
+  var url = ENDPOINT_URL + '?action=' + action + (adminKey ? '&key=' + encodeURIComponent(adminKey) : '') + '&_=' + Date.now();
 
-    var params = new URLSearchParams(window.location.search);
-    var postId = params.get('id');
-
-    if(!postId){
-      showError('No blog post was specified.');
-      return;
-    }
-    if(!ENDPOINT_URL || ENDPOINT_URL.indexOf('PASTE_YOUR') === 0){
-      showError('Blog backend not connected yet.');
-      return;
-    }
-
-    fetch(ENDPOINT_URL + '?action=blogs')
-      .then(function(res){ return res.json(); })
-      .then(function(data){
-        var post = (data || []).find(function(b){ return b.id === postId; });
-        if(!post){
-          showError('This blog post could not be found.');
-          return;
-        }
-
-        document.title = post.title + ' — Blog';
-        if(post.category) document.getElementById('postCategory').textContent = post.category;
-        document.getElementById('postTitle').textContent = post.title;
-        document.getElementById('postDate').innerHTML = '📅 ' + escapeHtml(formatDate(post.createdAt));
-        document.getElementById('postReadTime').innerHTML = '⏱ ' + readTime(post.content);
-        document.getElementById('postBody').innerHTML = renderContent(post.content);
-
-        var images = post.images || [];
-        if(images.length){
-          var hero = document.getElementById('postHero');
-          hero.src = images[0];
-          hero.style.display = 'block';
-        }
-        if(images.length > 1){
-          var galleryEl = document.getElementById('postGallery');
-          galleryEl.innerHTML = images.slice(1).map(function(url){
-            return '<img src="' + escapeHtml(url) + '" alt="">';
-          }).join('');
-          galleryEl.style.display = 'flex';
-        }
-
-        document.getElementById('postLoading').style.display = 'none';
-        document.getElementById('postContent').style.display = 'block';
-      })
-      .catch(function(){
-        showError('Could not load this blog post right now.');
-      });
-  })();
+  fetch(url, { cache: 'no-store' })
+    .then(function(res){ return res.json(); })
+    .then(function(data){
+      if(!Array.isArray(data)){
+        loadingState.classList.add('hidden');
+        notFoundState.classList.remove('hidden');
+        return;
+      }
+      var post = data.find(function(b){ return String(b.id) === String(postId); });
+      if(!post){
+        loadingState.classList.add('hidden');
+        notFoundState.classList.remove('hidden');
+        return;
+      }
+      showArticle(post);
+    })
+    .catch(function(){
+      loadingState.classList.add('hidden');
+      notFoundState.classList.remove('hidden');
+    });
+})();
 </script>
 </body>
 </html>
