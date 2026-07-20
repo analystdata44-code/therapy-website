@@ -475,6 +475,9 @@
     statusEl.style.color = 'var(--muted)';
     statusEl.textContent = 'Uploading ' + files.length + ' image(s)…';
 
+    var sharingBlocked = false;
+    var failedCount = 0;
+
     var uploadOne = function(file){
       return new Promise(function(resolve){
         var reader = new FileReader();
@@ -488,19 +491,33 @@
           fetch(ENDPOINT_URL, { method: 'POST', body: payload })
             .then(function(res){ return res.json(); })
             .then(function(data){
-              if(data && data.success){ pendingImages.push({ url: data.url }); }
+              if(data && data.success){
+                pendingImages.push({ url: data.url });
+                if(data.sharingOk === false) sharingBlocked = true;
+              } else {
+                failedCount++;
+              }
               resolve();
             })
-            .catch(function(){ resolve(); });
+            .catch(function(){ failedCount++; resolve(); });
         };
         reader.readAsDataURL(file);
       });
     };
 
     Promise.all(files.map(uploadOne)).then(function(){
-      statusEl.textContent = '';
       renderImagePreviews();
       evt.target.value = ''; // allow re-selecting the same file again later
+
+      if(sharingBlocked){
+        statusEl.style.color = 'var(--red)';
+        statusEl.textContent = '⚠ Images uploaded, but your Google account\'s sharing settings are blocking public access — the images may not display on the website. See the note below the image list.';
+      } else if(failedCount){
+        statusEl.style.color = 'var(--red)';
+        statusEl.textContent = failedCount + ' image(s) failed to upload. Please try again.';
+      } else {
+        statusEl.textContent = '';
+      }
     });
   }
 
