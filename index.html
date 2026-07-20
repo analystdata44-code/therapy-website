@@ -1596,7 +1596,7 @@
           <textarea id="qcMessage" name="message" placeholder="What would you like to share?" required></textarea>
         </div>
         <button type="submit" class="btn-light">Send Message</button>
-        <p class="contact-note">This opens your email app to send the message to us.</p>
+        <p class="contact-note" id="qcNote">We'll get back to you by email soon.</p>
       </form>
     </div>
   </div>
@@ -1787,23 +1787,51 @@
 </script>
 <script>
   (function(){
-    var TO_EMAIL = "hello@mindhaventherapy.com";
+    var CONTACT_ENDPOINT_URL = (typeof TESTIMONIALS_SCRIPT_URL !== 'undefined') ? TESTIMONIALS_SCRIPT_URL : "PASTE_YOUR_TESTIMONIALS_APPS_SCRIPT_URL_HERE";
     var form = document.getElementById('quickContactForm');
+    var note = document.getElementById('qcNote');
     if(!form) return;
+    var submitBtn = form.querySelector('button[type="submit"]');
+    var defaultBtnText = submitBtn ? submitBtn.textContent : '';
+    var defaultNoteText = note ? note.textContent : '';
+
     form.addEventListener('submit', function(e){
       e.preventDefault();
+
+      if(!CONTACT_ENDPOINT_URL || CONTACT_ENDPOINT_URL.indexOf('PASTE_YOUR') === 0){
+        if(note){ note.style.color = '#c0685a'; note.textContent = "Contact form isn't connected yet — please email us directly."; }
+        return;
+      }
+
       var email = form.email.value.trim();
       var phone = form.phone.value.trim();
       var message = form.message.value.trim();
-      var subject = "New enquiry from " + email;
-      var body =
-        "Email: " + email + "\n" +
-        "Contact Number: " + phone + "\n\n" +
-        "Message:\n" + message;
-      var mailtoLink = "mailto:" + TO_EMAIL +
-        "?subject=" + encodeURIComponent(subject) +
-        "&body=" + encodeURIComponent(body);
-      window.location.href = mailtoLink;
+
+      var payload = new URLSearchParams();
+      payload.set('action', 'sendContactMessage');
+      payload.set('email', email);
+      payload.set('phone', phone);
+      payload.set('message', message);
+
+      if(submitBtn){ submitBtn.disabled = true; submitBtn.textContent = 'Sending…'; }
+      if(note){ note.style.color = ''; note.textContent = ''; }
+
+      fetch(CONTACT_ENDPOINT_URL, { method: 'POST', body: payload })
+        .then(function(res){ return res.json(); })
+        .then(function(data){
+          if(data && data.success){
+            if(note){ note.style.color = '#7E9686'; note.textContent = "✓ Message sent — we'll get back to you soon."; }
+            form.reset();
+          } else {
+            if(note){ note.style.color = '#c0685a'; note.textContent = "Couldn't send — please try again or email us directly."; }
+          }
+        })
+        .catch(function(){
+          if(note){ note.style.color = '#c0685a'; note.textContent = "Couldn't send — please try again or email us directly."; }
+        })
+        .finally(function(){
+          if(submitBtn){ submitBtn.disabled = false; submitBtn.textContent = defaultBtnText; }
+        });
     });
   })();
 </script>
