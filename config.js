@@ -10,4 +10,4 @@
 // share-your-experience.html, aur admin.html rakhi hain.
 // ============================================================
 
-var TESTIMONIALS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyGCQ294KIiuOI7uaDA6kT9nNs061jaFmmYmifoH6oZWXsktWUk-Uh74WazzQN1iq3-iQ/exec";
+var TESTIMONIALS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbymCUKdraBQFvwGVqkMiD0dSQAxDX0dGS5COvJfWlKUrh5zmQb6A8sgw8W-use09ENw4w/exec";
