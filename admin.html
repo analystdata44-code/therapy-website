@@ -112,7 +112,7 @@
 
   <div class="card">
     <h2>Generate a Unique Review Link</h2>
-    <p style="color:var(--muted); font-size:13.5px; margin-bottom:14px;">Har customer ke liye ek naya link banao. Neeche unka email daal kar seedha professional mail bhi bhej sakte ho — copy-paste ki zaroorat nahi.</p>
+    <p style="color:var(--muted); font-size:13.5px; margin-bottom:14px;">Create a new link for each customer. Add their email below to send a professional email directly — no copy-pasting required.</p>
     <div class="row">
       <input type="text" id="customerLabel" placeholder="Customer name (e.g. Priya Sharma)">
       <input type="email" id="customerEmail" placeholder="Customer's email address">
@@ -155,17 +155,26 @@
     <input type="hidden" id="blogId" value="">
     <input type="text" id="blogTitle" placeholder="Blog title" style="width:100%; padding:12px 13px; border:1px solid var(--line); border-radius:6px; font-size:15px; background:var(--cream);">
     <div class="field-label">Content</div>
-    <textarea id="blogContent" placeholder="Likho apna blog post yahan…"></textarea>
+    <textarea id="blogContent" placeholder="Write your blog post here…"></textarea>
 
-    <div class="field-label">Images (multiple select kar sakte ho)</div>
+    <div class="field-label">Category</div>
+    <select id="blogCategory" class="blog-status-select" style="width:100%;">
+      <option value="Trauma & Healing">Trauma &amp; Healing</option>
+      <option value="Mental Wellness">Mental Wellness</option>
+      <option value="Self Growth">Self Growth</option>
+      <option value="Relationships">Relationships</option>
+      <option value="Mindfulness">Mindfulness</option>
+    </select>
+
+    <div class="field-label">Images (you can select multiple)</div>
     <input type="file" id="blogImageInput" accept="image/*" multiple onchange="handleImageSelect(event)">
     <div class="image-preview-row" id="imagePreviewRow"></div>
 
     <div class="blog-form-actions">
       <div class="field-label" style="margin:0;">Status:</div>
       <select id="blogStatus" class="blog-status-select">
-        <option value="Draft">Draft (sirf aapko dikhega)</option>
-        <option value="Published">Published (website par live)</option>
+        <option value="Draft">Draft (only visible to you)</option>
+        <option value="Published">Published (live on the website)</option>
       </select>
       <button class="btn-primary" onclick="saveBlog()" id="saveBlogBtn">Save Blog Post</button>
       <button class="btn-secondary" onclick="resetBlogForm()">Clear</button>
@@ -188,8 +197,8 @@
 
 <script src="config.js"></script>
 <script>
-  // 👇 Script URL ab config.js me ek hi jagah set hota hai (TESTIMONIALS_SCRIPT_URL).
-  //    Yahan alag se paste karne ki zaroorat nahi.
+  // 👇 The script URL is now set in one place, in config.js (TESTIMONIALS_SCRIPT_URL).
+  //    No need to paste it separately here.
   var ENDPOINT_URL = (typeof TESTIMONIALS_SCRIPT_URL !== 'undefined') ? TESTIMONIALS_SCRIPT_URL : "PASTE_YOUR_TESTIMONIALS_APPS_SCRIPT_URL_HERE";
 
   var adminKey = '';
@@ -258,8 +267,8 @@
     var statusEl = document.getElementById('emailStatus');
     var btn = document.getElementById('sendEmailBtn');
 
-    if(!link){ statusEl.style.color = 'var(--red)'; statusEl.textContent = 'Pehle "Generate Link" click karo.'; return; }
-    if(!email){ statusEl.style.color = 'var(--red)'; statusEl.textContent = 'Customer ka email daalo.'; return; }
+    if(!link){ statusEl.style.color = 'var(--red)'; statusEl.textContent = 'Please click "Generate Link" first.'; return; }
+    if(!email){ statusEl.style.color = 'var(--red)'; statusEl.textContent = 'Please enter the customer\'s email.'; return; }
 
     btn.disabled = true;
     var oldText = btn.textContent;
@@ -431,7 +440,7 @@
   function renderBlogList(){
     var list = document.getElementById('blogList');
     if(!allBlogs.length){
-      list.innerHTML = '<p class="empty">Koi blog post nahi hai abhi. Upar se ek likh do!</p>';
+      list.innerHTML = '<p class="empty">No blog posts yet. Write one above to get started!</p>';
       return;
     }
     list.innerHTML = allBlogs.map(function(b){
@@ -446,6 +455,7 @@
               '<h3>' + escapeHtml(b.title) + '</h3>' +
               '<span class="status-badge ' + statusClass + '">' + escapeHtml(status) + '</span>' +
             '</div>' +
+            (b.category ? '<div style="font-size:12px; color:var(--sage-dark); font-weight:600; margin-bottom:8px;">' + escapeHtml(b.category) + '</div>' : '') +
             '<p class="blog-excerpt">' + escapeHtml(b.content) + '</p>' +
             '<div class="blog-actions">' +
               '<button class="btn-edit" onclick="editBlog(\'' + b.id + '\')">Edit</button>' +
@@ -514,6 +524,7 @@
     document.getElementById('blogId').value = '';
     document.getElementById('blogTitle').value = '';
     document.getElementById('blogContent').value = '';
+    document.getElementById('blogCategory').value = 'Trauma & Healing';
     document.getElementById('blogStatus').value = 'Draft';
     document.getElementById('blogFormTitle').textContent = 'Write a New Blog Post';
     document.getElementById('saveBlogBtn').textContent = 'Save Blog Post';
@@ -528,6 +539,7 @@
     document.getElementById('blogId').value = b.id;
     document.getElementById('blogTitle').value = b.title;
     document.getElementById('blogContent').value = b.content;
+    document.getElementById('blogCategory').value = b.category || 'Trauma & Healing';
     document.getElementById('blogStatus').value = (b.status && b.status.toLowerCase() === 'published') ? 'Published' : 'Draft';
     document.getElementById('blogFormTitle').textContent = 'Edit Blog Post';
     document.getElementById('saveBlogBtn').textContent = 'Update Blog Post';
@@ -540,11 +552,12 @@
     var id = document.getElementById('blogId').value;
     var title = document.getElementById('blogTitle').value.trim();
     var content = document.getElementById('blogContent').value.trim();
+    var category = document.getElementById('blogCategory').value;
     var status = document.getElementById('blogStatus').value;
     var statusEl = document.getElementById('blogSaveStatus');
     var btn = document.getElementById('saveBlogBtn');
 
-    if(!title){ statusEl.style.color = 'var(--red)'; statusEl.textContent = 'Title likhna zaroori hai.'; return; }
+    if(!title){ statusEl.style.color = 'var(--red)'; statusEl.textContent = 'Please enter a title.'; return; }
 
     btn.disabled = true;
     var oldText = btn.textContent;
@@ -558,6 +571,7 @@
     payload.set('id', id);
     payload.set('title', title);
     payload.set('content', content);
+    payload.set('category', category);
     payload.set('status', status);
     payload.set('images', JSON.stringify(pendingImages.map(function(i){ return i.url; })));
 
@@ -585,7 +599,7 @@
   }
 
   function deleteBlogFn(id){
-    if(!confirm('Ye blog post permanently delete karna hai?')) return;
+    if(!confirm('Are you sure you want to permanently delete this blog post?')) return;
     allBlogs = allBlogs.filter(function(b){ return b.id !== id; }); // optimistic
     renderBlogList();
 
