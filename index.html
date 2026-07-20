@@ -765,6 +765,13 @@
     display:flex; align-items:center; justify-content:space-between; gap:18px; flex-wrap:wrap;
   }
   .booking-footer-note{font-size:12.5px; color:var(--muted); line-height:1.65;}
+
+  .booking-disclaimer{
+    background:var(--cream); border:1px solid var(--line); border-radius:8px;
+    padding:14px 16px; margin-top:6px;
+  }
+  .booking-disclaimer strong{display:block; font-size:12.5px; font-weight:700; color:var(--ink); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.04em;}
+  .booking-disclaimer p{font-size:12.5px; color:var(--muted); line-height:1.65; margin:0;}
   .b-submit{
     background:var(--ink); color:#fff; border:none; border-radius:100px; padding:14px 26px;
     font-size:14px; font-weight:600; display:inline-flex; align-items:center; gap:8px;
@@ -1707,7 +1714,7 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"></rect><line x1="8" y1="3" x2="8" y2="7"></line><line x1="16" y1="3" x2="16" y2="7"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
           </div>
         </div>
-        <div class="b-field">
+        <div class="b-field" id="bTimeField">
           <label for="bTime">Preferred Time</label>
           <div class="b-select-wrap">
             <select id="bTime" name="time">
@@ -1729,6 +1736,11 @@
       <div class="b-field">
         <label for="bNotes">Anything you'd like me to know? <span class="opt">(Optional)</span></label>
         <textarea id="bNotes" name="notes" placeholder="Any questions, concerns, or preferences."></textarea>
+      </div>
+
+      <div class="booking-disclaimer">
+        <strong>Disclaimer for appointment</strong>
+        <p>Please note: Your appointment is confirmed only after payment has been received. A valid phone number is required to complete the booking and confirm your session.</p>
       </div>
 
       <div class="booking-footer">
@@ -1821,6 +1833,20 @@
       document.body.style.overflow = '';
     }
     triggers.forEach(function(t){ t.addEventListener('click', openModal); });
+
+    // "Preferred Time" is only relevant for In Person sessions — hide it for Online.
+    var sessionRadios = form ? form.querySelectorAll('input[name="session"]') : [];
+    var bTimeField = document.getElementById('bTimeField');
+    var bTimeSelect = document.getElementById('bTime');
+    function updateTimeFieldVisibility(){
+      var selected = form.querySelector('input[name="session"]:checked');
+      var isInPerson = selected && selected.value === 'In Person';
+      if(bTimeField) bTimeField.style.display = isInPerson ? '' : 'none';
+      if(bTimeSelect) bTimeSelect.required = !!isInPerson;
+      if(!isInPerson && bTimeSelect) bTimeSelect.value = '';
+    }
+    sessionRadios.forEach(function(r){ r.addEventListener('change', updateTimeFieldVisibility); });
+    updateTimeFieldVisibility();
     if(closeBtn) closeBtn.addEventListener('click', closeModal);
     overlay.addEventListener('click', function(e){ if(e.target === overlay) closeModal(); });
     document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && overlay.classList.contains('open')) closeModal(); });
