@@ -155,7 +155,8 @@
     <input type="hidden" id="blogId" value="">
     <input type="text" id="blogTitle" placeholder="Blog title" style="width:100%; padding:12px 13px; border:1px solid var(--line); border-radius:6px; font-size:15px; background:var(--cream);">
     <div class="field-label">Content</div>
-    <textarea id="blogContent" placeholder="Write your blog post here…"></textarea>
+    <p style="font-size:12px; color:var(--muted); margin-bottom:8px;">Tip: start a line with <code>##</code> to turn it into a section heading (e.g. <code>## When Perfection Changes Its Outfit</code>). Leave a blank line between paragraphs.</p>
+    <textarea id="blogContent" placeholder="Write your blog post here…&#10;&#10;## First section heading&#10;Your paragraph text here.&#10;&#10;## Next section heading&#10;More text here…"></textarea>
 
     <div class="field-label">Category</div>
     <select id="blogCategory" class="blog-status-select" style="width:100%;">
@@ -456,7 +457,7 @@
               '<span class="status-badge ' + statusClass + '">' + escapeHtml(status) + '</span>' +
             '</div>' +
             (b.category ? '<div style="font-size:12px; color:var(--sage-dark); font-weight:600; margin-bottom:8px;">' + escapeHtml(b.category) + '</div>' : '') +
-            '<p class="blog-excerpt">' + escapeHtml(b.content) + '</p>' +
+            '<p class="blog-excerpt">' + escapeHtml(b.content.replace(/^##\s+.*$/gm, '').replace(/\s+/g, ' ').trim()) + '</p>' +
             '<div class="blog-actions">' +
               '<button class="btn-edit" onclick="editBlog(\'' + b.id + '\')">Edit</button>' +
               '<button class="btn-delete" onclick="deleteBlogFn(\'' + b.id + '\')">Delete</button>' +
