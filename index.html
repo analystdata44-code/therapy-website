@@ -971,6 +971,7 @@
     .blog-card-img{height:150px;}
   }
 </style>
+<script src="config.js"></script>
 </head>
 <body>
 
@@ -1710,14 +1711,14 @@
         <div class="b-field">
           <label for="bDate">Preferred Date</label>
           <div class="b-date-wrap">
-            <input type="date" id="bDate" name="date">
+            <input type="date" id="bDate" name="date" required>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"></rect><line x1="8" y1="3" x2="8" y2="7"></line><line x1="16" y1="3" x2="16" y2="7"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
           </div>
         </div>
         <div class="b-field" id="bTimeField">
           <label for="bTime">Preferred Time</label>
           <div class="b-select-wrap">
-            <select id="bTime" name="time">
+            <select id="bTime" name="time" required>
               <option value="">Choose a time</option>
               <option>Morning (9 AM – 12 PM)</option>
               <option>Afternoon (12 – 4 PM)</option>
@@ -1740,12 +1741,12 @@
 
       <div class="booking-disclaimer">
         <strong>Disclaimer for appointment</strong>
-        <p>Please note: Your appointment is confirmed only after payment has been received. A valid phone number is required to complete the booking and confirm your session.</p>
+        <p>Please note: Your appointment slot is reserved only after payment is completed on the next screen. A valid phone number is required to complete the booking and confirm your session.</p>
       </div>
 
       <div class="booking-footer">
-        <div class="booking-footer-note">Confidential • Online &amp; In-Person<br>Response within 24–48 hours.</div>
-        <button type="submit" class="b-submit">Book Your Consultation <span aria-hidden="true">→</span></button>
+        <div class="booking-footer-note">Confidential • Online &amp; In-Person<br>You'll be taken to secure payment next.</div>
+        <button type="submit" class="b-submit">Proceed to Payment <span aria-hidden="true">→</span></button>
       </div>
       <div class="booking-error" id="bookingError"></div>
     </form>
@@ -1754,8 +1755,8 @@
       <div class="b-success-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
       </div>
-      <h4>Thank you for reaching out</h4>
-      <p>Your request has been received. We'll get back to you within 24–48 hours to confirm your consultation.</p>
+      <h4>Payment received — you're booked</h4>
+      <p>Thank you. Your payment was successful and your appointment request has been sent for confirmation. You'll receive an email shortly with your confirmed meeting link, or a note if we need to propose a different time.</p>
     </div>
   </div>
 </div>
@@ -1806,10 +1807,11 @@
     });
   })();
 </script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
   (function(){
-    // 👇 YAHAN apna Google Apps Script "Web app URL" paste karo (BOOKING_BACKEND_Code.gs deploy karne ke baad milega)
-    var BOOKING_ENDPOINT_URL = "PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE";
+    // 👇 Same Apps Script Web app URL used everywhere else on the site (set once in config.js).
+    var BOOKING_ENDPOINT_URL = (typeof TESTIMONIALS_SCRIPT_URL !== 'undefined') ? TESTIMONIALS_SCRIPT_URL : "PASTE_YOUR_TESTIMONIALS_APPS_SCRIPT_URL_HERE";
 
     var overlay = document.getElementById('bookingOverlay');
     var closeBtn = document.getElementById('bookingClose');
@@ -1817,6 +1819,7 @@
     var success = document.getElementById('bookingSuccess');
     var errorBox = document.getElementById('bookingError');
     var submitBtn = form ? form.querySelector('.b-submit') : null;
+    var submitBtnDefaultHtml = submitBtn ? submitBtn.innerHTML : '';
     var triggers = document.querySelectorAll('.js-open-booking');
     if(!overlay) return;
 
@@ -1827,6 +1830,7 @@
       form.classList.remove('hide');
       success.classList.remove('show');
       if(errorBox) errorBox.classList.remove('show');
+      resetSubmitButton();
     }
     function closeModal(){
       overlay.classList.remove('open');
@@ -1834,22 +1838,21 @@
     }
     triggers.forEach(function(t){ t.addEventListener('click', openModal); });
 
-    // "Preferred Time" is only relevant for In Person sessions — hide it for Online.
-    var sessionRadios = form ? form.querySelectorAll('input[name="session"]') : [];
-    var bTimeField = document.getElementById('bTimeField');
-    var bTimeSelect = document.getElementById('bTime');
-    function updateTimeFieldVisibility(){
-      var selected = form.querySelector('input[name="session"]:checked');
-      var isInPerson = selected && selected.value === 'In Person';
-      if(bTimeField) bTimeField.style.display = isInPerson ? '' : 'none';
-      if(bTimeSelect) bTimeSelect.required = !!isInPerson;
-      if(!isInPerson && bTimeSelect) bTimeSelect.value = '';
-    }
-    sessionRadios.forEach(function(r){ r.addEventListener('change', updateTimeFieldVisibility); });
-    updateTimeFieldVisibility();
     if(closeBtn) closeBtn.addEventListener('click', closeModal);
     overlay.addEventListener('click', function(e){ if(e.target === overlay) closeModal(); });
     document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && overlay.classList.contains('open')) closeModal(); });
+
+    function resetSubmitButton(){
+      if(!submitBtn) return;
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = submitBtnDefaultHtml;
+    }
+    function showError(msg){
+      if(!errorBox) return;
+      errorBox.textContent = msg;
+      errorBox.classList.add('show');
+      resetSubmitButton();
+    }
 
     if(form){
       form.addEventListener('submit', function(e){
@@ -1857,31 +1860,88 @@
         if(errorBox) errorBox.classList.remove('show');
 
         if(!BOOKING_ENDPOINT_URL || BOOKING_ENDPOINT_URL.indexOf('PASTE_YOUR') === 0){
-          if(errorBox){
-            errorBox.textContent = "Booking backend not connected yet — see BOOKING_BACKEND_Code.gs setup instructions.";
-            errorBox.classList.add('show');
-          }
+          showError("Booking backend not connected yet — paste your Apps Script Web app URL into config.js.");
+          return;
+        }
+        if(typeof Razorpay === 'undefined'){
+          showError("Payment could not load. Please check your connection and try again.");
           return;
         }
 
-        var data = new URLSearchParams(new FormData(form));
+        var bookingFields = new URLSearchParams(new FormData(form));
         submitBtn.disabled = true;
-        submitBtn.textContent = 'Sending…';
+        submitBtn.textContent = 'Preparing payment…';
 
-        fetch(BOOKING_ENDPOINT_URL, { method: 'POST', body: data })
-          .then(function(){
-            form.classList.add('hide');
-            success.classList.add('show');
+        // STEP 1: ask the backend to create a Razorpay Order for the fixed session price.
+        var orderPayload = new URLSearchParams();
+        orderPayload.set('action', 'createOrder');
+
+        fetch(BOOKING_ENDPOINT_URL, { method: 'POST', body: orderPayload })
+          .then(function(res){ return res.json(); })
+          .then(function(order){
+            if(!order || !order.success){
+              showError("Could not start payment" + (order && order.message ? " (" + order.message + ")" : "") + ". Please try again.");
+              return;
+            }
+
+            // STEP 2: open Razorpay Checkout for the customer to pay.
+            var rzp = new Razorpay({
+              key: order.keyId,
+              amount: order.amount,
+              currency: order.currency,
+              order_id: order.orderId,
+              name: document.title || "Book a Consultation",
+              description: "Consultation booking",
+              prefill: {
+                name: bookingFields.get('name') || '',
+                email: bookingFields.get('email') || '',
+                contact: bookingFields.get('phone') || ''
+              },
+              theme: { color: '#7E9686' },
+              handler: function(response){
+                // STEP 3: payment succeeded on Razorpay's side — verify it server-side
+                // (signature check) and only then create the appointment.
+                submitBtn.textContent = 'Confirming booking…';
+                var verifyPayload = new URLSearchParams(bookingFields);
+                verifyPayload.set('action', 'verifyPayment');
+                verifyPayload.set('razorpay_order_id', response.razorpay_order_id);
+                verifyPayload.set('razorpay_payment_id', response.razorpay_payment_id);
+                verifyPayload.set('razorpay_signature', response.razorpay_signature);
+
+                fetch(BOOKING_ENDPOINT_URL, { method: 'POST', body: verifyPayload })
+                  .then(function(res){ return res.json(); })
+                  .then(function(result){
+                    if(result && result.success){
+                      form.classList.add('hide');
+                      success.classList.add('show');
+                    } else {
+                      showError("Payment was received, but we couldn't confirm your booking automatically" + (result && result.message ? " (" + result.message + ")" : "") + ". Please email us your payment reference and we'll sort it out.");
+                    }
+                  })
+                  .catch(function(){
+                    showError("Payment was received, but we couldn't reach our server to confirm your booking. Please email us your payment reference.");
+                  })
+                  .finally(function(){
+                    resetSubmitButton();
+                  });
+              },
+              modal: {
+                ondismiss: function(){
+                  // Customer closed the payment popup without paying — booking not completed.
+                  showError("Payment was not completed, so your booking wasn't confirmed. You can try again anytime.");
+                }
+              }
+            });
+
+            rzp.on('payment.failed', function(){
+              showError("Payment failed, so your booking wasn't confirmed. Please try again or use a different payment method.");
+            });
+
+            resetSubmitButton();
+            rzp.open();
           })
           .catch(function(){
-            if(errorBox){
-              errorBox.textContent = "Something went wrong sending your request. Please try again or email us directly.";
-              errorBox.classList.add('show');
-            }
-          })
-          .finally(function(){
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = 'Book Your Consultation <span aria-hidden="true">→</span>';
+            showError("Something went wrong starting payment. Please try again or email us directly.");
           });
       });
     }
@@ -1906,7 +1966,6 @@
     items.forEach(function(el){ io.observe(el); });
   })();
 </script>
-<script src="config.js"></script>
 <script>
   (function(){
     // 👇 Script URL ab config.js me ek hi jagah set hota hai (TESTIMONIALS_SCRIPT_URL).
