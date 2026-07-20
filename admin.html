@@ -103,6 +103,32 @@
   .blog-actions{display:flex; gap:8px;}
   .blog-actions button{border:none; padding:7px 14px; border-radius:6px; font-size:12.5px; font-weight:600; cursor:pointer;}
   .btn-edit{background:#fff; color:var(--ink); border:1px solid var(--line) !important;}
+
+  /* Appointments */
+  .status-paid{background:#f4ecd8; color:#8a6a2f;}
+  .status-confirmed{background:#e4ede6; color:var(--sage-dark);}
+  .status-rescheduled{background:#fbe7d6; color:#a2652b;}
+  .status-completed{background:#e6e6e6; color:#555;}
+  .status-cancelled{background:var(--red-bg); color:var(--red);}
+  .appt-card{background:#fff; border:1px solid var(--line); border-radius:10px; padding:20px; margin-bottom:14px;}
+  .appt-top{display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:10px;}
+  .appt-name{font-family:'Lora',serif; font-weight:600; font-size:16px;}
+  .appt-meta{font-size:12.5px; color:var(--muted); line-height:1.7; margin-bottom:10px;}
+  .appt-meta b{color:var(--ink);}
+  .appt-link{font-size:13px; color:var(--sage-dark); font-weight:600; word-break:break-all; margin-bottom:10px; display:block;}
+  .appt-note{font-size:13px; color:var(--muted); background:var(--cream); border-radius:6px; padding:8px 10px; margin-bottom:10px;}
+  .appt-actions{display:flex; gap:8px; flex-wrap:wrap;}
+  .appt-actions button{border:none; padding:8px 16px; border-radius:6px; font-size:13px; font-weight:600; cursor:pointer;}
+  .btn-confirm{background:var(--sage); color:#fff;}
+  .btn-confirm:hover{background:var(--sage-dark);}
+  .btn-reschedule{background:#fff; color:var(--gold); border:1px solid var(--gold) !important;}
+  .btn-complete{background:#fff; color:var(--sage-dark); border:1px solid var(--sage) !important;}
+  .btn-cancel{background:#fff; color:var(--red); border:1px solid var(--red) !important;}
+  .appt-inline-form{display:none; margin-top:14px; padding-top:14px; border-top:1px dashed var(--line);}
+  .appt-inline-form.show{display:block;}
+  .appt-inline-form input, .appt-inline-form textarea{width:100%; padding:10px 12px; border:1px solid var(--line); border-radius:6px; font-size:13.5px; background:var(--cream); margin-bottom:10px; font-family:'Inter',sans-serif;}
+  .appt-inline-form .row{gap:10px;}
+  .appt-form-status{font-size:12.5px; margin-top:6px;}
 </style>
 </head>
 <body>
@@ -120,6 +146,7 @@
 
   <div class="tabs">
     <button class="active" data-tab="feedback" onclick="setTab('feedback')">Feedback</button>
+    <button data-tab="appointments" onclick="setTab('appointments')">Appointments</button>
     <button data-tab="blogs" onclick="setTab('blogs')">Blogs</button>
   </div>
 
@@ -162,6 +189,30 @@
 
   </div>
   <!-- /tab-feedback -->
+
+  <div class="tab-panel" id="tab-appointments">
+
+  <div class="card">
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+      <h2 style="margin-bottom:0;">Appointments</h2>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span id="apptLastUpdated" style="font-size:12px; color:var(--muted);"></span>
+        <button type="button" onclick="fetchAppointments(false)" style="background:#fff; border:1px solid var(--line); color:var(--sage-dark); padding:7px 14px; border-radius:6px; font-weight:600; font-size:13px; cursor:pointer;">⟳ Refresh</button>
+      </div>
+    </div>
+    <div class="filters" style="margin-top:14px;">
+      <button class="active" data-appt-filter="all" onclick="setApptFilter('all')">All</button>
+      <button data-appt-filter="payment received" onclick="setApptFilter('payment received')">Needs Review</button>
+      <button data-appt-filter="confirmed" onclick="setApptFilter('confirmed')">Confirmed</button>
+      <button data-appt-filter="rescheduled" onclick="setApptFilter('rescheduled')">Rescheduled</button>
+      <button data-appt-filter="completed" onclick="setApptFilter('completed')">Completed</button>
+      <button data-appt-filter="cancelled" onclick="setApptFilter('cancelled')">Cancelled</button>
+    </div>
+    <div id="apptList"><p class="empty">Loading…</p></div>
+  </div>
+
+  </div>
+  <!-- /tab-appointments -->
 
   <div class="tab-panel" id="tab-blogs">
 
@@ -260,13 +311,18 @@
   var allBlogs = [];
   var pendingImages = []; // { url } objects already uploaded to Drive for the post being edited/created
 
+  var allAppointments = [];
+  var currentApptFilter = 'all';
+
   function setTab(tab){
     document.querySelectorAll('.tabs button').forEach(function(b){
       b.classList.toggle('active', b.getAttribute('data-tab') === tab);
     });
     document.getElementById('tab-feedback').classList.toggle('active', tab === 'feedback');
+    document.getElementById('tab-appointments').classList.toggle('active', tab === 'appointments');
     document.getElementById('tab-blogs').classList.toggle('active', tab === 'blogs');
     if(tab === 'blogs' && !allBlogs.length) fetchBlogs();
+    if(tab === 'appointments' && !allAppointments.length) fetchAppointments(false);
   }
 
   function login(){
@@ -734,6 +790,247 @@
       .then(function(res){ return res.json(); })
       .then(function(){ fetchBlogs(); })
       .catch(function(){ fetchBlogs(); });
+  }
+
+  // ---------------- APPOINTMENTS ----------------
+
+  function setApptFilter(f){
+    currentApptFilter = f;
+    document.querySelectorAll('[data-appt-filter]').forEach(function(b){
+      b.classList.toggle('active', b.getAttribute('data-appt-filter') === f);
+    });
+    renderAppointments();
+  }
+
+  function fetchAppointments(silent){
+    if(!silent) document.getElementById('apptList').innerHTML = '<p class="empty">Loading…</p>';
+    fetch(ENDPOINT_URL + '?action=adminAppointments&key=' + encodeURIComponent(adminKey))
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        if(data && data.error === 'unauthorized'){ return; }
+        allAppointments = data || [];
+        renderAppointments();
+        var lu = document.getElementById('apptLastUpdated');
+        if(lu) lu.textContent = 'Updated ' + new Date().toLocaleTimeString();
+      })
+      .catch(function(){
+        document.getElementById('apptList').innerHTML = '<p class="empty">Could not load appointments.</p>';
+      });
+  }
+
+  function apptStatusClass(status){
+    var s = (status || '').toLowerCase();
+    if(s === 'confirmed') return 'status-confirmed';
+    if(s === 'rescheduled') return 'status-rescheduled';
+    if(s === 'completed') return 'status-completed';
+    if(s === 'cancelled') return 'status-cancelled';
+    return 'status-paid'; // "Payment Received" / anything pending review
+  }
+
+  function renderAppointments(){
+    var list = document.getElementById('apptList');
+    var filtered = allAppointments.filter(function(a){
+      if(currentApptFilter === 'all') return true;
+      var s = (a.status || '').toLowerCase() || 'payment received';
+      return s === currentApptFilter;
+    });
+
+    if(!filtered.length){
+      list.innerHTML = '<p class="empty">No appointments here.</p>';
+      return;
+    }
+
+    list.innerHTML = filtered.map(function(a){
+      var status = a.status || 'Payment Received';
+      var statusClass = apptStatusClass(status);
+      var when = [a.date, a.time].filter(Boolean).join(' · ') || 'No date/time given';
+      var amountLine = a.amount ? ('₹' + a.amount + (a.currency ? ' ' + a.currency : '')) : '';
+
+      var actions = '';
+      if(status.toLowerCase() !== 'completed' && status.toLowerCase() !== 'cancelled'){
+        actions += '<button class="btn-confirm" onclick="toggleApptForm(\'' + a.rowNumber + '-confirm\')">Confirm</button>';
+        actions += '<button class="btn-reschedule" onclick="toggleApptForm(\'' + a.rowNumber + '-reschedule\')">Reschedule</button>';
+      }
+      if(status.toLowerCase() === 'confirmed'){
+        actions += '<button class="btn-complete" onclick="completeAppointment(' + a.rowNumber + ')">Mark Completed</button>';
+      }
+      if(status.toLowerCase() !== 'cancelled' && status.toLowerCase() !== 'completed'){
+        actions += '<button class="btn-cancel" onclick="cancelAppointment(' + a.rowNumber + ')">Cancel</button>';
+      }
+      actions += '<button class="btn-delete" onclick="deleteAppointment(' + a.rowNumber + ')">Delete</button>';
+
+      return (
+        '<div class="appt-card">' +
+          '<div class="appt-top">' +
+            '<div class="appt-name">' + escapeHtml(a.name || 'Unknown') + '</div>' +
+            '<span class="status-badge ' + statusClass + '">' + escapeHtml(status) + '</span>' +
+          '</div>' +
+          '<div class="appt-meta">' +
+            '<b>' + escapeHtml(a.session || '') + '</b> · ' + escapeHtml(when) + (amountLine ? ' · ' + escapeHtml(amountLine) : '') + '<br>' +
+            (a.email ? escapeHtml(a.email) + ' ' : '') + (a.phone ? '· ' + escapeHtml(a.phone) : '') +
+          '</div>' +
+          (a.reason ? '<div class="appt-note"><b>Reason:</b> ' + escapeHtml(a.reason) + '</div>' : '') +
+          (a.notes ? '<div class="appt-note"><b>Notes:</b> ' + escapeHtml(a.notes) + '</div>' : '') +
+          (a.meetingLink ? '<a class="appt-link" href="' + escapeHtml(a.meetingLink) + '" target="_blank">🔗 ' + escapeHtml(a.meetingLink) + '</a>' : '') +
+          '<div class="appt-actions">' + actions + '</div>' +
+
+          '<div class="appt-inline-form" id="apptForm-' + a.rowNumber + '-confirm">' +
+            '<div class="field-label" style="margin-top:0;">Meeting link (Google Meet / Zoom)</div>' +
+            '<input type="text" id="apptMeetingLink-' + a.rowNumber + '" placeholder="https://meet.google.com/xxx-xxxx-xxx">' +
+            '<div class="field-label">Message to customer (optional)</div>' +
+            '<textarea id="apptConfirmMsg-' + a.rowNumber + '" rows="2" placeholder="Anything you\'d like to add…"></textarea>' +
+            '<button class="btn-confirm" onclick="submitConfirm(' + a.rowNumber + ')">Send Confirmation</button>' +
+            '<span class="appt-form-status" id="apptConfirmStatus-' + a.rowNumber + '"></span>' +
+          '</div>' +
+
+          '<div class="appt-inline-form" id="apptForm-' + a.rowNumber + '-reschedule">' +
+            '<div class="row">' +
+              '<input type="date" id="apptNewDate-' + a.rowNumber + '" style="flex:1; min-width:140px;">' +
+              '<input type="text" id="apptNewTime-' + a.rowNumber + '" placeholder="e.g. Afternoon (12 – 4 PM)" style="flex:1; min-width:140px;">' +
+            '</div>' +
+            '<div class="field-label">Message to customer (optional)</div>' +
+            '<textarea id="apptRescheduleMsg-' + a.rowNumber + '" rows="2" placeholder="Why the change, or anything else…"></textarea>' +
+            '<button class="btn-reschedule" onclick="submitReschedule(' + a.rowNumber + ')">Send New Time</button>' +
+            '<span class="appt-form-status" id="apptRescheduleStatus-' + a.rowNumber + '"></span>' +
+          '</div>' +
+        '</div>'
+      );
+    }).join('');
+  }
+
+  function toggleApptForm(key){
+    var el = document.getElementById('apptForm-' + key);
+    if(!el) return;
+    var isOpen = el.classList.contains('show');
+    // close any other open forms for a tidier UI
+    document.querySelectorAll('.appt-inline-form.show').forEach(function(f){ f.classList.remove('show'); });
+    if(!isOpen) el.classList.add('show');
+  }
+
+  function submitConfirm(rowNumber){
+    var meetingLink = document.getElementById('apptMeetingLink-' + rowNumber).value.trim();
+    var message = document.getElementById('apptConfirmMsg-' + rowNumber).value.trim();
+    var statusEl = document.getElementById('apptConfirmStatus-' + rowNumber);
+    if(!meetingLink){
+      statusEl.style.color = 'var(--red)';
+      statusEl.textContent = 'Please paste a meeting link.';
+      return;
+    }
+    statusEl.style.color = 'var(--muted)';
+    statusEl.textContent = 'Sending…';
+
+    var payload = new URLSearchParams();
+    payload.set('action', 'confirmAppointment');
+    payload.set('key', adminKey);
+    payload.set('rowNumber', rowNumber);
+    payload.set('meetingLink', meetingLink);
+    payload.set('message', message);
+
+    fetch(ENDPOINT_URL, { method: 'POST', body: payload })
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        if(data && data.success){
+          statusEl.style.color = 'var(--sage-dark)';
+          statusEl.textContent = '✓ Confirmed — email sent.';
+          fetchAppointments(true);
+        } else {
+          statusEl.style.color = 'var(--red)';
+          statusEl.textContent = 'Could not confirm' + (data && data.message ? ' (' + data.message + ')' : '') + '.';
+        }
+      })
+      .catch(function(){
+        statusEl.style.color = 'var(--red)';
+        statusEl.textContent = 'Could not connect.';
+      });
+  }
+
+  function submitReschedule(rowNumber){
+    var newDate = document.getElementById('apptNewDate-' + rowNumber).value.trim();
+    var newTime = document.getElementById('apptNewTime-' + rowNumber).value.trim();
+    var message = document.getElementById('apptRescheduleMsg-' + rowNumber).value.trim();
+    var statusEl = document.getElementById('apptRescheduleStatus-' + rowNumber);
+    if(!newDate && !newTime){
+      statusEl.style.color = 'var(--red)';
+      statusEl.textContent = 'Please enter a new date or time.';
+      return;
+    }
+    statusEl.style.color = 'var(--muted)';
+    statusEl.textContent = 'Sending…';
+
+    var payload = new URLSearchParams();
+    payload.set('action', 'rescheduleAppointment');
+    payload.set('key', adminKey);
+    payload.set('rowNumber', rowNumber);
+    payload.set('newDate', newDate);
+    payload.set('newTime', newTime);
+    payload.set('message', message);
+
+    fetch(ENDPOINT_URL, { method: 'POST', body: payload })
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        if(data && data.success){
+          statusEl.style.color = 'var(--sage-dark)';
+          statusEl.textContent = '✓ New time sent to customer.';
+          fetchAppointments(true);
+        } else {
+          statusEl.style.color = 'var(--red)';
+          statusEl.textContent = 'Could not reschedule' + (data && data.message ? ' (' + data.message + ')' : '') + '.';
+        }
+      })
+      .catch(function(){
+        statusEl.style.color = 'var(--red)';
+        statusEl.textContent = 'Could not connect.';
+      });
+  }
+
+  function completeAppointment(rowNumber){
+    allAppointments = allAppointments.map(function(a){
+      if(a.rowNumber === rowNumber) a.status = 'Completed';
+      return a;
+    });
+    renderAppointments();
+
+    var payload = new URLSearchParams();
+    payload.set('action', 'completeAppointment');
+    payload.set('key', adminKey);
+    payload.set('rowNumber', rowNumber);
+    fetch(ENDPOINT_URL, { method: 'POST', body: payload })
+      .then(function(res){ return res.json(); })
+      .then(function(){ fetchAppointments(true); })
+      .catch(function(){ fetchAppointments(true); });
+  }
+
+  function cancelAppointment(rowNumber){
+    if(!confirm('Cancel this appointment? The customer will not be notified automatically.')) return;
+    allAppointments = allAppointments.map(function(a){
+      if(a.rowNumber === rowNumber) a.status = 'Cancelled';
+      return a;
+    });
+    renderAppointments();
+
+    var payload = new URLSearchParams();
+    payload.set('action', 'cancelAppointment');
+    payload.set('key', adminKey);
+    payload.set('rowNumber', rowNumber);
+    fetch(ENDPOINT_URL, { method: 'POST', body: payload })
+      .then(function(res){ return res.json(); })
+      .then(function(){ fetchAppointments(true); })
+      .catch(function(){ fetchAppointments(true); });
+  }
+
+  function deleteAppointment(rowNumber){
+    if(!confirm('Delete this appointment permanently? This cannot be undone.')) return;
+    allAppointments = allAppointments.filter(function(a){ return a.rowNumber !== rowNumber; });
+    renderAppointments();
+
+    var payload = new URLSearchParams();
+    payload.set('action', 'deleteAppointment');
+    payload.set('key', adminKey);
+    payload.set('rowNumber', rowNumber);
+    fetch(ENDPOINT_URL, { method: 'POST', body: payload })
+      .then(function(res){ return res.json(); })
+      .then(function(){ fetchAppointments(true); })
+      .catch(function(){ fetchAppointments(true); });
   }
 </script>
 </body>
