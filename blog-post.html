@@ -43,6 +43,28 @@
     font-family:'Lora',serif; font-weight:600; font-size:26px; color:var(--sage-dark);
     margin:44px 0 18px; line-height:1.35;
   }
+  .article-body h3{
+    font-family:'Lora',serif; font-weight:600; font-size:20px; color:var(--sage-dark);
+    margin:32px 0 14px; line-height:1.35;
+  }
+  .article-body u{text-decoration:underline;}
+  .article-body s{text-decoration:line-through;}
+  .article-body sub{font-size:75%;}
+  .article-body sup{font-size:75%;}
+  .article-body a{color:var(--sage-dark); text-decoration:underline;}
+  .article-body blockquote{
+    border-left:3px solid var(--sage); margin:28px 0; padding:6px 0 6px 20px;
+    font-style:italic; color:var(--muted);
+  }
+  .article-body ol{margin:0 0 24px 22px;}
+  .article-body ol li{font-size:16px; color:var(--ink); margin-bottom:10px;}
+  .article-body .ql-align-center{text-align:center;}
+  .article-body .ql-align-right{text-align:right;}
+  .article-body .ql-align-justify{text-align:justify;}
+  .article-body .ql-indent-1{padding-left:2em;}
+  .article-body .ql-indent-2{padding-left:4em;}
+  .extra-gallery{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:20px;}
+  @media (max-width:560px){ .extra-gallery{grid-template-columns:1fr;} }
 
   .article-body ul{margin:0 0 24px 22px;}
   .article-body ul li{font-size:16px; color:var(--ink); margin-bottom:10px;}
@@ -114,9 +136,21 @@
       .replace(/\*(.+?)\*/g, '<em>$1</em>');
   }
 
-  // Convert the plain-text/markdown-lite content into HTML.
-  // Supports: "## Heading" lines, blank-line-separated paragraphs, "- item" lists.
+  // Content saved by the new rich text editor is already HTML (starts with a tag
+  // like "<p>" or "<h2>"). Older posts were saved as plain text with "## Heading"
+  // lines, blank-line paragraphs, and "- item" lists — that legacy format is
+  // still supported below so old posts keep working.
   function renderContent(content, extraImages){
+    if(/^\s*</.test(content)){
+      var extraGallery = '';
+      if(extraImages && extraImages.length > 1){
+        extraGallery = '<div class="extra-gallery">' + extraImages.slice(1).map(function(url){
+          return '<figure class="inline-image"><img src="' + escapeHtml(url) + '" alt=""></figure>';
+        }).join('') + '</div>';
+      }
+      return content + extraGallery;
+    }
+
     var blocks = content.split(/\n\s*\n/);
     var html = '';
     var imgPointer = 0; // extraImages[0] is used as the hero image already, so start from 1
