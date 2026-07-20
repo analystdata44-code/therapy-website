@@ -1954,16 +1954,29 @@
       return d.toLocaleDateString('en-IN', { year:'numeric', month:'long' });
     }
 
-    // Strips the "## Heading" markers used for section headings so the card
-    // preview shows a clean plain-text snippet.
+    // Strips HTML tags (for posts written with the new rich text editor) or the
+    // legacy "## Heading" markers (for older posts), so the card preview shows
+    // a clean plain-text snippet either way.
+    function plainText(text){
+      var t = String(text || '');
+      if(/^\s*</.test(t)){
+        var div = document.createElement('div');
+        div.innerHTML = t;
+        t = div.textContent || div.innerText || '';
+      } else {
+        t = t.replace(/^##\s+.*$/gm, '');
+      }
+      return t.replace(/\s+/g, ' ').trim();
+    }
+
     function excerpt(text){
-      var t = String(text || '').replace(/^##\s+.*$/gm, '').replace(/\s+/g, ' ').trim();
+      var t = plainText(text);
       if(t.length <= 150) return t;
       return t.slice(0, 150).trim() + '…';
     }
 
     function readTime(text){
-      var words = String(text || '').trim().split(/\s+/).filter(Boolean).length;
+      var words = plainText(text).split(/\s+/).filter(Boolean).length;
       var minutes = Math.max(1, Math.round(words / 200));
       return minutes + ' min read';
     }
