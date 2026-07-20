@@ -155,7 +155,7 @@
     <input type="hidden" id="blogId" value="">
     <input type="text" id="blogTitle" placeholder="Blog title" style="width:100%; padding:12px 13px; border:1px solid var(--line); border-radius:6px; font-size:15px; background:var(--cream);">
     <div class="field-label">Content</div>
-    <p style="font-size:12px; color:var(--muted); margin-bottom:8px;">Tip: start a line with <code>##</code> to turn it into a section heading (e.g. <code>## When Perfection Changes Its Outfit</code>). Leave a blank line between paragraphs.</p>
+    <p style="font-size:12px; color:var(--muted); margin-bottom:8px;">Tip: start a line with <code>##</code> to turn it into a section heading (e.g. <code>## When Perfection Changes Its Outfit</code>). Leave a blank line between paragraphs. Use <code>**text**</code> for bold and <code>*text*</code> for italic. Lines starting with <code>-</code> become a bullet list.</p>
     <textarea id="blogContent" placeholder="Write your blog post here…&#10;&#10;## First section heading&#10;Your paragraph text here.&#10;&#10;## Next section heading&#10;More text here…"></textarea>
 
     <div class="field-label">Category</div>
@@ -180,6 +180,9 @@
       <button class="btn-primary" onclick="saveBlog()" id="saveBlogBtn">Save Blog Post</button>
       <button class="btn-secondary" onclick="resetBlogForm()">Clear</button>
       <span id="blogSaveStatus" style="font-size:13px;"></span>
+    </div>
+    <div id="previewLinkRow" class="hidden" style="margin-top:12px;">
+      <a id="previewLinkAnchor" href="#" target="_blank" style="font-size:13px; font-weight:600; color:var(--sage-dark);">↗ Preview this post as it will appear on the site</a>
     </div>
   </div>
 
@@ -459,6 +462,7 @@
             (b.category ? '<div style="font-size:12px; color:var(--sage-dark); font-weight:600; margin-bottom:8px;">' + escapeHtml(b.category) + '</div>' : '') +
             '<p class="blog-excerpt">' + escapeHtml(b.content.replace(/^##\s+.*$/gm, '').replace(/\s+/g, ' ').trim()) + '</p>' +
             '<div class="blog-actions">' +
+              '<a class="btn-edit" style="text-decoration:none; display:inline-block;" href="blog-post.html?id=' + encodeURIComponent(b.id) + '&key=' + encodeURIComponent(adminKey) + '" target="_blank">Preview</a>' +
               '<button class="btn-edit" onclick="editBlog(\'' + b.id + '\')">Edit</button>' +
               '<button class="btn-delete" onclick="deleteBlogFn(\'' + b.id + '\')">Delete</button>' +
             '</div>' +
@@ -476,10 +480,17 @@
     statusEl.textContent = 'Uploading ' + files.length + ' image(s)…';
 
     var sharingBlocked = false;
-    var failedCount = 0;
+    var failMessages = [];
 
     var uploadOne = function(file){
       return new Promise(function(resolve){
+        // Basic guard: Apps Script web apps struggle with very large payloads.
+        // Warn early instead of waiting for a confusing failure.
+        if(file.size > 15 * 1024 * 1024){
+          failMessages.push(file.name + ' is larger than 15MB — please use a smaller image.');
+          resolve();
+          return;
+        }
         var reader = new FileReader();
         reader.onload = function(){
           var payload = new URLSearchParams();
@@ -495,11 +506,18 @@
                 pendingImages.push({ url: data.url });
                 if(data.sharingOk === false) sharingBlocked = true;
               } else {
-                failedCount++;
+                failMessages.push(file.name + ': ' + (data && data.message ? data.message : 'unknown error'));
               }
               resolve();
             })
-            .catch(function(){ failedCount++; resolve(); });
+            .catch(function(err){
+              failMessages.push(file.name + ': could not reach the server (' + err + ')');
+              resolve();
+            });
+        };
+        reader.onerror = function(){
+          failMessages.push(file.name + ': could not read this file in the browser.');
+          resolve();
         };
         reader.readAsDataURL(file);
       });
@@ -509,12 +527,12 @@
       renderImagePreviews();
       evt.target.value = ''; // allow re-selecting the same file again later
 
-      if(sharingBlocked){
+      if(failMessages.length){
         statusEl.style.color = 'var(--red)';
-        statusEl.textContent = '⚠ Images uploaded, but your Google account\'s sharing settings are blocking public access — the images may not display on the website. See the note below the image list.';
-      } else if(failedCount){
+        statusEl.textContent = '⚠ ' + failMessages.join(' | ');
+      } else if(sharingBlocked){
         statusEl.style.color = 'var(--red)';
-        statusEl.textContent = failedCount + ' image(s) failed to upload. Please try again.';
+        statusEl.textContent = '⚠ Images uploaded, but your Google account\'s sharing settings are blocking public access — the images may not display on the website.';
       } else {
         statusEl.textContent = '';
       }
@@ -599,6 +617,12 @@
         if(data && data.success){
           statusEl.style.color = 'var(--sage-dark)';
           statusEl.textContent = '✓ Saved';
+          if(data.id){
+            var previewUrl = 'blog-post.html?id=' + encodeURIComponent(data.id) + '&key=' + encodeURIComponent(adminKey);
+            var linkEl = document.getElementById('previewLinkAnchor');
+            linkEl.href = previewUrl;
+            document.getElementById('previewLinkRow').classList.remove('hidden');
+          }
           resetBlogForm();
           fetchBlogs();
         } else {
