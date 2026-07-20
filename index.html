@@ -726,14 +726,6 @@
   .booking-head p{margin-top:10px; font-size:14px; color:var(--muted); line-height:1.75; max-width:460px; margin-left:auto; margin-right:auto;}
   .b-field{margin-bottom:20px;}
   .b-row{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
-
-  /* ---------- BLOG READ MODAL ---------- */
-  .blog-modal{max-width:680px;}
-  .blog-modal-date{font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--sage-dark); font-weight:600; margin-bottom:10px;}
-  .blog-modal h3{font-family:'Lora',serif; font-weight:500; font-size:clamp(22px,3vw,28px); color:var(--ink); margin-bottom:18px; text-align:left;}
-  .blog-gallery{display:flex; gap:10px; overflow-x:auto; margin-bottom:20px; padding-bottom:4px;}
-  .blog-gallery img{width:160px; height:120px; object-fit:cover; border-radius:10px; flex-shrink:0;}
-  .blog-modal-body{font-size:14.5px; line-height:1.85; color:var(--muted); white-space:pre-wrap;}
   .b-field label{display:block; font-size:13px; font-weight:600; color:var(--ink); margin-bottom:9px;}
   .b-field .opt{font-weight:400; color:var(--muted);}
   .b-field input[type="text"], .b-field input[type="email"], .b-field input[type="tel"],
@@ -946,26 +938,20 @@
   }
   .blog-card[data-reveal].in-view{opacity:1; transform:translateY(0);}
 
-  .blog-newsletter{
-    background:var(--cream-deep); border:1px solid var(--line); border-radius:16px;
-    padding:30px 34px; display:flex; align-items:center; gap:26px; flex-wrap:wrap; position:relative; overflow:hidden;
+  @media (max-width:1024px){
+    .testimonial-grid{grid-template-columns:repeat(2,1fr);}
+    .blog-grid{grid-template-columns:repeat(2,1fr);}
   }
-  .bn-icon{
-    width:52px; height:52px; border-radius:50%; background:var(--card); border:1px solid var(--line);
-    display:flex; align-items:center; justify-content:center; font-size:20px; color:var(--sage-dark); flex-shrink:0;
-  }
-  .bn-text{flex:1; min-width:200px;}
-  .bn-text h4{font-family:'Lora',serif; font-size:17px; font-weight:600; margin-bottom:6px;}
-  .bn-text p{font-size:13.5px; color:var(--muted); line-height:1.7;}
-  .bn-form{display:flex; gap:10px; flex-wrap:wrap;}
-  .bn-form input{padding:12px 16px; border:1px solid var(--line); border-radius:8px; font-size:13.5px; min-width:220px; background:var(--card); font-family:'Inter',sans-serif;}
-  .bn-form button{background:var(--sage); color:#fff; border:none; padding:12px 24px; border-radius:8px; font-weight:600; cursor:pointer; white-space:nowrap;}
-  .bn-form button:hover{background:var(--sage-dark);}
-
   @media (max-width:860px){
     .testimonial-grid{grid-template-columns:1fr;}
     .blog-grid{grid-template-columns:1fr;}
     .blog-toolbar{flex-direction:column; align-items:stretch;}
+    .blog-search{min-width:0;}
+  }
+  @media (max-width:560px){
+    .blog-hero-section{padding-top:44px;}
+    .blog-toolbar{padding:18px;}
+    .blog-card-img{height:150px;}
   }
 </style>
 </head>
@@ -1619,7 +1605,7 @@
 <!-- BLOG (own view, hidden by default, shown via nav) -->
 <div id="view-yellowchair" style="display:none;">
 <section class="section blog-hero-section" id="yellow-chair">
-  <img class="blog-hero-bg" src="assets/Background1.png" alt="">
+  <img class="blog-hero-bg" src="assets/background.png" alt="">
   <div class="wrap">
     <div class="blog-hero-head">
       <div class="section-eyebrow">🌿 Our Blog</div>
@@ -1648,33 +1634,10 @@
     <div class="blog-grid" id="blogGrid">
       <p style="grid-column:1/-1; text-align:center; color:var(--muted); font-size:14px;">Loading…</p>
     </div>
-
-    <div class="blog-newsletter" data-reveal style="--reveal-delay:0s">
-      <div class="bn-icon">✉</div>
-      <div class="bn-text">
-        <h4>Stay Inspired</h4>
-        <p>Subscribe to receive healing insights, new blog posts, and gentle reminders straight to your inbox.</p>
-      </div>
-      <form class="bn-form" id="blogSubscribeForm">
-        <input type="email" id="blogSubscribeEmail" placeholder="Your email address" required>
-        <button type="submit">Subscribe</button>
-      </form>
-    </div>
   </div>
 </section>
 </div>
 <!-- /view-yellowchair -->
-
-<!-- BLOG READ MODAL -->
-<div class="booking-overlay" id="blogReadOverlay">
-  <div class="booking-modal blog-modal" role="dialog" aria-modal="true" aria-labelledby="blogReadTitle">
-    <button class="booking-close" id="blogReadClose" aria-label="Close">✕</button>
-    <div class="blog-modal-date" id="blogReadDate"></div>
-    <h3 id="blogReadTitle"></h3>
-    <div class="blog-gallery" id="blogReadGallery"></div>
-    <div class="blog-modal-body" id="blogReadBody"></div>
-  </div>
-</div>
 
 <footer>
   © 2026 Mind Haven Therapy — Trauma, Healing &amp; Wellness. All rights reserved.
@@ -1978,13 +1941,6 @@
     var grid = document.getElementById('blogGrid');
     if(!grid) return;
 
-    var overlay = document.getElementById('blogReadOverlay');
-    var closeBtn = document.getElementById('blogReadClose');
-    var titleEl = document.getElementById('blogReadTitle');
-    var dateEl = document.getElementById('blogReadDate');
-    var galleryEl = document.getElementById('blogReadGallery');
-    var bodyEl = document.getElementById('blogReadBody');
-
     function escapeHtml(str){
       var div = document.createElement('div');
       div.textContent = str == null ? '' : String(str);
@@ -1998,8 +1954,10 @@
       return d.toLocaleDateString('en-IN', { year:'numeric', month:'long' });
     }
 
+    // Strips the "## Heading" markers used for section headings so the card
+    // preview shows a clean plain-text snippet.
     function excerpt(text){
-      var t = String(text || '').trim();
+      var t = String(text || '').replace(/^##\s+.*$/gm, '').replace(/\s+/g, ' ').trim();
       if(t.length <= 150) return t;
       return t.slice(0, 150).trim() + '…';
     }
@@ -2010,32 +1968,12 @@
       return minutes + ' min read';
     }
 
-    var blogsById = {};
     var allBlogItems = [];
     var currentCategory = 'all';
     var currentSearch = '';
 
-    function openBlog(id){
-      var b = blogsById[id];
-      if(!b) return;
-      titleEl.textContent = b.title;
-      dateEl.textContent = formatDate(b.createdAt) + (b.category ? ' · ' + b.category : '');
-      bodyEl.textContent = b.content;
-      galleryEl.innerHTML = (b.images || []).map(function(url){
-        return '<img src="' + escapeHtml(url) + '" alt="">';
-      }).join('');
-      galleryEl.style.display = (b.images && b.images.length) ? 'flex' : 'none';
-      overlay.classList.add('open');
-    }
-
-    function closeBlog(){ overlay.classList.remove('open'); }
-    if(closeBtn) closeBtn.addEventListener('click', closeBlog);
-    if(overlay) overlay.addEventListener('click', function(e){ if(e.target === overlay) closeBlog(); });
-
-    window.openBlogPost = openBlog; // used by the onclick handlers below
     window.toggleBookmark = function(btn){
       btn.classList.toggle('saved');
-      btn.textContent = btn.classList.contains('saved') ? '🔖' : '🔖';
     };
 
     function applyFilters(){
@@ -2068,25 +2006,11 @@
       });
     }
 
-    var subscribeForm = document.getElementById('blogSubscribeForm');
-    if(subscribeForm){
-      subscribeForm.addEventListener('submit', function(e){
-        e.preventDefault();
-        var emailInput = document.getElementById('blogSubscribeEmail');
-        if(emailInput && emailInput.value){
-          alert('Thank you for subscribing! We will keep you updated with new posts.');
-          subscribeForm.reset();
-        }
-      });
-    }
-
     function renderBlogs(items){
       if(!items || !items.length){
         grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:var(--muted); font-size:14px;">No articles found.</p>';
         return;
       }
-
-      items.forEach(function(b){ blogsById[b.id] = b; });
 
       var html = items.map(function(item, i){
         var delay = (i * 0.1).toFixed(2) + 's';
@@ -2105,7 +2029,7 @@
               '<h4>' + escapeHtml(item.title) + '</h4>' +
               '<p>' + escapeHtml(excerpt(item.content)) + '</p>' +
               '<div class="blog-card-footer">' +
-                '<button type="button" class="blog-read-link" onclick="openBlogPost(\'' + item.id + '\')">Read More →</button>' +
+                '<a class="blog-read-link" href="blog-post.html?id=' + encodeURIComponent(item.id) + '">Read More →</a>' +
                 '<button type="button" class="blog-bookmark" onclick="toggleBookmark(this)" aria-label="Save article">🔖</button>' +
               '</div>' +
             '</div>' +
