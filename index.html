@@ -999,10 +999,17 @@
         if (!settings) return;
 
         // Font applies to EVERY headline on the site (hero + every section title).
+        // Also explicitly re-applies to every child element (e.g. the italic
+        // "line2" span inside the hero headline), so nothing inside a heading
+        // keeps stale font-family from an old inline/class style, and uses
+        // !important so it always wins regardless of CSS specificity.
         if (settings.headlineFont) {
           var fontStack = siteFontStackFor(settings.headlineFont);
           document.querySelectorAll('h1, h2, h3').forEach(function(el){
-            el.style.fontFamily = fontStack;
+            el.style.setProperty('font-family', fontStack, 'important');
+            el.querySelectorAll('*').forEach(function(child){
+              child.style.setProperty('font-family', fontStack, 'important');
+            });
           });
         }
 
