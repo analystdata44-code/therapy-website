@@ -977,6 +977,18 @@
   // Reads settings saved from admin.html's "Site Design" tab and applies them to the
   // homepage headline for every visitor. Falls back to the CSS defaults above if the
   // backend isn't reachable, so the page never breaks if this fails.
+  // Builds a safe CSS font-family stack for each option. Baskerville, Bodoni 72,
+  // and Optima are Apple system fonts (not on Google Fonts) — Mac/iPhone visitors
+  // get the real font; everyone else gets a close, freely-licensed fallback.
+  function siteFontStackFor(font){
+    var stacks = {
+      'Baskerville': "'Baskerville', 'Libre Baskerville', 'Times New Roman', serif",
+      'Bodoni 72': "'Bodoni 72', Didot, 'Bodoni MT', serif",
+      'Optima': "Optima, Candara, 'Segoe UI', sans-serif"
+    };
+    return stacks[font] || ("'" + font + "', serif");
+  }
+
   (function applySiteDesignSettings(){
     var SITE_DESIGN_ENDPOINT_URL = (typeof TESTIMONIALS_SCRIPT_URL !== 'undefined') ? TESTIMONIALS_SCRIPT_URL : "PASTE_YOUR_TESTIMONIALS_APPS_SCRIPT_URL_HERE";
     if (!SITE_DESIGN_ENDPOINT_URL || SITE_DESIGN_ENDPOINT_URL.indexOf('PASTE_YOUR') === 0) return;
@@ -985,12 +997,20 @@
       .then(function(res){ return res.json(); })
       .then(function(settings){
         if (!settings) return;
+
+        // Font applies to EVERY headline on the site (hero + every section title).
+        if (settings.headlineFont) {
+          var fontStack = siteFontStackFor(settings.headlineFont);
+          document.querySelectorAll('h1, h2, h3').forEach(function(el){
+            el.style.fontFamily = fontStack;
+          });
+        }
+
+        // Color and size apply to the hero headline only (section titles keep
+        // their own existing sizes/colors so the page layout doesn't break).
         var headline = document.getElementById('heroHeadline');
         if (!headline) return;
 
-        if (settings.headlineFont) {
-          headline.style.fontFamily = "'" + settings.headlineFont + "', serif";
-        }
         if (settings.headlineColor) {
           headline.style.color = settings.headlineColor;
         }
