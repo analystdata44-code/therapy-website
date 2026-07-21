@@ -951,9 +951,13 @@
     var color = document.getElementById('sdColorHex').value || '#33433E';
     var size = document.getElementById('sdSize').value;
     var preview = document.getElementById('sdPreview');
-    preview.style.fontFamily = fontStackFor(font);
+    var stack = fontStackFor(font);
+    preview.style.setProperty('font-family', stack, 'important');
     preview.style.color = color;
     preview.style.fontSize = size + 'px';
+    preview.querySelectorAll('*').forEach(function(child){
+      child.style.setProperty('font-family', stack, 'important');
+    });
     document.getElementById('sdSizeLabel').textContent = '(' + size + 'px on desktop, hero headline only)';
   }
 
