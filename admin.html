@@ -6,6 +6,8 @@
 <title>Admin — Testimonials</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!-- Extra fonts so the "Site Design" headline-font dropdown can preview each of these live -->
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Merriweather:wght@400;700&family=Cormorant+Garamond:wght@500;600;700&family=Poppins:wght@500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.snow.min.css" rel="stylesheet">
 <style>
   :root{
@@ -244,6 +246,7 @@
       <button data-tab="appointments" onclick="setTab('appointments')"><span class="ico">🗓</span> Appointments</button>
       <button data-tab="feedback" onclick="setTab('feedback')"><span class="ico">★</span> Feedback</button>
       <button data-tab="blogs" onclick="setTab('blogs')"><span class="ico">📝</span> Blogs</button>
+      <button data-tab="siteDesign" onclick="setTab('siteDesign')"><span class="ico">🎨</span> Site Design</button>
     </nav>
     <div class="sidebar-foot">
       <button onclick="logout()"><span class="ico">⎋</span> Logout</button>
@@ -483,6 +486,49 @@
   </div>
   <!-- /tab-blogs -->
 
+  <div class="tab-panel" id="tab-siteDesign">
+
+  <div class="card">
+    <h2>Homepage Headline Style</h2>
+    <p style="color:var(--muted); font-size:13.5px; margin-top:-6px; margin-bottom:18px;">
+      Changes here apply to the big headline on your homepage, for every visitor. Adjust the options below, check the live preview, then click Save.
+    </p>
+
+    <div class="field-label">Font</div>
+    <select id="sdFont" style="width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:6px; font-size:14px; background:var(--cream); margin-bottom:16px;">
+      <option value="Lora">Lora (default — classic serif)</option>
+      <option value="Playfair Display">Playfair Display (elegant serif)</option>
+      <option value="Merriweather">Merriweather (soft serif)</option>
+      <option value="Cormorant Garamond">Cormorant Garamond (refined serif)</option>
+      <option value="Poppins">Poppins (modern sans-serif)</option>
+      <option value="Inter">Inter (clean sans-serif)</option>
+      <option value="Caveat">Caveat (handwritten)</option>
+    </select>
+
+    <div class="field-label">Color</div>
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+      <input type="color" id="sdColor" value="#33433E" style="width:52px; height:40px; padding:0; border:1px solid var(--line); border-radius:6px; cursor:pointer;">
+      <input type="text" id="sdColorHex" value="#33433E" style="flex:1; padding:11px 12px; border:1px solid var(--line); border-radius:6px; font-size:14px; background:var(--cream);" placeholder="#33433E">
+    </div>
+
+    <div class="field-label">Size <span id="sdSizeLabel" style="color:var(--muted); font-weight:400;">(50px on desktop)</span></div>
+    <input type="range" id="sdSize" min="28" max="72" value="50" style="width:100%; margin-bottom:22px;">
+
+    <div class="field-label">Live Preview</div>
+    <div style="background:var(--cream); border:1px solid var(--line); border-radius:10px; padding:32px 28px; margin-bottom:20px; overflow:hidden;">
+      <h3 id="sdPreview" style="font-weight:500; line-height:1.25; margin:0;">Helping you heal patterns,<span style="display:block; font-style:italic; font-weight:400; margin-top:4px;">not just symptoms.</span></h3>
+    </div>
+
+    <div style="display:flex; align-items:center; gap:14px;">
+      <button class="btn-primary" onclick="saveSiteDesign()" id="saveSiteDesignBtn">Save Changes</button>
+      <button class="btn-secondary" onclick="resetSiteDesign()">Reset to Default</button>
+      <span id="siteDesignStatus" style="font-size:13px;"></span>
+    </div>
+  </div>
+
+  </div>
+  <!-- /tab-siteDesign -->
+
     </div>
     <!-- /content -->
   </div>
@@ -515,11 +561,15 @@
   var allAppointments = [];
   var currentApptFilter = 'all';
 
+  var siteDesignLoaded = false;
+  var SITE_DESIGN_DEFAULTS = { headlineFont: 'Lora', headlineColor: '#33433E', headlineSize: '50' };
+
   var TAB_TITLES = {
     dashboard: ['Dashboard', 'Welcome back, Dr. Manasvi 👋'],
     appointments: ['Appointments', 'Confirm, reschedule, or review session requests'],
     feedback: ['Feedback', 'Manage testimonials and review links'],
-    blogs: ['Blogs', 'Write and publish articles for the website']
+    blogs: ['Blogs', 'Write and publish articles for the website'],
+    siteDesign: ['Site Design', 'Control the homepage headline\'s font, color, and size']
   };
 
   function setTab(tab){
@@ -530,11 +580,13 @@
     document.getElementById('tab-feedback').classList.toggle('active', tab === 'feedback');
     document.getElementById('tab-appointments').classList.toggle('active', tab === 'appointments');
     document.getElementById('tab-blogs').classList.toggle('active', tab === 'blogs');
+    document.getElementById('tab-siteDesign').classList.toggle('active', tab === 'siteDesign');
     var titles = TAB_TITLES[tab] || TAB_TITLES.dashboard;
     document.getElementById('topbarTitle').textContent = titles[0];
     document.getElementById('topbarSub').textContent = titles[1];
     if(tab === 'blogs' && !allBlogs.length) fetchBlogs();
     if(tab === 'appointments' && !allAppointments.length) fetchAppointments(false);
+    if(tab === 'siteDesign' && !siteDesignLoaded) fetchSiteSettings();
     if(tab === 'dashboard'){
       if(!allAppointments.length) fetchAppointments(false);
       if(!allBlogs.length) fetchBlogs();
@@ -873,6 +925,102 @@
   }
 
   // ---------------- BLOGS ----------------
+
+  // ---------------- SITE DESIGN (homepage headline font/color/size) ----------------
+
+  function updateSdPreview(){
+    var font = document.getElementById('sdFont').value;
+    var color = document.getElementById('sdColorHex').value || '#33433E';
+    var size = document.getElementById('sdSize').value;
+    var preview = document.getElementById('sdPreview');
+    preview.style.fontFamily = "'" + font + "', serif";
+    preview.style.color = color;
+    preview.style.fontSize = size + 'px';
+    document.getElementById('sdSizeLabel').textContent = '(' + size + 'px on desktop)';
+  }
+
+  function fetchSiteSettings(){
+    var statusEl = document.getElementById('siteDesignStatus');
+    statusEl.style.color = 'var(--muted)';
+    statusEl.textContent = 'Loading…';
+    fetch(ENDPOINT_URL + '?action=getSiteSettings')
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        siteDesignLoaded = true;
+        var settings = data || {};
+        document.getElementById('sdFont').value = settings.headlineFont || SITE_DESIGN_DEFAULTS.headlineFont;
+        var color = settings.headlineColor || SITE_DESIGN_DEFAULTS.headlineColor;
+        document.getElementById('sdColor').value = color;
+        document.getElementById('sdColorHex').value = color;
+        document.getElementById('sdSize').value = settings.headlineSize || SITE_DESIGN_DEFAULTS.headlineSize;
+        updateSdPreview();
+        statusEl.textContent = '';
+      })
+      .catch(function(){
+        siteDesignLoaded = true;
+        statusEl.style.color = 'var(--red)';
+        statusEl.textContent = 'Could not load current settings — showing defaults.';
+        updateSdPreview();
+      });
+  }
+
+  function saveSiteDesign(){
+    var btn = document.getElementById('saveSiteDesignBtn');
+    var statusEl = document.getElementById('siteDesignStatus');
+    var payload = new URLSearchParams();
+    payload.set('action', 'saveSiteSettings');
+    payload.set('key', adminKey);
+    payload.set('headlineFont', document.getElementById('sdFont').value);
+    payload.set('headlineColor', document.getElementById('sdColorHex').value);
+    payload.set('headlineSize', document.getElementById('sdSize').value);
+
+    btn.disabled = true;
+    var oldText = btn.textContent;
+    btn.textContent = 'Saving…';
+    statusEl.style.color = 'var(--muted)';
+    statusEl.textContent = '';
+
+    fetch(ENDPOINT_URL, { method: 'POST', body: payload })
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        btn.disabled = false;
+        btn.textContent = oldText;
+        if(data && data.success){
+          statusEl.style.color = 'var(--sage-dark)';
+          statusEl.textContent = '✓ Saved — live on the website now.';
+        } else {
+          statusEl.style.color = 'var(--red)';
+          statusEl.textContent = 'Could not save. ' + (data && data.message ? data.message : '');
+        }
+      })
+      .catch(function(){
+        btn.disabled = false;
+        btn.textContent = oldText;
+        statusEl.style.color = 'var(--red)';
+        statusEl.textContent = 'Network error — please try again.';
+      });
+  }
+
+  function resetSiteDesign(){
+    document.getElementById('sdFont').value = SITE_DESIGN_DEFAULTS.headlineFont;
+    document.getElementById('sdColor').value = SITE_DESIGN_DEFAULTS.headlineColor;
+    document.getElementById('sdColorHex').value = SITE_DESIGN_DEFAULTS.headlineColor;
+    document.getElementById('sdSize').value = SITE_DESIGN_DEFAULTS.headlineSize;
+    updateSdPreview();
+    document.getElementById('siteDesignStatus').style.color = 'var(--muted)';
+    document.getElementById('siteDesignStatus').textContent = 'Reset — click Save to make this live.';
+  }
+
+  document.getElementById('sdFont').addEventListener('change', updateSdPreview);
+  document.getElementById('sdSize').addEventListener('input', updateSdPreview);
+  document.getElementById('sdColor').addEventListener('input', function(){
+    document.getElementById('sdColorHex').value = this.value;
+    updateSdPreview();
+  });
+  document.getElementById('sdColorHex').addEventListener('input', function(){
+    if(/^#[0-9a-fA-F]{6}$/.test(this.value)) document.getElementById('sdColor').value = this.value;
+    updateSdPreview();
+  });
 
   function fetchBlogs(){
     document.getElementById('blogList').innerHTML = '<p class="empty">Loading…</p>';
