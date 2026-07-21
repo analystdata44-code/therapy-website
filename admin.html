@@ -494,9 +494,12 @@
       Changes here apply to the big headline on your homepage, for every visitor. Adjust the options below, check the live preview, then click Save.
     </p>
 
-    <div class="field-label">Font</div>
+    <div class="field-label">Font <span style="color:var(--muted); font-weight:400;">(applies to every headline on the site — hero, section titles, everything)</span></div>
     <select id="sdFont" style="width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:6px; font-size:14px; background:var(--cream); margin-bottom:16px;">
       <option value="Lora">Lora (default — classic serif)</option>
+      <option value="Baskerville">Baskerville (elegant classic serif)</option>
+      <option value="Bodoni 72">Bodoni 72 (high-contrast fashion serif)</option>
+      <option value="Optima">Optima (refined humanist sans-serif)</option>
       <option value="Playfair Display">Playfair Display (elegant serif)</option>
       <option value="Merriweather">Merriweather (soft serif)</option>
       <option value="Cormorant Garamond">Cormorant Garamond (refined serif)</option>
@@ -504,14 +507,17 @@
       <option value="Inter">Inter (clean sans-serif)</option>
       <option value="Caveat">Caveat (handwritten)</option>
     </select>
+    <p style="font-size:12px; color:var(--muted); margin-top:-10px; margin-bottom:16px;">
+      Note: Baskerville, Bodoni 72 &amp; Optima are Apple system fonts. Mac/iPhone visitors see the exact font; Windows/Android visitors see a close fallback automatically.
+    </p>
 
-    <div class="field-label">Color</div>
+    <div class="field-label">Color <span style="color:var(--muted); font-weight:400;">(hero headline only)</span></div>
     <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
       <input type="color" id="sdColor" value="#33433E" style="width:52px; height:40px; padding:0; border:1px solid var(--line); border-radius:6px; cursor:pointer;">
       <input type="text" id="sdColorHex" value="#33433E" style="flex:1; padding:11px 12px; border:1px solid var(--line); border-radius:6px; font-size:14px; background:var(--cream);" placeholder="#33433E">
     </div>
 
-    <div class="field-label">Size <span id="sdSizeLabel" style="color:var(--muted); font-weight:400;">(50px on desktop)</span></div>
+    <div class="field-label">Size <span id="sdSizeLabel" style="color:var(--muted); font-weight:400;">(50px on desktop, hero headline only)</span></div>
     <input type="range" id="sdSize" min="28" max="72" value="50" style="width:100%; margin-bottom:22px;">
 
     <div class="field-label">Live Preview</div>
@@ -928,15 +934,27 @@
 
   // ---------------- SITE DESIGN (homepage headline font/color/size) ----------------
 
+  // Builds a safe CSS font-family stack for each option. Baskerville, Bodoni 72,
+  // and Optima are Apple system fonts (not on Google Fonts) — Mac/iPhone visitors
+  // get the real font; everyone else gets a close, freely-licensed fallback.
+  function fontStackFor(font){
+    var stacks = {
+      'Baskerville': "'Baskerville', 'Libre Baskerville', 'Times New Roman', serif",
+      'Bodoni 72': "'Bodoni 72', Didot, 'Bodoni MT', serif",
+      'Optima': "Optima, Candara, 'Segoe UI', sans-serif"
+    };
+    return stacks[font] || ("'" + font + "', serif");
+  }
+
   function updateSdPreview(){
     var font = document.getElementById('sdFont').value;
     var color = document.getElementById('sdColorHex').value || '#33433E';
     var size = document.getElementById('sdSize').value;
     var preview = document.getElementById('sdPreview');
-    preview.style.fontFamily = "'" + font + "', serif";
+    preview.style.fontFamily = fontStackFor(font);
     preview.style.color = color;
     preview.style.fontSize = size + 'px';
-    document.getElementById('sdSizeLabel').textContent = '(' + size + 'px on desktop)';
+    document.getElementById('sdSizeLabel').textContent = '(' + size + 'px on desktop, hero headline only)';
   }
 
   function fetchSiteSettings(){
