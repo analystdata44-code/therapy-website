@@ -1779,7 +1779,6 @@
               <option value="">Choose a time</option>
               <option>Morning (9 AM – 12 PM)</option>
               <option>Afternoon (12 – 4 PM)</option>
-              <option>Evening (4 – 7 PM)</option>
             </select>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
           </div>
@@ -1907,6 +1906,28 @@
     var submitBtnDefaultHtml = submitBtn ? submitBtn.innerHTML : '';
     var triggers = document.querySelectorAll('.js-open-booking');
     if(!overlay) return;
+
+    // "Preferred Time" only makes sense for In Person sessions — Online sessions
+    // don't need a time slot, so hide that field whenever Online is selected.
+    var bTimeField = document.getElementById('bTimeField');
+    var bTimeSelect = document.getElementById('bTime');
+    var sessionRadios = form ? form.querySelectorAll('input[name="session"]') : [];
+
+    function updateTimeFieldVisibility(){
+      var selected = form ? form.querySelector('input[name="session"]:checked') : null;
+      var isInPerson = selected && selected.value === 'In Person';
+      if(!bTimeField || !bTimeSelect) return;
+      if(isInPerson){
+        bTimeField.style.display = '';
+        bTimeSelect.required = true;
+      } else {
+        bTimeField.style.display = 'none';
+        bTimeSelect.required = false;
+        bTimeSelect.value = '';
+      }
+    }
+    sessionRadios.forEach(function(r){ r.addEventListener('change', updateTimeFieldVisibility); });
+    updateTimeFieldVisibility();
 
     function openModal(e){
       if(e) e.preventDefault();
