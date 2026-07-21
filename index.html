@@ -6,7 +6,7 @@
 <title>Good Earth Citizen — Trauma, Healing &amp; Wellness</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@400;500;600;700&family=Caveat:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@400;500;600;700&family=Caveat:wght@500;600;700&family=Playfair+Display:wght@500;600;700&family=Merriweather:wght@400;700&family=Cormorant+Garamond:wght@500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --cream: #F1EEE7;
@@ -972,6 +972,43 @@
   }
 </style>
 <script src="config.js"></script>
+<script>
+  // ---------------- SITE DESIGN: apply admin-chosen headline font/color/size ----------------
+  // Reads settings saved from admin.html's "Site Design" tab and applies them to the
+  // homepage headline for every visitor. Falls back to the CSS defaults above if the
+  // backend isn't reachable, so the page never breaks if this fails.
+  (function applySiteDesignSettings(){
+    var SITE_DESIGN_ENDPOINT_URL = (typeof TESTIMONIALS_SCRIPT_URL !== 'undefined') ? TESTIMONIALS_SCRIPT_URL : "PASTE_YOUR_TESTIMONIALS_APPS_SCRIPT_URL_HERE";
+    if (!SITE_DESIGN_ENDPOINT_URL || SITE_DESIGN_ENDPOINT_URL.indexOf('PASTE_YOUR') === 0) return;
+
+    fetch(SITE_DESIGN_ENDPOINT_URL + '?action=getSiteSettings')
+      .then(function(res){ return res.json(); })
+      .then(function(settings){
+        if (!settings) return;
+        var headline = document.getElementById('heroHeadline');
+        if (!headline) return;
+
+        if (settings.headlineFont) {
+          headline.style.fontFamily = "'" + settings.headlineFont + "', serif";
+        }
+        if (settings.headlineColor) {
+          headline.style.color = settings.headlineColor;
+        }
+        if (settings.headlineSize) {
+          var size = parseFloat(settings.headlineSize);
+          if (!isNaN(size) && size > 0) {
+            // Keeps the same responsive "shrink on smaller screens" feel as the
+            // original clamp(32px, 4.4vw, 50px), scaled proportionally to the
+            // admin-chosen desktop size instead of the fixed 50px default.
+            var minSize = Math.round(size * 0.64);
+            var vwFactor = (size * 0.088).toFixed(2);
+            headline.style.fontSize = 'clamp(' + minSize + 'px, ' + vwFactor + 'vw, ' + size + 'px)';
+          }
+        }
+      })
+      .catch(function(){ /* silently keep default styling if this fails */ });
+  })();
+</script>
 </head>
 <body>
 
@@ -1011,7 +1048,7 @@
   <div class="wrap">
     <div class="hero-grid">
       <div>
-        <h1>Helping you heal patterns the mind understands<span class="line2">but the body still carries.</span></h1>
+        <h1 id="heroHeadline">Helping you heal patterns the mind understands<span class="line2">but the body still carries.</span></h1>
         <p class="lede">You analyse the patterns clearly — and yet your body still reaches for the smallest triggers. That's a nervous system imprint.</p>
         <p class="lede2">Let's rewire it together.</p>
         <div class="hero-ctas">
