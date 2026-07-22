@@ -1804,12 +1804,12 @@
 
       <div class="booking-disclaimer">
         <strong>Disclaimer for appointment</strong>
-        <p>Please note: Your appointment slot is reserved only after payment is completed on the next screen. A valid phone number is required to complete the booking and confirm your session.</p>
+        <p>Please note: submitting this form sends your appointment request for confirmation. A valid phone number is required to complete the booking and confirm your session.</p>
       </div>
 
       <div class="booking-footer">
-        <div class="booking-footer-note">Confidential • Online &amp; In-Person<br>You'll be taken to secure payment next.</div>
-        <button type="submit" class="b-submit">Proceed to Payment <span aria-hidden="true">→</span></button>
+        <div class="booking-footer-note">Confidential • Online &amp; In-Person</div>
+        <button type="submit" class="b-submit">Book Now <span aria-hidden="true">→</span></button>
       </div>
       <div class="booking-error" id="bookingError"></div>
     </form>
@@ -1818,8 +1818,8 @@
       <div class="b-success-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
       </div>
-      <h4>Payment received — you're booked</h4>
-      <p>Thank you. Your payment was successful and your appointment request has been sent for confirmation. You'll receive an email shortly with your confirmed meeting link, or a note if we need to propose a different time.</p>
+      <h4>You're booked</h4>
+      <p>Thank you. Your appointment request has been sent for confirmation. You'll receive an email shortly with your confirmed meeting link, or a note if we need to propose a different time.</p>
     </div>
   </div>
 </div>
@@ -1898,7 +1898,6 @@
     });
   })();
 </script>
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
   (function(){
     // 👇 Same Apps Script Web app URL used everywhere else on the site (set once in config.js).
@@ -1976,85 +1975,31 @@
           showError("Booking backend not connected yet — paste your Apps Script Web app URL into config.js.");
           return;
         }
-        if(typeof Razorpay === 'undefined'){
-          showError("Payment could not load. Please check your connection and try again.");
-          return;
-        }
 
         var bookingFields = new URLSearchParams(new FormData(form));
         submitBtn.disabled = true;
-        submitBtn.textContent = 'Preparing payment…';
+        submitBtn.textContent = 'Booking…';
 
-        // STEP 1: ask the backend to create a Razorpay Order for the fixed session price.
-        var orderPayload = new URLSearchParams();
-        orderPayload.set('action', 'createOrder');
+        // Book directly — no payment step. The request goes straight to the
+        // backend and shows up in the admin panel for confirmation.
+        var bookPayload = new URLSearchParams(bookingFields);
+        bookPayload.set('action', 'bookAppointment');
 
-        fetch(BOOKING_ENDPOINT_URL, { method: 'POST', body: orderPayload })
+        fetch(BOOKING_ENDPOINT_URL, { method: 'POST', body: bookPayload })
           .then(function(res){ return res.json(); })
-          .then(function(order){
-            if(!order || !order.success){
-              showError("Could not start payment" + (order && order.message ? " (" + order.message + ")" : "") + ". Please try again.");
-              return;
+          .then(function(result){
+            if(result && result.success){
+              form.classList.add('hide');
+              success.classList.add('show');
+            } else {
+              showError("We couldn't confirm your booking automatically" + (result && result.message ? " (" + result.message + ")" : "") + ". Please try again or email us directly.");
             }
-
-            // STEP 2: open Razorpay Checkout for the customer to pay.
-            var rzp = new Razorpay({
-              key: order.keyId,
-              amount: order.amount,
-              currency: order.currency,
-              order_id: order.orderId,
-              name: document.title || "Book a Consultation",
-              description: "Consultation booking",
-              prefill: {
-                name: bookingFields.get('name') || '',
-                email: bookingFields.get('email') || '',
-                contact: bookingFields.get('phone') || ''
-              },
-              theme: { color: '#7E9686' },
-              handler: function(response){
-                // STEP 3: payment succeeded on Razorpay's side — verify it server-side
-                // (signature check) and only then create the appointment.
-                submitBtn.textContent = 'Confirming booking…';
-                var verifyPayload = new URLSearchParams(bookingFields);
-                verifyPayload.set('action', 'verifyPayment');
-                verifyPayload.set('razorpay_order_id', response.razorpay_order_id);
-                verifyPayload.set('razorpay_payment_id', response.razorpay_payment_id);
-                verifyPayload.set('razorpay_signature', response.razorpay_signature);
-
-                fetch(BOOKING_ENDPOINT_URL, { method: 'POST', body: verifyPayload })
-                  .then(function(res){ return res.json(); })
-                  .then(function(result){
-                    if(result && result.success){
-                      form.classList.add('hide');
-                      success.classList.add('show');
-                    } else {
-                      showError("Payment was received, but we couldn't confirm your booking automatically" + (result && result.message ? " (" + result.message + ")" : "") + ". Please email us your payment reference and we'll sort it out.");
-                    }
-                  })
-                  .catch(function(){
-                    showError("Payment was received, but we couldn't reach our server to confirm your booking. Please email us your payment reference.");
-                  })
-                  .finally(function(){
-                    resetSubmitButton();
-                  });
-              },
-              modal: {
-                ondismiss: function(){
-                  // Customer closed the payment popup without paying — booking not completed.
-                  showError("Payment was not completed, so your booking wasn't confirmed. You can try again anytime.");
-                }
-              }
-            });
-
-            rzp.on('payment.failed', function(){
-              showError("Payment failed, so your booking wasn't confirmed. Please try again or use a different payment method.");
-            });
-
-            resetSubmitButton();
-            rzp.open();
           })
           .catch(function(){
-            showError("Something went wrong starting payment. Please try again or email us directly.");
+            showError("Something went wrong while booking. Please try again or email us directly.");
+          })
+          .finally(function(){
+            resetSubmitButton();
           });
       });
     }
