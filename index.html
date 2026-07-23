@@ -2299,5 +2299,24 @@ s0.parentNode.insertBefore(s1,s0);
 })();
 </script>
 <!--End of Tawk.to Script-->
+
+<!-- Basic Content Protection (deters casual copying; not a security measure) -->
+<script type="text/javascript">
+  // Disable right-click context menu
+  document.addEventListener('contextmenu', function(e){ e.preventDefault(); });
+
+  // Disable common shortcuts used to view/inspect source
+  document.addEventListener('keydown', function(e){
+    // F12
+    if (e.keyCode === 123) { e.preventDefault(); }
+    // Ctrl+Shift+I / Ctrl+Shift+J / Ctrl+Shift+C (DevTools)
+    if (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) { e.preventDefault(); }
+    // Ctrl+U (View Source)
+    if (e.ctrlKey && (e.keyCode === 85)) { e.preventDefault(); }
+  });
+
+  // Disable text selection (optional; prevents easy copy-paste of content)
+  document.addEventListener('selectstart', function(e){ e.preventDefault(); });
+</script>
 </body>
 </html>
