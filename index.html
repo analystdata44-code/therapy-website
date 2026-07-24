@@ -330,7 +330,21 @@
         "left2 right2";
     }
     .card-top{max-width:none;}
-    .radial-card::before, .radial-card::after{display:none;}
+    .radial-center-wrap{ position:relative; z-index:1; }
+    .card-top, .card-left1, .card-left2, .card-right1, .card-right2{
+      position:relative; margin-top:34px;
+    }
+    /* On mobile the cards stack in a single column below the illustration,
+       so the connector becomes a short vertical dashed line + dot above
+       each card instead of a horizontal one pointing at the center image. */
+    .radial-card::before{
+      content:''; position:absolute; left:50%; right:auto; top:-34px; width:0; height:34px;
+      border-left:1.5px dashed #C3CDC5; border-top:none; transform:translateX(-50%); z-index:0;
+    }
+    .radial-card::after{
+      content:''; position:absolute; left:50%; right:auto; top:-34px; width:10px; height:10px; border-radius:50%;
+      transform:translate(-50%,-50%); z-index:1; box-shadow:0 0 0 3px var(--cream-deep);
+    }
     .radial-center-wrap img{max-width:220px;}
     .intro-feature-bar{grid-template-columns:1fr 1fr; }
     .feature-photo{grid-column:1/-1; min-height:140px;}
@@ -346,6 +360,32 @@
         "left2"
         "right1"
         "right2";
+      display:block;
+    }
+    /* The illustration stays pinned near the top of the viewport while the
+       cards scroll past beneath it — so at any moment only the card
+       currently under the woman reads as "connected" to her; as the next
+       card scrolls into place, the curve appears to jump to it instead. */
+    .radial-center-wrap{
+      position:sticky; top:80px; z-index:3;
+      background:var(--cream-deep);
+      padding:14px 0 6px; margin-bottom:0;
+    }
+    .radial-center-wrap img{max-width:170px;}
+    .radial-center-bg{width:70%; height:80%;}
+    .card-top, .card-left1, .card-left2, .card-right1, .card-right2{
+      position:relative; z-index:2; margin-top:0; margin-bottom:40px; padding-top:30px;
+    }
+    .radial-card:last-child{margin-bottom:0;}
+    .radial-card::before{
+      content:''; position:absolute; left:50%; top:0; width:120px; height:30px;
+      transform:translateX(-50%);
+      border:1.5px dashed var(--gold); border-top:none;
+      border-radius:0 0 60px 60px/0 0 30px 30px;
+    }
+    .radial-card::after{
+      content:''; position:absolute; left:50%; top:-3px; width:8px; height:8px; border-radius:50%;
+      transform:translateX(-50%); background:var(--gold); box-shadow:0 0 0 3px var(--cream-deep);
     }
     .intro-feature-bar{grid-template-columns:1fr;}
     .feature-item{border-left:none; border-top:1px solid var(--line);}
