@@ -122,6 +122,39 @@
     font-size:15.5px; line-height:1.85; color:var(--muted);
   }
 
+  /* ---------- SECTION PROGRESS LINE (fixed side nav: small dots + a thin line that fills in as you scroll) ---------- */
+  .section-nav{
+    position:fixed; right:16px; top:50%; transform:translateY(-50%);
+    z-index:40; display:flex; flex-direction:column; align-items:center;
+  }
+  .sn-track{
+    position:absolute; left:50%; transform:translateX(-50%);
+    top:10px; bottom:10px; width:1px; border-radius:2px;
+    background:rgba(216,210,196,0.7); overflow:hidden; z-index:0;
+  }
+  .sn-progress{
+    position:absolute; left:0; top:0; width:100%; height:0%;
+    background:var(--sage-dark);
+    transition:height .1s linear;
+  }
+  .section-nav a{
+    position:relative; z-index:1; display:flex; align-items:center; justify-content:center;
+    padding:9px 0; text-decoration:none;
+  }
+  .section-nav .sn-dot{
+    width:7px; height:7px; border-radius:50%; flex-shrink:0;
+    background:var(--cream); border:1.5px solid var(--sage-dark);
+    transition:transform .25s ease, background .25s ease;
+  }
+  .section-nav a.active .sn-dot{
+    background:var(--sage-dark); transform:scale(1.4);
+  }
+  @media (max-width:640px){
+    .section-nav{ right:8px; }
+    .section-nav a{ padding:6px 0; }
+    .section-nav .sn-dot{ width:5px; height:5px; border-width:1px; }
+  }
+
   /* ---------- SECTION GENERIC ---------- */
   .section{padding:100px 0;}
   .section-alt{background:var(--cream-deep);}
@@ -1068,6 +1101,16 @@
     <a href="#contact" class="nav-cta mobile-cta js-open-booking">Book Now</a>
   </div>
 </header>
+
+<nav class="section-nav" id="sectionNav" aria-label="Page sections">
+  <div class="sn-track"><div class="sn-progress" id="snProgress"></div></div>
+  <a href="#home" data-target="home"><span class="sn-dot"></span></a>
+  <a href="#introduction" data-target="introduction"><span class="sn-dot"></span></a>
+  <a href="#about" data-target="about"><span class="sn-dot"></span></a>
+  <a href="#services" data-target="services"><span class="sn-dot"></span></a>
+  <a href="#corporate" data-target="corporate"><span class="sn-dot"></span></a>
+  <a href="#start" data-target="start"><span class="sn-dot"></span></a>
+</nav>
 
 <div id="view-home">
 <!-- PAGE 1 — HOME -->
@@ -2283,6 +2326,47 @@
 
     window.addEventListener('hashchange', function(){ showView(currentHash()); });
     showView(currentHash());
+  })();
+</script>
+
+<script>
+  (function(){
+    var nav = document.getElementById('sectionNav');
+    var progressEl = document.getElementById('snProgress');
+    if(!nav || !progressEl) return;
+    var links = Array.prototype.slice.call(nav.querySelectorAll('a'));
+    var sections = links
+      .map(function(a){ return document.getElementById(a.getAttribute('data-target')); })
+      .filter(Boolean);
+
+    function setActiveIndex(i){
+      links.forEach(function(a, idx){
+        a.classList.toggle('active', idx === i);
+      });
+    }
+
+    function updateProgress(){
+      if(sections.length < 2) return;
+      var first = sections[0];
+      var last = sections[sections.length - 1];
+      var startY = first.offsetTop;
+      var endY = last.offsetTop + last.offsetHeight;
+      var current = window.scrollY + (window.innerHeight * 0.5);
+      var pct = (current - startY) / (endY - startY);
+      pct = Math.max(0, Math.min(1, pct));
+
+      // Drive both the line fill AND the active dot off the same pct,
+      // so the line always reaches a dot's position first, and only
+      // then does that dot light up — never the other way round.
+      progressEl.style.height = (pct * 100) + '%';
+      var n = sections.length;
+      var activeIndex = Math.min(n - 1, Math.floor(pct * n));
+      setActiveIndex(activeIndex);
+    }
+
+    window.addEventListener('scroll', updateProgress, {passive:true});
+    window.addEventListener('resize', updateProgress);
+    updateProgress();
   })();
 </script>
 
