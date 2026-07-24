@@ -48,12 +48,23 @@
   }
   nav{
     display:flex; align-items:center; justify-content:space-between;
-    padding:8px 32px; max-width:1100px; margin:0 auto;
+    padding:14px 32px; max-width:1100px; margin:0 auto;
   }
-  .logo{font-family:'Lora',serif; font-size:19px; font-weight:500; color:var(--ink); display:flex; align-items:center; gap:10px;}
-  .logo img{height:58px; width:auto; display:block;}
-  .logo .logo-text{line-height:1.15;}
-  .logo .logo-text span{display:block; font-size:10px; font-weight:500; letter-spacing:0.14em; color:var(--sage-dark); text-transform:uppercase; margin-top:1px;}
+  .logo{display:flex; flex-direction:column; align-items:center; gap:3px; line-height:1;}
+  .logo-name{
+    font-family:'Playfair Display',serif; font-size:22px; font-weight:600;
+    letter-spacing:0.01em; color:var(--ink); white-space:nowrap;
+  }
+  .logo-therapy{
+    display:flex; align-items:center; gap:9px;
+    font-size:10px; font-weight:600; letter-spacing:0.32em;
+    color:var(--gold); text-transform:uppercase; white-space:nowrap;
+  }
+  .logo-therapy .dash{width:16px; height:1px; background:var(--gold); display:inline-block; flex-shrink:0;}
+  .logo-tagline{
+    font-size:9px; font-weight:600; letter-spacing:0.24em;
+    color:var(--muted); text-transform:uppercase; white-space:nowrap;
+  }
   .nav-links{display:flex; gap:22px; font-size:13.5px;}
   .nav-links a{position:relative; color:var(--muted); padding:4px 0; transition:color .25s ease;}
   .nav-links a::after{content:''; position:absolute; left:0; bottom:0; width:0; height:1px; background:var(--sage-dark); transition:width .3s ease;}
@@ -901,12 +912,13 @@
     .start-grid{grid-template-columns:1fr;}
     .contact-grid{grid-template-columns:1fr; gap:40px;}
     .wrap{padding:0 20px;}
-    nav{padding:8px 20px; gap:10px;}
-    .logo{gap:8px; min-width:0;}
-    .logo img{height:42px;}
-    .logo .logo-text{font-size:14px; white-space:nowrap;}
-    .logo .logo-text span{display:none;}
-    .nav-cta{padding:9px 14px; font-size:12.5px; white-space:nowrap;}
+    nav{padding:10px 20px; gap:10px;}
+    .logo{gap:2px; min-width:0;}
+    .logo-name{font-size:16px;}
+    .logo-therapy{font-size:8px; gap:6px; letter-spacing:0.24em;}
+    .logo-therapy .dash{width:11px;}
+    .logo-tagline{font-size:7.5px; letter-spacing:0.18em;}
+    nav > .nav-cta{display:none;}
     .intro-quote-bar{flex-direction:column; align-items:flex-start; padding:26px 24px 34px; gap:14px;}
     .quote-branch{width:100px; right:12px; bottom:-10px; opacity:.5;}
     .approach-quote-bubble{width:130px; height:130px; padding:14px; right:-6px;}
@@ -922,8 +934,7 @@
     .approach-image-icons{display:none;}
   }
   @media (max-width:380px){
-    .logo .logo-text{font-size:12.5px;}
-    .nav-cta{padding:8px 11px; font-size:11.5px;}
+    .logo-name{font-size:14px;}
   }
 
   /* ---------- TESTIMONIALS ---------- */
@@ -1115,8 +1126,9 @@
 <header>
   <nav>
     <div class="logo">
-      <img src="assets/logo-icon.png" alt="">
-      <div class="logo-text">Good Earth Citizen</div>
+      <div class="logo-name">Manasvi Mehta</div>
+      <div class="logo-therapy"><span class="dash"></span>Therapy<span class="dash"></span></div>
+      <div class="logo-tagline">Mind. Body. Self.</div>
     </div>
     <div class="nav-links">
       <a href="#home">Home</a>
