@@ -50,7 +50,9 @@
     display:flex; align-items:center; justify-content:space-between;
     padding:14px 32px; max-width:1100px; margin:0 auto;
   }
-  .logo{display:flex; flex-direction:column; align-items:center; gap:3px; line-height:1;}
+  .logo{display:flex; flex-direction:row; align-items:center; gap:12px; line-height:1;}
+  .logo-icon{height:50px; width:auto; display:block; flex-shrink:0;}
+  .logo-text-stack{display:flex; flex-direction:column; align-items:flex-start; gap:3px;}
   .logo-name{
     font-family:'Playfair Display',serif; font-size:22px; font-weight:600;
     letter-spacing:0.01em; color:var(--ink); white-space:nowrap;
@@ -913,7 +915,8 @@
     .contact-grid{grid-template-columns:1fr; gap:40px;}
     .wrap{padding:0 20px;}
     nav{padding:10px 20px; gap:10px;}
-    .logo{gap:2px; min-width:0;}
+    .logo{gap:8px; min-width:0;}
+    .logo-icon{height:34px;}
     .logo-name{font-size:16px;}
     .logo-therapy{font-size:8px; gap:6px; letter-spacing:0.24em;}
     .logo-therapy .dash{width:11px;}
@@ -1126,9 +1129,12 @@
 <header>
   <nav>
     <div class="logo">
-      <div class="logo-name">Manasvi Mehta</div>
-      <div class="logo-therapy"><span class="dash"></span>Therapy<span class="dash"></span></div>
-      <div class="logo-tagline">Mind. Body. Self.</div>
+      <img src="assets/logo-icon.png" alt="Good Earth Citizen mark" class="logo-icon">
+      <div class="logo-text-stack">
+        <div class="logo-name">Manasvi Mehta</div>
+        <div class="logo-therapy"><span class="dash"></span>Therapy<span class="dash"></span></div>
+        <div class="logo-tagline">Mind. Body. Self.</div>
+      </div>
     </div>
     <div class="nav-links">
       <a href="#home">Home</a>
