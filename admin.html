@@ -42,7 +42,7 @@
   .sidebar-foot button{display:flex; align-items:center; gap:12px; width:100%; text-align:left; background:none; border:none; color:#e3b3a8; font-size:14px; font-weight:600; padding:11px 12px; border-radius:8px; cursor:pointer;}
   .sidebar-foot button:hover{background:rgba(163,74,58,.18);}
 
-  .main-col{flex:1; min-width:0; display:flex; flex-direction:column;}
+  .main-col{flex:1; min-width:0; display:flex; flex-direction:column; overflow-x:hidden;}
   .topbar{display:flex; align-items:center; justify-content:space-between; gap:16px; padding:20px 32px; background:#fff; border-bottom:1px solid var(--line); position:sticky; top:0; z-index:5;}
   .topbar h1{font-size:22px; margin-bottom:2px;}
   .topbar .sub{font-size:13px; color:var(--muted);}
@@ -69,6 +69,7 @@
   .stat-4{background:var(--stat-plum-bg);} .stat-4 .stat-icon{background:var(--plum);} .stat-4 .stat-note{color:var(--plum);}
 
   .dash-grid{display:grid; grid-template-columns:2fr 1fr; gap:20px; align-items:start;}
+  .dash-grid > div{min-width:0;}
   .dash-card{background:#fff; border:1px solid var(--line); border-radius:14px; padding:22px;}
   .dash-card-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;}
   .dash-card-head h2{margin-bottom:0;}
@@ -98,19 +99,121 @@
   .schedule-item .nm{font-size:13px; font-weight:600;}
   .schedule-item .em{font-size:11px; color:var(--muted);}
 
+  /* ============ RESPONSIVE / MOBILE ============ */
+
+  /* Tablets & small laptops */
   @media (max-width: 980px){
     .stat-grid{grid-template-columns:repeat(2,1fr);}
     .dash-grid{grid-template-columns:1fr;}
     .topbar-search{display:none;}
+    .content{max-width:100%;}
   }
+
+  /* Large phones landscape / small tablets */
   @media (max-width: 720px){
     #appShell.show{flex-direction:column;}
-    .sidebar{width:100%; height:auto; position:relative; flex-direction:row; align-items:center; padding:14px 16px; overflow-x:auto;}
-    .sidebar-brand{border-bottom:none; margin-bottom:0; padding:0 12px 0 0; border-right:1px solid var(--sidebar-line);}
-    .sidebar-nav{flex-direction:row;}
-    .sidebar-foot{border-top:none; margin-top:0; padding-top:0;}
+    .sidebar{width:100%; height:auto; position:relative; flex-direction:row; align-items:center; padding:14px 16px; overflow-x:auto; -webkit-overflow-scrolling:touch;}
+    .sidebar-brand{border-bottom:none; margin-bottom:0; padding:0 12px 0 0; border-right:1px solid var(--sidebar-line); flex-shrink:0;}
+    .sidebar-nav{flex-direction:row; flex-shrink:0;}
+    .sidebar-nav button{white-space:nowrap;}
+    .sidebar-foot{border-top:none; margin-top:0; padding-top:0; flex-shrink:0;}
+    .sidebar-foot button{white-space:nowrap;}
     .stat-grid{grid-template-columns:1fr;}
     .content{padding:20px 16px 60px;}
+    .wrap{padding:28px 16px 60px;}
+  }
+
+  /* Phones (iPhone Pro Max / Plus down to iPhone SE) */
+  @media (max-width: 480px){
+    html{-webkit-text-size-adjust:100%;}
+    h1{font-size:21px; margin-bottom:18px;}
+    h2{font-size:16px;}
+
+    /* Sidebar becomes a compact top strip; icons only, labels hidden to save space */
+    .sidebar{padding:10px 12px; gap:2px;}
+    .sidebar-brand{padding:0 10px 0 0;}
+    .sidebar-brand .leaf{width:32px; height:32px; font-size:15px;}
+    .sidebar-brand .brand-name{font-size:13px;}
+    .sidebar-brand .brand-name span{font-size:9.5px;}
+    .sidebar-nav button{padding:9px 9px; font-size:0; gap:0;}
+    .sidebar-nav button .ico{font-size:17px;}
+    .sidebar-foot button{padding:9px; font-size:0;}
+    .sidebar-foot button .ico{font-size:16px;}
+
+    /* Topbar */
+    .topbar{padding:14px 16px; flex-wrap:wrap; gap:10px;}
+    .topbar h1{font-size:19px;}
+    .topbar .sub{font-size:12px;}
+    .topbar-right{gap:10px;}
+    .topbar-profile .who{display:none;}
+    .topbar-profile .avatar{width:34px; height:34px; font-size:12.5px;}
+
+    .content{padding:16px 12px 50px;}
+    .wrap{padding:20px 12px 50px;}
+
+    /* Stat cards */
+    .stat-card{padding:16px;}
+    .stat-card .stat-value{font-size:23px;}
+    .stat-card .stat-icon{width:34px; height:34px; font-size:15px; margin-bottom:10px;}
+
+    /* Dashboard cards */
+    .dash-card, .side-card, .card{padding:16px;}
+    .dash-card-head{flex-wrap:wrap; gap:8px;}
+    .quick-actions{grid-template-columns:1fr 1fr; gap:8px;}
+    .quick-actions button{padding:14px 8px; font-size:11.5px;}
+
+    /* Mini tables scroll horizontally, don't crush columns */
+    .mini-table{min-width:480px;}
+    .mini-name .em{display:none;}
+
+    /* Login */
+    #loginBox{margin:50px auto; padding:28px 22px; max-width:92vw;}
+
+    /* Generate link / inputs row */
+    .row{flex-direction:column; gap:10px;}
+    .row input[type="text"], .row input[type="email"]{width:100%; min-width:0;}
+    .row button{width:100%;}
+    .link-output{flex-direction:column; align-items:stretch; gap:10px;}
+    .link-output button{width:100%;}
+
+    /* Filters & tabs scroll instead of wrap-crush */
+    .filters{overflow-x:auto; flex-wrap:nowrap; -webkit-overflow-scrolling:touch; padding-bottom:4px;}
+    .filters button{flex-shrink:0;}
+    .tabs{overflow-x:auto; flex-wrap:nowrap; -webkit-overflow-scrolling:touch; padding-bottom:4px;}
+    .tabs button{flex-shrink:0; padding:9px 16px; font-size:13px;}
+
+    /* Review cards */
+    .review-top{flex-direction:column; gap:8px;}
+    .review-actions{flex-wrap:wrap;}
+    .review-actions button{flex:1; min-width:90px;}
+
+    /* Blog cards */
+    .blog-card{flex-direction:column;}
+    .blog-card .blog-thumb{width:100%; height:150px;}
+    .blog-title-row{flex-direction:column; gap:6px;}
+    .blog-actions{flex-wrap:wrap;}
+    .blog-actions button{flex:1; min-width:80px;}
+    .blog-form-actions{flex-wrap:wrap;}
+    .blog-form-actions button{flex:1; min-width:120px;}
+    .image-preview{width:72px; height:72px;}
+
+    /* Quill editor toolbar wraps cleanly on small screens */
+    .ql-toolbar.ql-snow{padding:6px 4px;}
+    #blogEditor{min-height:200px;}
+
+    /* Appointments */
+    .appt-top{flex-direction:column; gap:8px;}
+    .appt-actions button{flex:1; min-width:100px;}
+
+    /* Site design live preview & controls */
+    #sdPreview{font-size:clamp(22px, 7vw, 34px) !important;}
+  }
+
+  /* Very small phones (iPhone SE / mini) */
+  @media (max-width: 375px){
+    .quick-actions{grid-template-columns:1fr;}
+    .stat-card .stat-value{font-size:21px;}
+    .topbar h1{font-size:17px;}
   }
 
   /* Login */
@@ -496,19 +599,79 @@
 
     <div class="field-label">Font <span style="color:var(--muted); font-weight:400;">(applies to every headline on the site — hero, section titles, everything)</span></div>
     <select id="sdFont" style="width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:6px; font-size:14px; background:var(--cream); margin-bottom:16px;">
-      <option value="Lora">Lora (default — classic serif)</option>
-      <option value="Baskerville">Baskerville (elegant classic serif)</option>
-      <option value="Bodoni 72">Bodoni 72 (high-contrast fashion serif)</option>
-      <option value="Optima">Optima (refined humanist sans-serif)</option>
-      <option value="Playfair Display">Playfair Display (elegant serif)</option>
-      <option value="Merriweather">Merriweather (soft serif)</option>
-      <option value="Cormorant Garamond">Cormorant Garamond (refined serif)</option>
-      <option value="Poppins">Poppins (modern sans-serif)</option>
-      <option value="Inter">Inter (clean sans-serif)</option>
-      <option value="Caveat">Caveat (handwritten)</option>
+      <optgroup label="Google Fonts (all devices)">
+        <option value="Lora">Lora (default — classic serif)</option>
+        <option value="Playfair Display">Playfair Display (elegant serif)</option>
+        <option value="Merriweather">Merriweather (soft serif)</option>
+        <option value="Cormorant Garamond">Cormorant Garamond (refined serif)</option>
+        <option value="Poppins">Poppins (modern sans-serif)</option>
+        <option value="Inter">Inter (clean sans-serif)</option>
+        <option value="Caveat">Caveat (handwritten)</option>
+      </optgroup>
+      <optgroup label="Apple System — Sans-serif">
+        <option value="SF Pro">SF Pro / San Francisco (Apple's default UI font)</option>
+        <option value="Helvetica Neue">Helvetica Neue</option>
+        <option value="Helvetica">Helvetica</option>
+        <option value="Arial">Arial</option>
+        <option value="Arial Rounded MT Bold">Arial Rounded MT Bold</option>
+        <option value="Avenir">Avenir</option>
+        <option value="Avenir Next">Avenir Next</option>
+        <option value="Avenir Next Condensed">Avenir Next Condensed</option>
+        <option value="Optima">Optima (refined humanist sans-serif)</option>
+        <option value="Futura">Futura</option>
+        <option value="Gill Sans">Gill Sans</option>
+        <option value="Trebuchet MS">Trebuchet MS</option>
+        <option value="Verdana">Verdana</option>
+        <option value="Galvji">Galvji</option>
+        <option value="Seravek">Seravek</option>
+        <option value="DIN Alternate">DIN Alternate</option>
+        <option value="DIN Condensed">DIN Condensed</option>
+      </optgroup>
+      <optgroup label="Apple System — Serif">
+        <option value="New York">New York (Apple's system serif)</option>
+        <option value="Baskerville">Baskerville (elegant classic serif)</option>
+        <option value="Big Caslon">Big Caslon</option>
+        <option value="Bodoni 72">Bodoni 72 (high-contrast fashion serif)</option>
+        <option value="Bodoni 72 Oldstyle">Bodoni 72 Oldstyle</option>
+        <option value="Bodoni 72 Smallcaps">Bodoni 72 Smallcaps</option>
+        <option value="Charter">Charter</option>
+        <option value="Cochin">Cochin</option>
+        <option value="Didot">Didot</option>
+        <option value="Georgia">Georgia</option>
+        <option value="Hoefler Text">Hoefler Text</option>
+        <option value="Iowan Old Style">Iowan Old Style</option>
+        <option value="Palatino">Palatino</option>
+        <option value="Rockwell">Rockwell</option>
+        <option value="Superclarendon">Superclarendon</option>
+        <option value="Times New Roman">Times New Roman</option>
+      </optgroup>
+      <optgroup label="Apple System — Handwriting &amp; Script">
+        <option value="Snell Roundhand">Snell Roundhand</option>
+        <option value="Savoye LET">Savoye LET</option>
+        <option value="SignPainter">SignPainter</option>
+        <option value="Noteworthy">Noteworthy</option>
+        <option value="Bradley Hand">Bradley Hand</option>
+        <option value="Marker Felt">Marker Felt</option>
+        <option value="Party LET">Party LET</option>
+        <option value="Zapfino">Zapfino</option>
+      </optgroup>
+      <optgroup label="Apple System — Display &amp; Decorative">
+        <option value="Copperplate">Copperplate</option>
+        <option value="Papyrus">Papyrus</option>
+        <option value="Herculanum">Herculanum</option>
+        <option value="Chalkboard SE">Chalkboard SE</option>
+        <option value="Chalkduster">Chalkduster</option>
+        <option value="American Typewriter">American Typewriter</option>
+        <option value="Phosphate">Phosphate</option>
+        <option value="Impact">Impact</option>
+      </optgroup>
+      <optgroup label="Apple System — Monospace">
+        <option value="Menlo">Menlo</option>
+        <option value="Courier New">Courier New</option>
+      </optgroup>
     </select>
     <p style="font-size:12px; color:var(--muted); margin-top:-10px; margin-bottom:16px;">
-      Note: Baskerville, Bodoni 72 &amp; Optima are Apple system fonts. Mac/iPhone visitors see the exact font; Windows/Android visitors see a close fallback automatically.
+      Note: everything under "Apple System" is a built-in Apple font (not on Google Fonts). iPhone &amp; Mac visitors see the exact font; Windows/Android visitors automatically see a close, freely-licensed fallback.
     </p>
 
     <div class="field-label">Color <span style="color:var(--muted); font-weight:400;">(hero headline only)</span></div>
@@ -939,9 +1102,62 @@
   // get the real font; everyone else gets a close, freely-licensed fallback.
   function fontStackFor(font){
     var stacks = {
+      // Sans-serif
+      'SF Pro': "-apple-system, BlinkMacSystemFont, 'SF Pro', 'Segoe UI', Roboto, sans-serif",
+      'Helvetica Neue': "'Helvetica Neue', Helvetica, Arial, sans-serif",
+      'Helvetica': "Helvetica, Arial, sans-serif",
+      'Arial': "Arial, Helvetica, sans-serif",
+      'Arial Rounded MT Bold': "'Arial Rounded MT Bold', 'Arial Rounded MT', Arial, sans-serif",
+      'Avenir': "Avenir, 'Avenir Next', Poppins, sans-serif",
+      'Avenir Next': "'Avenir Next', Avenir, Poppins, sans-serif",
+      'Avenir Next Condensed': "'Avenir Next Condensed', 'Avenir Next', Poppins, sans-serif",
+      'Optima': "Optima, Candara, 'Segoe UI', sans-serif",
+      'Futura': "Futura, 'Century Gothic', Poppins, sans-serif",
+      'Gill Sans': "'Gill Sans', 'Gill Sans MT', Poppins, sans-serif",
+      'Trebuchet MS': "'Trebuchet MS', sans-serif",
+      'Verdana': "Verdana, Geneva, sans-serif",
+      'Galvji': "Galvji, 'Segoe UI', sans-serif",
+      'Seravek': "Seravek, 'Segoe UI', sans-serif",
+      'DIN Alternate': "'DIN Alternate', 'Arial Narrow', sans-serif",
+      'DIN Condensed': "'DIN Condensed', 'Arial Narrow', sans-serif",
+      // Serif
+      'New York': "'New York', ui-serif, Georgia, 'Times New Roman', serif",
       'Baskerville': "'Baskerville', 'Libre Baskerville', 'Times New Roman', serif",
+      'Big Caslon': "'Big Caslon', 'Big Caslon FB', Georgia, serif",
       'Bodoni 72': "'Bodoni 72', Didot, 'Bodoni MT', serif",
-      'Optima': "Optima, Candara, 'Segoe UI', sans-serif"
+      'Bodoni 72 Oldstyle': "'Bodoni 72 Oldstyle', 'Bodoni 72', Didot, serif",
+      'Bodoni 72 Smallcaps': "'Bodoni 72 Smallcaps', 'Bodoni 72', Didot, serif",
+      'Charter': "Charter, Georgia, serif",
+      'Cochin': "Cochin, Georgia, serif",
+      'Didot': "Didot, 'Bodoni MT', serif",
+      'Georgia': "Georgia, 'Times New Roman', serif",
+      'Hoefler Text': "'Hoefler Text', Cormorant Garamond, Georgia, serif",
+      'Iowan Old Style': "'Iowan Old Style', Georgia, serif",
+      'Palatino': "Palatino, 'Palatino Linotype', Georgia, serif",
+      'Rockwell': "Rockwell, 'Rockwell Nova', Georgia, serif",
+      'Superclarendon': "Superclarendon, Rockwell, Georgia, serif",
+      'Times New Roman': "'Times New Roman', Times, serif",
+      // Handwriting & script
+      'Snell Roundhand': "'Snell Roundhand', Caveat, cursive",
+      'Savoye LET': "'Savoye LET', Caveat, cursive",
+      'SignPainter': "SignPainter, Caveat, cursive",
+      'Noteworthy': "Noteworthy, Caveat, cursive",
+      'Bradley Hand': "'Bradley Hand', Caveat, cursive",
+      'Marker Felt': "'Marker Felt', Caveat, cursive",
+      'Party LET': "'Party LET', Caveat, cursive",
+      'Zapfino': "Zapfino, Caveat, cursive",
+      // Display & decorative
+      'Copperplate': "Copperplate, 'Copperplate Gothic Light', serif",
+      'Papyrus': "Papyrus, fantasy",
+      'Herculanum': "Herculanum, fantasy",
+      'Chalkboard SE': "'Chalkboard SE', Comic Sans MS, cursive",
+      'Chalkduster': "Chalkduster, fantasy",
+      'American Typewriter': "'American Typewriter', 'Courier New', monospace",
+      'Phosphate': "Phosphate, fantasy",
+      'Impact': "Impact, 'Arial Narrow', sans-serif",
+      // Monospace
+      'Menlo': "Menlo, 'Courier New', monospace",
+      'Courier New': "'Courier New', Courier, monospace"
     };
     return stacks[font] || ("'" + font + "', serif");
   }
