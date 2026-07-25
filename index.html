@@ -1061,6 +1061,39 @@
   }
 </style>
 <script src="config.js"></script>
+<script src="content-fields.js"></script>
+<script>
+  // ---------------- SITE CONTENT: apply admin-edited text from the "Site Content" tab ----------------
+  // Reads the {key: value} map saved from admin.html's "Site Content" tab and applies each
+  // value to the matching element (found via the CSS selector in content-fields.js).
+  // If a key has never been saved (or the backend isn't reachable), the element simply
+  // keeps the text that's already hardcoded in this file — so the page never breaks.
+  (function applyPageContent(){
+    var fields = (typeof CONTENT_FIELDS !== 'undefined') ? CONTENT_FIELDS : [];
+    var ENDPOINT_URL = (typeof TESTIMONIALS_SCRIPT_URL !== 'undefined') ? TESTIMONIALS_SCRIPT_URL : "PASTE_YOUR_TESTIMONIALS_APPS_SCRIPT_URL_HERE";
+    if (!fields.length || !ENDPOINT_URL || ENDPOINT_URL.indexOf('PASTE_YOUR') === 0) return;
+
+    fetch(ENDPOINT_URL + '?action=getPageContent')
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        var values = (data && data.values) || {};
+        fields.forEach(function(f){
+          var val = values[f.key];
+          if (val === undefined || val === null || val === '') return; // nothing saved yet -> keep hardcoded default
+          var el = document.querySelector(f.sel);
+          if (!el) return;
+          if (f.mode === 'list') {
+            var lines = String(val).split('\n').map(function(s){ return s.trim(); }).filter(Boolean);
+            el.innerHTML = lines.map(function(l){ return '<li>' + l + '</li>'; }).join('');
+          } else {
+            // 'text' and 'html' modes both applied via innerHTML — plain text has no tags so it's safe either way.
+            el.innerHTML = val;
+          }
+        });
+      })
+      .catch(function(err){ console.warn('Site content load failed, showing defaults:', err); });
+  })();
+</script>
 <script>
   // ---------------- SITE DESIGN: apply admin-chosen headline font/color/size ----------------
   // Reads settings saved from admin.html's "Site Design" tab and applies them to the
