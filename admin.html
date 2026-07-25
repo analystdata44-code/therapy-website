@@ -350,6 +350,7 @@
       <button data-tab="feedback" onclick="setTab('feedback')"><span class="ico">★</span> Feedback</button>
       <button data-tab="blogs" onclick="setTab('blogs')"><span class="ico">📝</span> Blogs</button>
       <button data-tab="siteDesign" onclick="setTab('siteDesign')"><span class="ico">🎨</span> Site Design</button>
+      <button data-tab="siteContent" onclick="setTab('siteContent')"><span class="ico">📄</span> Site Content</button>
     </nav>
     <div class="sidebar-foot">
       <button onclick="logout()"><span class="ico">⎋</span> Logout</button>
@@ -698,6 +699,23 @@
   </div>
   <!-- /tab-siteDesign -->
 
+  <div class="tab-panel" id="tab-siteContent">
+    <div class="card" style="margin-bottom:20px;">
+      <h2 style="margin-bottom:6px;">Edit Website Text</h2>
+      <p style="color:var(--muted); font-size:13.5px; margin-bottom:0;">
+        Every section's text lives here. Change anything below, then click <strong>Save All Changes</strong> at the bottom —
+        it goes live on the website immediately for every visitor. Leaving a field blank keeps the current live text.
+      </p>
+    </div>
+    <div id="scGroups">Loading…</div>
+    <div class="card" style="position:sticky; bottom:14px; display:flex; align-items:center; gap:14px; box-shadow:var(--shadow); z-index:4;">
+      <button class="btn-primary" onclick="saveSiteContent()" id="saveSiteContentBtn">Save All Changes</button>
+      <button class="btn-secondary" onclick="fetchSiteContent()">Discard &amp; Reload</button>
+      <span id="siteContentStatus" style="font-size:13px;"></span>
+    </div>
+  </div>
+  <!-- /tab-siteContent -->
+
     </div>
     <!-- /content -->
   </div>
@@ -706,6 +724,7 @@
 <!-- /appShell -->
 
 <script src="config.js"></script>
+<script src="content-fields.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.min.js"></script>
 <script>
   // 👇 The script URL is now set in one place, in config.js (TESTIMONIALS_SCRIPT_URL).
@@ -733,12 +752,16 @@
   var siteDesignLoaded = false;
   var SITE_DESIGN_DEFAULTS = { headlineFont: 'Lora', headlineColor: '#33433E', headlineSize: '50' };
 
+  var siteContentLoaded = false;
+  var siteContentValues = {}; // current saved values, keyed by CONTENT_FIELDS[].key
+
   var TAB_TITLES = {
     dashboard: ['Dashboard', 'Welcome back, Dr. Manasvi 👋'],
     appointments: ['Appointments', 'Confirm, reschedule, or review session requests'],
     feedback: ['Feedback', 'Manage testimonials and review links'],
     blogs: ['Blogs', 'Write and publish articles for the website'],
-    siteDesign: ['Site Design', 'Control the homepage headline\'s font, color, and size']
+    siteDesign: ['Site Design', 'Control the homepage headline\'s font, color, and size'],
+    siteContent: ['Site Content', 'Edit every piece of text on the website']
   };
 
   function setTab(tab){
@@ -750,12 +773,14 @@
     document.getElementById('tab-appointments').classList.toggle('active', tab === 'appointments');
     document.getElementById('tab-blogs').classList.toggle('active', tab === 'blogs');
     document.getElementById('tab-siteDesign').classList.toggle('active', tab === 'siteDesign');
+    document.getElementById('tab-siteContent').classList.toggle('active', tab === 'siteContent');
     var titles = TAB_TITLES[tab] || TAB_TITLES.dashboard;
     document.getElementById('topbarTitle').textContent = titles[0];
     document.getElementById('topbarSub').textContent = titles[1];
     if(tab === 'blogs' && !allBlogs.length) fetchBlogs();
     if(tab === 'appointments' && !allAppointments.length) fetchAppointments(false);
     if(tab === 'siteDesign' && !siteDesignLoaded) fetchSiteSettings();
+    if(tab === 'siteContent' && !siteContentLoaded) fetchSiteContent();
     if(tab === 'dashboard'){
       if(!allAppointments.length) fetchAppointments(false);
       if(!allBlogs.length) fetchBlogs();
@@ -1247,6 +1272,106 @@
     updateSdPreview();
     document.getElementById('siteDesignStatus').style.color = 'var(--muted)';
     document.getElementById('siteDesignStatus').textContent = 'Reset — click Save to make this live.';
+  }
+
+  // ---------------- SITE CONTENT (editable text for every section on index.html) ----------------
+
+  function renderSiteContentForm(){
+    var fields = (typeof CONTENT_FIELDS !== 'undefined') ? CONTENT_FIELDS : [];
+    var groupsWrap = document.getElementById('scGroups');
+    if(!fields.length){ groupsWrap.innerHTML = '<div class="card">No content fields defined.</div>'; return; }
+
+    // group fields by section, preserving first-seen order
+    var order = [], bySection = {};
+    fields.forEach(function(f){
+      if(!bySection[f.section]){ bySection[f.section] = []; order.push(f.section); }
+      bySection[f.section].push(f);
+    });
+
+    var html = '';
+    order.forEach(function(section){
+      html += '<div class="card" style="margin-bottom:16px;"><h2>' + escapeHtml(section) + '</h2>';
+      bySection[section].forEach(function(f){
+        var current = (siteContentValues[f.key] !== undefined && siteContentValues[f.key] !== '') ? siteContentValues[f.key] : f.def;
+        var isLong = f.mode !== 'text' || current.length > 70;
+        html += '<div class="field-label">' + f.label + '</div>';
+        if(isLong){
+          html += '<textarea data-sc-key="' + f.key + '" rows="' + (f.mode === 'list' ? 5 : 3) + '" style="width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:6px; font-size:13.5px; font-family:inherit; background:var(--cream); margin-bottom:16px; resize:vertical;">' + escapeHtml(current) + '</textarea>';
+        } else {
+          html += '<input type="text" data-sc-key="' + f.key + '" value="' + escapeHtml(current).replace(/"/g,'&quot;') + '" style="width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:6px; font-size:13.5px; background:var(--cream); margin-bottom:16px;">';
+        }
+      });
+      html += '</div>';
+    });
+    groupsWrap.innerHTML = html;
+  }
+
+  function escapeHtml(s){
+    return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function fetchSiteContent(){
+    var statusEl = document.getElementById('siteContentStatus');
+    var groupsWrap = document.getElementById('scGroups');
+    groupsWrap.innerHTML = 'Loading…';
+    statusEl.textContent = '';
+    fetch(ENDPOINT_URL + '?action=getPageContent')
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        siteContentLoaded = true;
+        siteContentValues = (data && data.values) || {};
+        renderSiteContentForm();
+      })
+      .catch(function(){
+        siteContentLoaded = true;
+        siteContentValues = {};
+        statusEl.style.color = 'var(--red)';
+        statusEl.textContent = 'Could not load saved content — showing current site defaults.';
+        renderSiteContentForm();
+      });
+  }
+
+  function saveSiteContent(){
+    var btn = document.getElementById('saveSiteContentBtn');
+    var statusEl = document.getElementById('siteContentStatus');
+    var fields = (typeof CONTENT_FIELDS !== 'undefined') ? CONTENT_FIELDS : [];
+    var values = {};
+    fields.forEach(function(f){
+      var el = document.querySelector('[data-sc-key="' + f.key + '"]');
+      values[f.key] = el ? el.value : (siteContentValues[f.key] || '');
+    });
+
+    var payload = new URLSearchParams();
+    payload.set('action', 'savePageContent');
+    payload.set('key', adminKey);
+    payload.set('data', JSON.stringify(values));
+
+    btn.disabled = true;
+    var oldText = btn.textContent;
+    btn.textContent = 'Saving…';
+    statusEl.style.color = 'var(--muted)';
+    statusEl.textContent = '';
+
+    fetch(ENDPOINT_URL, { method: 'POST', body: payload })
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        btn.disabled = false;
+        btn.textContent = oldText;
+        if(data && data.success){
+          siteContentValues = values;
+          statusEl.style.color = 'var(--sage-dark)';
+          statusEl.textContent = '✓ Saved — live on the website now.';
+        } else {
+          statusEl.style.color = 'var(--red)';
+          statusEl.textContent = (data && data.error) ? data.error : 'Save failed — please try again.';
+        }
+      })
+      .catch(function(){
+        btn.disabled = false;
+        btn.textContent = oldText;
+        statusEl.style.color = 'var(--red)';
+        statusEl.textContent = 'Save failed — check your connection and try again.';
+      });
   }
 
   document.getElementById('sdFont').addEventListener('change', updateSdPreview);
