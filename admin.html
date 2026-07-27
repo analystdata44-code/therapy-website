@@ -351,6 +351,7 @@
       <button data-tab="blogs" onclick="setTab('blogs')"><span class="ico">📝</span> Blogs</button>
       <button data-tab="siteDesign" onclick="setTab('siteDesign')"><span class="ico">🎨</span> Site Design</button>
       <button data-tab="siteContent" onclick="setTab('siteContent')"><span class="ico">📄</span> Site Content</button>
+      <button data-tab="services" onclick="setTab('services')"><span class="ico">🧩</span> Services</button>
     </nav>
     <div class="sidebar-foot">
       <button onclick="logout()"><span class="ico">⎋</span> Logout</button>
@@ -706,6 +707,13 @@
         Every section's text lives here. Change anything below, then click <strong>Save All Changes</strong> at the bottom —
         it goes live on the website immediately for every visitor. Leaving a field blank keeps the current live text.
       </p>
+      <p style="color:var(--muted); font-size:13.5px; margin:10px 0 0;">
+        <strong>Service icons:</strong> each Services section also has an "Icon" field — paste raw SVG code into it to change the icon.
+        Good free sources: <a href="https://heroicons.com" target="_blank" rel="noopener">heroicons.com</a>,
+        <a href="https://feathericons.com" target="_blank" rel="noopener">feathericons.com</a>, or
+        <a href="https://lucide.dev/icons" target="_blank" rel="noopener">lucide.dev/icons</a> — pick an icon, copy its
+        "Outline/SVG" code, and paste the whole <code>&lt;svg&gt;...&lt;/svg&gt;</code> tag into the field. Leave it blank to keep the current icon.
+      </p>
     </div>
     <div id="scGroups">Loading…</div>
     <div class="card" style="position:sticky; bottom:14px; display:flex; align-items:center; gap:14px; box-shadow:var(--shadow); z-index:4;">
@@ -715,6 +723,29 @@
     </div>
   </div>
   <!-- /tab-siteContent -->
+
+  <div class="tab-panel" id="tab-services">
+    <div class="card" style="margin-bottom:20px;">
+      <h2 style="margin-bottom:6px;">Services</h2>
+      <p style="color:var(--muted); font-size:13.5px; margin-bottom:0;">
+        Add, remove, or reorder the service cards shown on the website. Each card needs a title, a short
+        description, at least one bullet point, and an icon color. The icon itself is optional raw SVG code —
+        paste one from <a href="https://heroicons.com" target="_blank" rel="noopener">heroicons.com</a>,
+        <a href="https://feathericons.com" target="_blank" rel="noopener">feathericons.com</a>, or
+        <a href="https://lucide.dev/icons" target="_blank" rel="noopener">lucide.dev/icons</a>, or leave blank for a default circle.
+      </p>
+    </div>
+    <div id="servicesList">Loading…</div>
+    <div class="card" style="margin-bottom:16px;">
+      <button class="btn-secondary" onclick="addServiceCard()">+ Add Service</button>
+    </div>
+    <div class="card" style="position:sticky; bottom:14px; display:flex; align-items:center; gap:14px; box-shadow:var(--shadow); z-index:4;">
+      <button class="btn-primary" onclick="saveServicesList()" id="saveServicesBtn">Save All Changes</button>
+      <button class="btn-secondary" onclick="fetchServicesList()">Discard &amp; Reload</button>
+      <span id="servicesStatus" style="font-size:13px;"></span>
+    </div>
+  </div>
+  <!-- /tab-services -->
 
     </div>
     <!-- /content -->
@@ -755,13 +786,18 @@
   var siteContentLoaded = false;
   var siteContentValues = {}; // current saved values, keyed by CONTENT_FIELDS[].key
 
+  var servicesLoaded = false;
+  var servicesData = []; // array of {id,title,desc,bullets,note,icon,iconColor}
+  var ICON_COLORS = ['ic-sage','ic-tan','ic-blue','ic-purple','ic-gold','ic-moss'];
+
   var TAB_TITLES = {
     dashboard: ['Dashboard', 'Welcome back, Dr. Manasvi 👋'],
     appointments: ['Appointments', 'Confirm, reschedule, or review session requests'],
     feedback: ['Feedback', 'Manage testimonials and review links'],
     blogs: ['Blogs', 'Write and publish articles for the website'],
     siteDesign: ['Site Design', 'Control the homepage headline\'s font, color, and size'],
-    siteContent: ['Site Content', 'Edit every piece of text on the website']
+    siteContent: ['Site Content', 'Edit every piece of text on the website'],
+    services: ['Services', 'Add, remove, and reorder service cards']
   };
 
   function setTab(tab){
@@ -774,6 +810,7 @@
     document.getElementById('tab-blogs').classList.toggle('active', tab === 'blogs');
     document.getElementById('tab-siteDesign').classList.toggle('active', tab === 'siteDesign');
     document.getElementById('tab-siteContent').classList.toggle('active', tab === 'siteContent');
+    document.getElementById('tab-services').classList.toggle('active', tab === 'services');
     var titles = TAB_TITLES[tab] || TAB_TITLES.dashboard;
     document.getElementById('topbarTitle').textContent = titles[0];
     document.getElementById('topbarSub').textContent = titles[1];
@@ -781,6 +818,7 @@
     if(tab === 'appointments' && !allAppointments.length) fetchAppointments(false);
     if(tab === 'siteDesign' && !siteDesignLoaded) fetchSiteSettings();
     if(tab === 'siteContent' && !siteContentLoaded) fetchSiteContent();
+    if(tab === 'services' && !servicesLoaded) fetchServicesList();
     if(tab === 'dashboard'){
       if(!allAppointments.length) fetchAppointments(false);
       if(!allBlogs.length) fetchBlogs();
@@ -1359,6 +1397,142 @@
         btn.textContent = oldText;
         if(data && data.success){
           siteContentValues = values;
+          statusEl.style.color = 'var(--sage-dark)';
+          statusEl.textContent = '✓ Saved — live on the website now.';
+        } else {
+          statusEl.style.color = 'var(--red)';
+          statusEl.textContent = (data && data.error) ? data.error : 'Save failed — please try again.';
+        }
+      })
+      .catch(function(){
+        btn.disabled = false;
+        btn.textContent = oldText;
+        statusEl.style.color = 'var(--red)';
+        statusEl.textContent = 'Save failed — check your connection and try again.';
+      });
+  }
+
+  // ---------------- SERVICES (dynamic list — add / remove / reorder cards) ----------------
+
+  function renderServicesForm(){
+    var wrap = document.getElementById('servicesList');
+    if(!servicesData.length){
+      wrap.innerHTML = '<div class="card">No services yet — click "+ Add Service" below.</div>';
+      return;
+    }
+    var html = '';
+    servicesData.forEach(function(s, i){
+      var colorOptions = ICON_COLORS.map(function(c){
+        return '<option value="' + c + '"' + (s.iconColor === c ? ' selected' : '') + '>' + c.replace('ic-','') + '</option>';
+      }).join('');
+      html += '<div class="card" style="margin-bottom:16px;">' +
+        '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">' +
+          '<h2 style="margin:0;">Service ' + (i+1) + '</h2>' +
+          '<div style="display:flex; gap:8px;">' +
+            '<button class="btn-secondary" type="button" onclick="moveServiceCard(' + i + ',-1)" ' + (i===0?'disabled':'') + '>↑ Up</button>' +
+            '<button class="btn-secondary" type="button" onclick="moveServiceCard(' + i + ',1)" ' + (i===servicesData.length-1?'disabled':'') + '>↓ Down</button>' +
+            '<button class="btn-secondary" type="button" onclick="removeServiceCard(' + i + ')" style="color:var(--red);">Remove</button>' +
+          '</div>' +
+        '</div>' +
+        '<div class="field-label">Title</div>' +
+        '<input type="text" data-svc-field="title" data-svc-idx="' + i + '" value="' + escapeHtml(s.title||'').replace(/"/g,'&quot;') + '" style="width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:6px; font-size:13.5px; background:var(--cream); margin-bottom:14px;">' +
+        '<div class="field-label">Short description</div>' +
+        '<textarea data-svc-field="desc" data-svc-idx="' + i + '" rows="2" style="width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:6px; font-size:13.5px; font-family:inherit; background:var(--cream); margin-bottom:14px; resize:vertical;">' + escapeHtml(s.desc||'') + '</textarea>' +
+        '<div class="field-label">Bullet points (one per line)</div>' +
+        '<textarea data-svc-field="bullets" data-svc-idx="' + i + '" rows="5" style="width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:6px; font-size:13.5px; font-family:inherit; background:var(--cream); margin-bottom:14px; resize:vertical;">' + escapeHtml(s.bullets||'') + '</textarea>' +
+        '<div class="field-label">Footnote (optional)</div>' +
+        '<input type="text" data-svc-field="note" data-svc-idx="' + i + '" value="' + escapeHtml(s.note||'').replace(/"/g,'&quot;') + '" style="width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:6px; font-size:13.5px; background:var(--cream); margin-bottom:14px;">' +
+        '<div style="display:flex; gap:16px; flex-wrap:wrap;">' +
+          '<div style="flex:1; min-width:160px;">' +
+            '<div class="field-label">Icon color</div>' +
+            '<select data-svc-field="iconColor" data-svc-idx="' + i + '" style="width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:6px; font-size:13.5px; background:var(--cream);">' + colorOptions + '</select>' +
+          '</div>' +
+          '<div style="flex:2; min-width:220px;">' +
+            '<div class="field-label">Icon SVG (optional — paste raw code)</div>' +
+            '<textarea data-svc-field="icon" data-svc-idx="' + i + '" rows="2" style="width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:6px; font-size:12.5px; font-family:monospace; background:var(--cream); resize:vertical;">' + escapeHtml(s.icon||'') + '</textarea>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    });
+    wrap.innerHTML = html;
+
+    // keep servicesData in sync as the admin types, so add/remove/reorder never loses edits
+    wrap.querySelectorAll('[data-svc-field]').forEach(function(el){
+      el.addEventListener('input', function(){
+        var idx = Number(el.getAttribute('data-svc-idx'));
+        var field = el.getAttribute('data-svc-field');
+        if(servicesData[idx]) servicesData[idx][field] = el.value;
+      });
+      el.addEventListener('change', function(){
+        var idx = Number(el.getAttribute('data-svc-idx'));
+        var field = el.getAttribute('data-svc-field');
+        if(servicesData[idx]) servicesData[idx][field] = el.value;
+      });
+    });
+  }
+
+  function addServiceCard(){
+    servicesData.push({ id: 's' + Date.now().toString(36), title: 'New Service', desc: '', bullets: '', note: '', icon: '', iconColor: ICON_COLORS[servicesData.length % ICON_COLORS.length] });
+    renderServicesForm();
+  }
+
+  function removeServiceCard(i){
+    if(!confirm('Remove this service card? This takes effect once you click Save All Changes.')) return;
+    servicesData.splice(i, 1);
+    renderServicesForm();
+  }
+
+  function moveServiceCard(i, dir){
+    var j = i + dir;
+    if(j < 0 || j >= servicesData.length) return;
+    var tmp = servicesData[i];
+    servicesData[i] = servicesData[j];
+    servicesData[j] = tmp;
+    renderServicesForm();
+  }
+
+  function fetchServicesList(){
+    var statusEl = document.getElementById('servicesStatus');
+    var wrap = document.getElementById('servicesList');
+    wrap.innerHTML = 'Loading…';
+    statusEl.textContent = '';
+    fetch(ENDPOINT_URL + '?action=getServices')
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        servicesLoaded = true;
+        servicesData = (data && data.services) || [];
+        renderServicesForm();
+      })
+      .catch(function(){
+        servicesLoaded = true;
+        servicesData = [];
+        statusEl.style.color = 'var(--red)';
+        statusEl.textContent = 'Could not load services.';
+        renderServicesForm();
+      });
+  }
+
+  function saveServicesList(){
+    var btn = document.getElementById('saveServicesBtn');
+    var statusEl = document.getElementById('servicesStatus');
+
+    var payload = new URLSearchParams();
+    payload.set('action', 'saveServices');
+    payload.set('key', adminKey);
+    payload.set('data', JSON.stringify(servicesData));
+
+    btn.disabled = true;
+    var oldText = btn.textContent;
+    btn.textContent = 'Saving…';
+    statusEl.style.color = 'var(--muted)';
+    statusEl.textContent = '';
+
+    fetch(ENDPOINT_URL, { method: 'POST', body: payload })
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        btn.disabled = false;
+        btn.textContent = oldText;
+        if(data && data.success){
           statusEl.style.color = 'var(--sage-dark)';
           statusEl.textContent = '✓ Saved — live on the website now.';
         } else {
