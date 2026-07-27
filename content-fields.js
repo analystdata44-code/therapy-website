@@ -92,41 +92,6 @@ var CONTENT_FIELDS = [
   { key:'services_heading', sel:'#services .section-head h2', mode:'html', section:'Services', label:'Heading (HTML allowed)',
     def:"Every person's process is different. <em>We decide together.</em>" },
 
-  { key:'svc1_title', sel:'.services-grid .service-acc:nth-child(1) h3', mode:'html', section:'Services — Individual Therapy', label:'Title', def:'Individual Therapy' },
-  { key:'svc1_desc', sel:'.services-grid .service-acc:nth-child(1) .sc-head-text p', mode:'text', section:'Services — Individual Therapy', label:'Short description', def:'A space to understand yourself more clearly and work through patterns that affect your day-to-day life.' },
-  { key:'svc1_bullets', sel:'.services-grid .service-acc:nth-child(1) .sc-body ul', mode:'list', section:'Services — Individual Therapy', label:'Bullet points (one per line)',
-    def:'Inner child work to process early experiences and parental dynamics\nRelationship challenges, including attachment patterns and communication\nAnxiety, overthinking and emotional overwhelm\nSelf-worth, identity and confidence\nNavigating life transitions and decision-making' },
-  { key:'svc1_note', sel:'.services-grid .service-acc:nth-child(1) .note', mode:'text', section:'Services — Individual Therapy', label:'Footnote', def:'Paced carefully so you feel supported as you explore and shift these patterns.' },
-
-  { key:'svc2_title', sel:'.services-grid .service-acc:nth-child(2) h3', mode:'html', section:'Services — Trauma-Focused Therapy', label:'Title', def:'Trauma-Focused Therapy' },
-  { key:'svc2_desc', sel:'.services-grid .service-acc:nth-child(2) .sc-head-text p', mode:'text', section:'Services — Trauma-Focused Therapy', label:'Short description', def:'Understanding and processing past experiences, reducing triggers, building safety.' },
-  { key:'svc2_bullets', sel:'.services-grid .service-acc:nth-child(2) .sc-body ul', mode:'list', section:'Services — Trauma-Focused Therapy', label:'Bullet points (one per line)',
-    def:'Processing childhood trauma, emotional neglect, or criticism\nUnderstanding triggers and reducing emotional reactivity\nWorking through shame, fear, or chronic self-doubt\nHealing patterns of hypervigilance, freeze, or shutdown\nRebuilding a sense of safety within yourself' },
-  { key:'svc2_note', sel:'.services-grid .service-acc:nth-child(2) .note', mode:'text', section:'Services — Trauma-Focused Therapy', label:'Footnote', def:'Gradual and always guided by your capacity.' },
-
-  { key:'svc3_title', sel:'.services-grid .service-acc:nth-child(3) h3', mode:'html', section:'Services — Somatic Work', label:'Title', def:'Somatic Work' },
-  { key:'svc3_desc', sel:'.services-grid .service-acc:nth-child(3) .sc-head-text p', mode:'text', section:'Services — Somatic Work', label:'Short description', def:'Working with the body to release stress, regulate emotions and build internal safety.' },
-  { key:'svc3_bullets', sel:'.services-grid .service-acc:nth-child(3) .sc-body ul', mode:'list', section:'Services — Somatic Work', label:'Bullet points (one per line)',
-    def:'Noticing and understanding body-based responses (tightness, breath, shutdown)\nLearning to regulate your nervous system in moments of stress\nReleasing stored tension and survival responses\nBuilding a greater sense of safety and presence in your body\nReducing anxiety that feels physical or immediate' },
-  { key:'svc3_note', sel:'.services-grid .service-acc:nth-child(3) .note', mode:'text', section:'Services — Somatic Work', label:'Footnote', def:'Helps shift patterns that talking alone often cannot reach.' },
-
-  { key:'svc4_title', sel:'.services-grid .service-acc:nth-child(4) h3', mode:'html', section:'Services — Hypnotherapy', label:'Title', def:'Hypnotherapy' },
-  { key:'svc4_desc', sel:'.services-grid .service-acc:nth-child(4) .sc-head-text p', mode:'text', section:'Services — Hypnotherapy', label:'Short description', def:'Subconscious work for deeper patterns, beliefs, and emotional responses.' },
-  { key:'svc4_bullets', sel:'.services-grid .service-acc:nth-child(4) .sc-body ul', mode:'list', section:'Services — Hypnotherapy', label:'Bullet points (one per line)',
-    def:'Identifying and shifting core beliefs about yourself\nWorking with repeating relationship patterns\nAddressing performance anxiety or confidence blocks\nProcessing emotional memories linked to past experiences\nWorking through sexual blocks or body-based inhibitions' },
-  { key:'svc4_note', sel:'.services-grid .service-acc:nth-child(4) .note', mode:'text', section:'Services — Hypnotherapy', label:'Footnote', def:'You remain aware and in control throughout the process.' },
-
-  { key:'svc5_title', sel:'.services-grid .service-acc:nth-child(5) h3', mode:'html', section:'Services — Self Integration Work', label:'Title (HTML allowed)', def:'Self Integration Work <span class="sc-sub">(Shadow Work)</span>' },
-  { key:'svc5_desc', sel:'.services-grid .service-acc:nth-child(5) .sc-head-text p', mode:'text', section:'Services — Self Integration Work', label:'Short description', def:'Working with different parts of self to create internal coherence and stability.' },
-  { key:'svc5_bullets', sel:'.services-grid .service-acc:nth-child(5) .sc-body ul', mode:'list', section:'Services — Self Integration Work', label:'Bullet points (one per line)',
-    def:'Working with conflicting parts (e.g. one part wants closeness, another pulls away)\nUnderstanding protective patterns like perfectionism or people-pleasing\nReconnecting with younger or vulnerable parts of yourself\nReducing inner conflict and self-criticism\nBuilding a more stable and cohesive sense of self' },
-  { key:'svc5_note', sel:'.services-grid .service-acc:nth-child(5) .note', mode:'text', section:'Services — Self Integration Work', label:'Footnote', def:'Over time, this creates a deeper sense of internal steadiness.' },
-
-  { key:'svc6_title', sel:'.services-grid .service-acc:nth-child(6) h3', mode:'html', section:'Services — Mindset & Growth', label:'Title', def:'Mindset &amp; Personal Growth' },
-  { key:'svc6_desc', sel:'.services-grid .service-acc:nth-child(6) .sc-head-text p', mode:'text', section:'Services — Mindset & Growth', label:'Short description', def:'For those who feel stuck in their thinking, direction or decision-making.' },
-  { key:'svc6_bullets', sel:'.services-grid .service-acc:nth-child(6) .sc-body ul', mode:'list', section:'Services — Mindset & Growth', label:'Bullet points (one per line)',
-    def:'Identifying and shifting limiting beliefs\nWorking through imposter syndrome and self-doubt\nImproving clarity in career or academic decisions\nBuilding focus, motivation, and consistency\nDeveloping a healthier relationship with failure and growth' },
-  { key:'svc6_note', sel:'.services-grid .service-acc:nth-child(6) .note', mode:'text', section:'Services — Mindset & Growth', label:'Footnote', def:'More forward-focused, while still grounded in self-awareness.' },
 
   // ---------- CORPORATE / NGO / HOSPITAL ----------
   { key:'corp_eyebrow', sel:'#corporate .section-eyebrow', mode:'text', section:'Corporate / NGO / Hospital', label:'Eyebrow tag', def:'Corporate · NGO · Hospital' },
