@@ -1095,6 +1095,54 @@
   })();
 </script>
 <script>
+  // ---------------- SERVICES: render service cards from the admin's "Services" tab ----------------
+  // The 6 <div class="service-acc"> cards already hardcoded below act as the fallback shown
+  // before this loads (and if the backend is unreachable). If the Apps Script returns a
+  // services list, we replace the whole .services-grid with cards built from that list —
+  // so admin can add/remove/reorder services, not just edit the fixed 6.
+  (function renderServices(){
+    var ENDPOINT_URL = (typeof TESTIMONIALS_SCRIPT_URL !== 'undefined') ? TESTIMONIALS_SCRIPT_URL : "PASTE_YOUR_TESTIMONIALS_APPS_SCRIPT_URL_HERE";
+    var grid = document.querySelector('.services-grid');
+    if (!grid || !ENDPOINT_URL || ENDPOINT_URL.indexOf('PASTE_YOUR') === 0) return;
+
+    function escapeHtml(s){
+      return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    fetch(ENDPOINT_URL + '?action=getServices')
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        var services = (data && data.services) || [];
+        if (!services.length) return; // keep the hardcoded fallback cards as-is
+
+        var html = services.map(function(s, i){
+          var bullets = String(s.bullets || '').split('\n').map(function(l){ return l.trim(); }).filter(Boolean);
+          var bulletsHtml = bullets.map(function(b){ return '<li>' + escapeHtml(b) + '</li>'; }).join('');
+          var iconColor = s.iconColor || 'ic-sage';
+          var iconSvg = s.icon || '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8"/></svg>';
+          return (
+            '<div class="service-acc in-view" data-reveal style="--reveal-delay:' + (Math.min(i,6) * 0.08) + 's">' +
+              '<div class="sc-head">' +
+                '<span class="sc-icon ' + iconColor + '">' + iconSvg + '</span>' +
+                '<div class="sc-head-text">' +
+                  '<h3>' + (s.title || '') + '</h3>' +
+                  '<p>' + escapeHtml(s.desc || '') + '</p>' +
+                '</div>' +
+              '</div>' +
+              '<div class="sc-body">' +
+                '<ul>' + bulletsHtml + '</ul>' +
+                (s.note ? '<div class="note">' + escapeHtml(s.note) + '</div>' : '') +
+              '</div>' +
+            '</div>'
+          );
+        }).join('');
+
+        grid.innerHTML = html;
+      })
+      .catch(function(err){ console.warn('Services load failed, showing defaults:', err); });
+  })();
+</script>
+<script>
   // ---------------- SITE DESIGN: apply admin-chosen headline font/color/size ----------------
   // Reads settings saved from admin.html's "Site Design" tab and applies them to the
   // homepage headline for every visitor. Falls back to the CSS defaults above if the
