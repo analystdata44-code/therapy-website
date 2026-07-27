@@ -1101,45 +1101,56 @@
   // services list, we replace the whole .services-grid with cards built from that list —
   // so admin can add/remove/reorder services, not just edit the fixed 6.
   (function renderServices(){
-    var ENDPOINT_URL = (typeof TESTIMONIALS_SCRIPT_URL !== 'undefined') ? TESTIMONIALS_SCRIPT_URL : "PASTE_YOUR_TESTIMONIALS_APPS_SCRIPT_URL_HERE";
-    var grid = document.querySelector('.services-grid');
-    if (!grid || !ENDPOINT_URL || ENDPOINT_URL.indexOf('PASTE_YOUR') === 0) return;
+    function run(){
+      var ENDPOINT_URL = (typeof TESTIMONIALS_SCRIPT_URL !== 'undefined') ? TESTIMONIALS_SCRIPT_URL : "PASTE_YOUR_TESTIMONIALS_APPS_SCRIPT_URL_HERE";
+      var grid = document.querySelector('.services-grid');
+      if (!grid || !ENDPOINT_URL || ENDPOINT_URL.indexOf('PASTE_YOUR') === 0) return;
 
-    function escapeHtml(s){
-      return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      function escapeHtml(s){
+        return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      }
+
+      fetch(ENDPOINT_URL + '?action=getServices')
+        .then(function(res){ return res.json(); })
+        .then(function(data){
+          var services = (data && data.services) || [];
+          if (!services.length) return; // keep the hardcoded fallback cards as-is
+
+          var html = services.map(function(s, i){
+            var bullets = String(s.bullets || '').split('\n').map(function(l){ return l.trim(); }).filter(Boolean);
+            var bulletsHtml = bullets.map(function(b){ return '<li>' + escapeHtml(b) + '</li>'; }).join('');
+            var iconColor = s.iconColor || 'ic-sage';
+            var iconSvg = s.icon || '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8"/></svg>';
+            return (
+              '<div class="service-acc in-view" data-reveal style="--reveal-delay:' + (Math.min(i,6) * 0.08) + 's">' +
+                '<div class="sc-head">' +
+                  '<span class="sc-icon ' + iconColor + '">' + iconSvg + '</span>' +
+                  '<div class="sc-head-text">' +
+                    '<h3>' + (s.title || '') + '</h3>' +
+                    '<p>' + escapeHtml(s.desc || '') + '</p>' +
+                  '</div>' +
+                '</div>' +
+                '<div class="sc-body">' +
+                  '<ul>' + bulletsHtml + '</ul>' +
+                  (s.note ? '<div class="note">' + escapeHtml(s.note) + '</div>' : '') +
+                '</div>' +
+              '</div>'
+            );
+          }).join('');
+
+          grid.innerHTML = html;
+        })
+        .catch(function(err){ console.warn('Services load failed, showing defaults:', err); });
     }
 
-    fetch(ENDPOINT_URL + '?action=getServices')
-      .then(function(res){ return res.json(); })
-      .then(function(data){
-        var services = (data && data.services) || [];
-        if (!services.length) return; // keep the hardcoded fallback cards as-is
-
-        var html = services.map(function(s, i){
-          var bullets = String(s.bullets || '').split('\n').map(function(l){ return l.trim(); }).filter(Boolean);
-          var bulletsHtml = bullets.map(function(b){ return '<li>' + escapeHtml(b) + '</li>'; }).join('');
-          var iconColor = s.iconColor || 'ic-sage';
-          var iconSvg = s.icon || '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8"/></svg>';
-          return (
-            '<div class="service-acc in-view" data-reveal style="--reveal-delay:' + (Math.min(i,6) * 0.08) + 's">' +
-              '<div class="sc-head">' +
-                '<span class="sc-icon ' + iconColor + '">' + iconSvg + '</span>' +
-                '<div class="sc-head-text">' +
-                  '<h3>' + (s.title || '') + '</h3>' +
-                  '<p>' + escapeHtml(s.desc || '') + '</p>' +
-                '</div>' +
-              '</div>' +
-              '<div class="sc-body">' +
-                '<ul>' + bulletsHtml + '</ul>' +
-                (s.note ? '<div class="note">' + escapeHtml(s.note) + '</div>' : '') +
-              '</div>' +
-            '</div>'
-          );
-        }).join('');
-
-        grid.innerHTML = html;
-      })
-      .catch(function(err){ console.warn('Services load failed, showing defaults:', err); });
+    // The .services-grid element may not exist yet if this <script> tag happens to
+    // appear earlier in the HTML than that section — waiting for DOMContentLoaded
+    // makes this work regardless of script placement.
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', run);
+    } else {
+      run();
+    }
   })();
 </script>
 <script>
