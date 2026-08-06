@@ -326,6 +326,19 @@
   .appt-inline-form input, .appt-inline-form textarea{width:100%; padding:10px 12px; border:1px solid var(--line); border-radius:6px; font-size:13.5px; background:var(--cream); margin-bottom:10px; font-family:'Inter',sans-serif;}
   .appt-inline-form .row{gap:10px;}
   .appt-form-status{font-size:12.5px; margin-top:6px;}
+
+  /* ---- Site Content: per-field rich text editors ---- */
+  .sc-field-block{margin-bottom:18px;}
+  .sc-editor-wrap{border:1px solid var(--line); border-radius:8px; overflow:hidden; background:#fff;}
+  .sc-toolbar.ql-toolbar.ql-snow{background:var(--cream); border:none; border-bottom:1px solid var(--line); padding:5px 6px; display:flex; flex-wrap:wrap; align-items:center; gap:2px;}
+  .sc-toolbar .ql-picker{margin-right:2px;}
+  .sc-toolbar .ql-font .ql-picker-label,
+  .sc-toolbar .ql-font .ql-picker-item{font-size:12.5px;}
+  .sc-toolbar .ql-size .ql-picker-label,
+  .sc-toolbar .ql-size .ql-picker-item{font-size:12px;}
+  .sc-editor.ql-container.ql-snow{border:none; font-family:'Inter',sans-serif; font-size:13.5px;}
+  .sc-editor .ql-editor{min-height:44px; padding:10px 12px; background:var(--cream);}
+  .sc-editor.sc-editor-long .ql-editor{min-height:110px;}
 </style>
 </head>
 <body>
@@ -704,7 +717,8 @@
     <div class="card" style="margin-bottom:20px;">
       <h2 style="margin-bottom:6px;">Edit Website Text</h2>
       <p style="color:var(--muted); font-size:13.5px; margin-bottom:0;">
-        Every section's text lives here. Change anything below, then click <strong>Save All Changes</strong> at the bottom —
+        Every section's text lives here. Each field below has its own formatting toolbar — select text and apply
+        <strong>Bold</strong>, <em>Italic</em>, <u>Underline</u>, a font, or a size. Change anything, then click <strong>Save All Changes</strong> at the bottom —
         it goes live on the website immediately for every visitor. Leaving a field blank keeps the current live text.
       </p>
       <p style="color:var(--muted); font-size:13.5px; margin:10px 0 0;">
@@ -762,6 +776,22 @@
   //    No need to paste it separately here.
   var ENDPOINT_URL = (typeof TESTIMONIALS_SCRIPT_URL !== 'undefined') ? TESTIMONIALS_SCRIPT_URL : "PASTE_YOUR_TESTIMONIALS_APPS_SCRIPT_URL_HERE";
 
+  // ---- Fonts & sizes available in every rich-text editor (blog + site content) ----
+  var RICH_TEXT_FONTS = ['Lora','Playfair Display','Merriweather','Cormorant Garamond','Poppins','Inter','Caveat','Georgia','Times New Roman','Arial'];
+  var RICH_TEXT_SIZES = ['12px','14px','16px','18px','20px','24px','28px','32px'];
+
+  // Register style-based Font & Size attributors so formatting is saved as
+  // plain inline CSS (font-family / font-size) inside the saved HTML —
+  // this way the live website can render the exact same formatting without
+  // needing any extra Quill-specific CSS classes.
+  var ScFontAttributor = Quill.import('attributors/style/font');
+  ScFontAttributor.whitelist = RICH_TEXT_FONTS;
+  Quill.register(ScFontAttributor, true);
+
+  var ScSizeAttributor = Quill.import('attributors/style/size');
+  ScSizeAttributor.whitelist = RICH_TEXT_SIZES;
+  Quill.register(ScSizeAttributor, true);
+
   var blogQuill = new Quill('#blogEditor', {
     theme: 'snow',
     modules: { toolbar: '#blogToolbar' },
@@ -785,6 +815,7 @@
 
   var siteContentLoaded = false;
   var siteContentValues = {}; // current saved values, keyed by CONTENT_FIELDS[].key
+  var scQuills = {}; // live Quill instances for the Site Content tab, keyed by field key
 
   var servicesLoaded = false;
   var servicesData = []; // array of {id,title,desc,bullets,note,icon,iconColor}
@@ -1312,7 +1343,32 @@
     document.getElementById('siteDesignStatus').textContent = 'Reset — click Save to make this live.';
   }
 
-  // ---------------- SITE CONTENT (editable text for every section on index.html) ----------------
+  // ---------------- SITE CONTENT (editable, per-field rich text for every section on index.html) ----------------
+
+  // Older saved values (and the site's current hard-coded defaults) are plain
+  // text. Convert that into a single <p> of HTML so it loads cleanly into a
+  // Quill editor. Values already saved by the new rich editor start with a
+  // tag (e.g. "<p>") and are used as-is.
+  function scLegacyValueToHtml(value){
+    var text = value == null ? '' : String(value);
+    if(/^\s*</.test(text)) return text; // already HTML
+    if(text === '') return '';
+    return '<p>' + escapeHtml(text).replace(/\n/g, '<br>') + '</p>';
+  }
+
+  function scBuildToolbarHtml(uid){
+    return (
+      '<select class="ql-font">' +
+        RICH_TEXT_FONTS.map(function(f){ return '<option value="' + f + '">' + f + '</option>'; }).join('') +
+      '</select>' +
+      '<select class="ql-size">' +
+        RICH_TEXT_SIZES.map(function(s){ return '<option value="' + s + '">' + s + '</option>'; }).join('') +
+      '</select>' +
+      '<button class="ql-bold" type="button"></button>' +
+      '<button class="ql-italic" type="button"></button>' +
+      '<button class="ql-underline" type="button"></button>'
+    );
+  }
 
   function renderSiteContentForm(){
     var fields = (typeof CONTENT_FIELDS !== 'undefined') ? CONTENT_FIELDS : [];
@@ -1326,22 +1382,38 @@
       bySection[f.section].push(f);
     });
 
+    scQuills = {}; // drop references to the editors we're about to replace
+
     var html = '';
     order.forEach(function(section){
       html += '<div class="card" style="margin-bottom:16px;"><h2>' + escapeHtml(section) + '</h2>';
       bySection[section].forEach(function(f){
-        var current = (siteContentValues[f.key] !== undefined && siteContentValues[f.key] !== '') ? siteContentValues[f.key] : f.def;
-        var isLong = f.mode !== 'text' || current.length > 70;
-        html += '<div class="field-label">' + f.label + '</div>';
-        if(isLong){
-          html += '<textarea data-sc-key="' + f.key + '" rows="' + (f.mode === 'list' ? 5 : 3) + '" style="width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:6px; font-size:13.5px; font-family:inherit; background:var(--cream); margin-bottom:16px; resize:vertical;">' + escapeHtml(current) + '</textarea>';
-        } else {
-          html += '<input type="text" data-sc-key="' + f.key + '" value="' + escapeHtml(current).replace(/"/g,'&quot;') + '" style="width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:6px; font-size:13.5px; background:var(--cream); margin-bottom:16px;">';
-        }
+        var isLong = f.mode !== 'text';
+        var uid = 'sc-' + f.key.replace(/[^a-zA-Z0-9_-]/g, '_');
+        html += '<div class="sc-field-block">';
+        html += '<div class="field-label" style="margin-top:0;">' + f.label + '</div>';
+        html += '<div class="sc-editor-wrap">';
+        html += '<div id="' + uid + '-toolbar" class="sc-toolbar ql-toolbar ql-snow">' + scBuildToolbarHtml(uid) + '</div>';
+        html += '<div id="' + uid + '-editor" class="sc-editor' + (isLong ? ' sc-editor-long' : '') + '" data-sc-key="' + f.key + '"></div>';
+        html += '</div>';
+        html += '</div>';
       });
       html += '</div>';
     });
     groupsWrap.innerHTML = html;
+
+    // Now that the toolbars/editors exist in the DOM, spin up a Quill instance per field.
+    fields.forEach(function(f){
+      var uid = 'sc-' + f.key.replace(/[^a-zA-Z0-9_-]/g, '_');
+      var current = (siteContentValues[f.key] !== undefined && siteContentValues[f.key] !== '') ? siteContentValues[f.key] : f.def;
+      var q = new Quill('#' + uid + '-editor', {
+        theme: 'snow',
+        modules: { toolbar: '#' + uid + '-toolbar' },
+        placeholder: f.label
+      });
+      q.root.innerHTML = scLegacyValueToHtml(current);
+      scQuills[f.key] = q;
+    });
   }
 
   function escapeHtml(s){
@@ -1375,8 +1447,10 @@
     var fields = (typeof CONTENT_FIELDS !== 'undefined') ? CONTENT_FIELDS : [];
     var values = {};
     fields.forEach(function(f){
-      var el = document.querySelector('[data-sc-key="' + f.key + '"]');
-      values[f.key] = el ? el.value : (siteContentValues[f.key] || '');
+      var q = scQuills[f.key];
+      // An editor left completely empty means "keep whatever's currently live" —
+      // same behaviour as the old blank-textarea rule.
+      values[f.key] = (q && q.getText().trim() !== '') ? q.root.innerHTML.trim() : (siteContentValues[f.key] || '');
     });
 
     var payload = new URLSearchParams();
