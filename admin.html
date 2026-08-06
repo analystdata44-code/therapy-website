@@ -335,7 +335,9 @@
   .sc-static{border:1px solid var(--line); border-radius:8px; padding:10px 12px; background:var(--cream); font-size:13.5px; line-height:1.6; min-height:22px; cursor:pointer;}
   .sc-static:hover{border-color:var(--sage);}
   .sc-static:empty::before{content:'(empty — click to add text)'; color:var(--muted); font-style:italic;}
-  .sc-editor-wrap{border:1px solid var(--line); border-radius:8px; overflow:hidden; background:#fff;}
+  .sc-editor-wrap{border:1px solid var(--line); border-radius:8px; background:#fff; position:relative;}
+  .sc-editor-wrap .ql-toolbar.ql-snow{border-radius:8px 8px 0 0;}
+  .sc-editor-wrap .ql-container.ql-snow{border-radius:0 0 8px 8px; overflow:hidden;}
   .sc-toolbar.ql-toolbar.ql-snow{background:var(--cream); border:none; border-bottom:1px solid var(--line); padding:5px 6px; display:flex; flex-wrap:wrap; align-items:center; gap:2px;}
   .sc-toolbar .ql-picker{margin-right:2px;}
   .sc-toolbar .ql-font{width:170px;}
@@ -343,6 +345,7 @@
   .sc-toolbar .ql-font .ql-picker-item{font-size:12.5px;}
   .sc-toolbar .ql-size .ql-picker-label,
   .sc-toolbar .ql-size .ql-picker-item{font-size:12px;}
+  .sc-toolbar .ql-picker-options{max-height:280px; overflow-y:auto; z-index:50;}
   .sc-editor.ql-container.ql-snow{border:none; font-family:'Inter',sans-serif; font-size:13.5px;}
   .sc-editor .ql-editor{min-height:44px; padding:10px 12px; background:var(--cream);}
   .sc-editor.sc-editor-long .ql-editor{min-height:110px;}
