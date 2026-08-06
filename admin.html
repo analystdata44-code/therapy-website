@@ -327,11 +327,18 @@
   .appt-inline-form .row{gap:10px;}
   .appt-form-status{font-size:12.5px; margin-top:6px;}
 
-  /* ---- Site Content: per-field rich text editors ---- */
+  /* ---- Site Content: per-field rich text editors (lazy-loaded) ---- */
   .sc-field-block{margin-bottom:18px;}
+  .sc-field-block .field-label{display:flex; align-items:center; justify-content:space-between; gap:10px;}
+  .sc-edit-btn{background:#fff; border:1px solid var(--line); color:var(--sage-dark); padding:4px 11px; border-radius:20px; font-size:11.5px; font-weight:700; cursor:pointer; flex-shrink:0;}
+  .sc-edit-btn:hover{background:var(--stat-sage-bg);}
+  .sc-static{border:1px solid var(--line); border-radius:8px; padding:10px 12px; background:var(--cream); font-size:13.5px; line-height:1.6; min-height:22px; cursor:pointer;}
+  .sc-static:hover{border-color:var(--sage);}
+  .sc-static:empty::before{content:'(empty — click to add text)'; color:var(--muted); font-style:italic;}
   .sc-editor-wrap{border:1px solid var(--line); border-radius:8px; overflow:hidden; background:#fff;}
   .sc-toolbar.ql-toolbar.ql-snow{background:var(--cream); border:none; border-bottom:1px solid var(--line); padding:5px 6px; display:flex; flex-wrap:wrap; align-items:center; gap:2px;}
   .sc-toolbar .ql-picker{margin-right:2px;}
+  .sc-toolbar .ql-font{width:170px;}
   .sc-toolbar .ql-font .ql-picker-label,
   .sc-toolbar .ql-font .ql-picker-item{font-size:12.5px;}
   .sc-toolbar .ql-size .ql-picker-label,
@@ -776,9 +783,28 @@
   //    No need to paste it separately here.
   var ENDPOINT_URL = (typeof TESTIMONIALS_SCRIPT_URL !== 'undefined') ? TESTIMONIALS_SCRIPT_URL : "PASTE_YOUR_TESTIMONIALS_APPS_SCRIPT_URL_HERE";
 
-  // ---- Fonts & sizes available in every rich-text editor (blog + site content) ----
-  var RICH_TEXT_FONTS = ['Lora','Playfair Display','Merriweather','Cormorant Garamond','Poppins','Inter','Caveat','Georgia','Times New Roman','Arial'];
-  var RICH_TEXT_SIZES = ['12px','14px','16px','18px','20px','24px','28px','32px'];
+  // ---- Fonts & sizes available in the Site Content rich-text editors ----
+  // Same full list as the "Site Design" headline-font dropdown, so every
+  // font available there is also available when formatting page text.
+  var RICH_TEXT_FONTS = [
+    // Google Fonts (all devices)
+    'Lora','Playfair Display','Merriweather','Cormorant Garamond','Poppins','Inter','Caveat',
+    // Apple System — Sans-serif
+    'SF Pro','Helvetica Neue','Helvetica','Arial','Arial Rounded MT Bold','Avenir','Avenir Next',
+    'Avenir Next Condensed','Optima','Futura','Gill Sans','Trebuchet MS','Verdana','Galvji',
+    'Seravek','DIN Alternate','DIN Condensed',
+    // Apple System — Serif
+    'New York','Baskerville','Big Caslon','Bodoni 72','Bodoni 72 Oldstyle','Bodoni 72 Smallcaps',
+    'Charter','Cochin','Didot','Georgia','Hoefler Text','Iowan Old Style','Palatino','Rockwell',
+    'Superclarendon','Times New Roman',
+    // Apple System — Handwriting & Script
+    'Snell Roundhand','Savoye LET','SignPainter','Noteworthy','Bradley Hand','Marker Felt','Party LET','Zapfino',
+    // Apple System — Display & Decorative
+    'Copperplate','Papyrus','Herculanum','Chalkboard SE','Chalkduster','American Typewriter','Phosphate','Impact',
+    // Apple System — Monospace
+    'Menlo','Courier New'
+  ];
+  var RICH_TEXT_SIZES = ['12px','14px','16px','18px','20px','24px','28px','32px','40px'];
 
   // Register style-based Font & Size attributors so formatting is saved as
   // plain inline CSS (font-family / font-size) inside the saved HTML —
@@ -1370,6 +1396,17 @@
     );
   }
 
+  // Site Content can have a lot of fields, and each rich-text editor (with the
+  // full ~58-font list) is fairly heavy to construct. So the tab only builds a
+  // lightweight static preview for every field up front, and creates the real
+  // Quill editor for a field the moment the admin clicks into it — keeping the
+  // tab fast to open no matter how many fields there are.
+  function scUid(key){ return 'sc-' + key.replace(/[^a-zA-Z0-9_-]/g, '_'); }
+
+  function scCurrentValue(f){
+    return (siteContentValues[f.key] !== undefined && siteContentValues[f.key] !== '') ? siteContentValues[f.key] : f.def;
+  }
+
   function renderSiteContentForm(){
     var fields = (typeof CONTENT_FIELDS !== 'undefined') ? CONTENT_FIELDS : [];
     var groupsWrap = document.getElementById('scGroups');
@@ -1389,31 +1426,46 @@
       html += '<div class="card" style="margin-bottom:16px;"><h2>' + escapeHtml(section) + '</h2>';
       bySection[section].forEach(function(f){
         var isLong = f.mode !== 'text';
-        var uid = 'sc-' + f.key.replace(/[^a-zA-Z0-9_-]/g, '_');
-        html += '<div class="sc-field-block">';
-        html += '<div class="field-label" style="margin-top:0;">' + f.label + '</div>';
-        html += '<div class="sc-editor-wrap">';
+        var uid = scUid(f.key);
+        var currentHtml = scLegacyValueToHtml(scCurrentValue(f));
+        html += '<div class="sc-field-block" data-sc-key="' + f.key + '">';
+        html += '<div class="field-label" style="margin-top:0;">' + f.label +
+                  '<button type="button" class="sc-edit-btn" onclick="scActivateEditor(\'' + f.key + '\')">✎ Format text</button></div>';
+        html += '<div class="sc-static" id="' + uid + '-static" onclick="scActivateEditor(\'' + f.key + '\')">' + currentHtml + '</div>';
+        html += '<div class="sc-editor-wrap" id="' + uid + '-wrap" style="display:none;">';
         html += '<div id="' + uid + '-toolbar" class="sc-toolbar ql-toolbar ql-snow">' + scBuildToolbarHtml(uid) + '</div>';
-        html += '<div id="' + uid + '-editor" class="sc-editor' + (isLong ? ' sc-editor-long' : '') + '" data-sc-key="' + f.key + '"></div>';
+        html += '<div id="' + uid + '-editor" class="sc-editor' + (isLong ? ' sc-editor-long' : '') + '"></div>';
         html += '</div>';
         html += '</div>';
       });
       html += '</div>';
     });
     groupsWrap.innerHTML = html;
+  }
 
-    // Now that the toolbars/editors exist in the DOM, spin up a Quill instance per field.
-    fields.forEach(function(f){
-      var uid = 'sc-' + f.key.replace(/[^a-zA-Z0-9_-]/g, '_');
-      var current = (siteContentValues[f.key] !== undefined && siteContentValues[f.key] !== '') ? siteContentValues[f.key] : f.def;
+  // Instantiates (once) and reveals the real Quill editor for one field,
+  // hiding the lightweight static preview in its place.
+  function scActivateEditor(key){
+    var uid = scUid(key);
+    var staticEl = document.getElementById(uid + '-static');
+    var wrapEl = document.getElementById(uid + '-wrap');
+    if(!staticEl || !wrapEl) return;
+
+    if(!scQuills[key]){
+      var fields = (typeof CONTENT_FIELDS !== 'undefined') ? CONTENT_FIELDS : [];
+      var f = fields.find(function(x){ return x.key === key; });
       var q = new Quill('#' + uid + '-editor', {
         theme: 'snow',
         modules: { toolbar: '#' + uid + '-toolbar' },
-        placeholder: f.label
+        placeholder: f ? f.label : ''
       });
-      q.root.innerHTML = scLegacyValueToHtml(current);
-      scQuills[f.key] = q;
-    });
+      q.root.innerHTML = staticEl.innerHTML;
+      scQuills[key] = q;
+    }
+
+    staticEl.style.display = 'none';
+    wrapEl.style.display = 'block';
+    scQuills[key].focus();
   }
 
   function escapeHtml(s){
